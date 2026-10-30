@@ -14,7 +14,7 @@ public class ModEntities {
 
     public static final RegistryObject<EntityType<LeviathanEntity>> LEVIATHAN = ENTITIES.register("leviathan",
             () -> EntityType.Builder.of(LeviathanEntity::new, MobCategory.WATER_CREATURE)
-                    .sized(6.0F, 3.6F)
+                    .sized(4.5F, 3.0F)
                     .clientTrackingRange(12)
                     .build("leviathan"));
 }

@@ -1,6 +1,7 @@
 package com.rpgrealms.entity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
@@ -23,6 +24,7 @@ import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -55,7 +57,8 @@ public class LeviathanEntity extends WaterAnimal {
         this.goalSelector.addGoal(0, new MeleeAttackGoal(this, 1.6D, false) {
             @Override
             protected double getAttackReachSqr(LivingEntity target) {
-                double reach = this.mob.getBbWidth() * 0.6D + target.getBbWidth();
+                // La boca está lejos del centro del cuerpo: alcance generoso.
+                double reach = 6.0D + target.getBbWidth() * 0.5D;
                 return reach * reach;
             }
         });
@@ -79,6 +82,28 @@ public class LeviathanEntity extends WaterAnimal {
         } else {
             super.travel(travelVector);
         }
+    }
+
+    @Override
+    public void aiStep() {
+        // Burbujas que salen del hocico (más seguidas cuando está enfadado).
+        if (this.level().isClientSide && this.isInWater()
+                && this.random.nextInt(this.isAggressive() ? 3 : 25) == 0) {
+            Vec3 look = this.getViewVector(1.0F);
+            Vec3 mouth = this.position().add(look.scale(5.5D)).add(0.0D, 1.2D, 0.0D);
+            this.level().addParticle(ParticleTypes.BUBBLE,
+                    mouth.x + (this.random.nextDouble() - 0.5D),
+                    mouth.y + (this.random.nextDouble() - 0.5D),
+                    mouth.z + (this.random.nextDouble() - 0.5D),
+                    0.0D, 0.06D, 0.0D);
+        }
+        super.aiStep();
+    }
+
+    /** El modelo es mucho más largo que la hitbox: ampliamos el área de culling para que no desaparezca. */
+    @Override
+    public AABB getBoundingBoxForCulling() {
+        return this.getBoundingBox().inflate(14.0D, 4.0D, 14.0D);
     }
 
     @Override
