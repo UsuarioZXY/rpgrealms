@@ -1,7 +1,5 @@
 {
   "itemGroup.rpgrealms": "RPG Realms",
-  "item.rpgrealms.ashen_blade": "Hoja Cenicienta",
-  "item.rpgrealms.ashen_blade.desc": "Prende fuego a los enemigos.",
-  "item.rpgrealms.ashen_king_spawn_egg": "Huevo generador de Rey Cenizo",
-  "entity.rpgrealms.ashen_king": "Rey Cenizo"
+  "item.rpgrealms.leviathan_spawn_egg": "Huevo generador de Leviatán",
+  "entity.rpgrealms.leviathan": "Leviatán"
 }

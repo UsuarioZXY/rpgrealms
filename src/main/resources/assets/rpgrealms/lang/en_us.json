@@ -1,7 +1,5 @@
 {
   "itemGroup.rpgrealms": "RPG Realms",
-  "item.rpgrealms.ashen_blade": "Ashen Blade",
-  "item.rpgrealms.ashen_blade.desc": "Sets enemies on fire.",
-  "item.rpgrealms.ashen_king_spawn_egg": "Ashen King Spawn Egg",
-  "entity.rpgrealms.ashen_king": "Ashen King"
+  "item.rpgrealms.leviathan_spawn_egg": "Leviathan Spawn Egg",
+  "entity.rpgrealms.leviathan": "Leviathan"
 }

@@ -1,7 +1,7 @@
 package com.rpgrealms.registry;
 
 import com.rpgrealms.RpgRealms;
-import com.rpgrealms.entity.AshenKingEntity;
+import com.rpgrealms.entity.LeviathanEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.registries.DeferredRegister;
@@ -12,10 +12,9 @@ public class ModEntities {
     public static final DeferredRegister<EntityType<?>> ENTITIES =
             DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, RpgRealms.MODID);
 
-    public static final RegistryObject<EntityType<AshenKingEntity>> ASHEN_KING = ENTITIES.register("ashen_king",
-            () -> EntityType.Builder.of(AshenKingEntity::new, MobCategory.MONSTER)
-                    .sized(1.2F, 3.4F)
-                    .fireImmune()
-                    .clientTrackingRange(10)
-                    .build("ashen_king"));
+    public static final RegistryObject<EntityType<LeviathanEntity>> LEVIATHAN = ENTITIES.register("leviathan",
+            () -> EntityType.Builder.of(LeviathanEntity::new, MobCategory.WATER_CREATURE)
+                    .sized(6.0F, 3.6F)
+                    .clientTrackingRange(12)
+                    .build("leviathan"));
 }

@@ -15,10 +15,7 @@ public class ModTabs {
     public static final RegistryObject<CreativeModeTab> MAIN = TABS.register("main",
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.rpgrealms"))
-                    .icon(() -> new ItemStack(ModItems.ASHEN_BLADE.get()))
-                    .displayItems((params, output) -> {
-                        output.accept(ModItems.ASHEN_BLADE.get());
-                        output.accept(ModItems.ASHEN_KING_SPAWN_EGG.get());
-                    })
+                    .icon(() -> new ItemStack(ModItems.LEVIATHAN_SPAWN_EGG.get()))
+                    .displayItems((params, output) -> output.accept(ModItems.LEVIATHAN_SPAWN_EGG.get()))
                     .build());
 }

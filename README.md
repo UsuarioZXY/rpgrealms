@@ -3,9 +3,8 @@
 Mod RPG para **Minecraft 1.20.1 (Forge 47.3.0)**.
 
 ## Contenido actual
-- **Rey Cenizo** (boss): 300 de vida, prende fuego, y al bajar del 50% se enfurece e invoca wither skeletons.
-- **Hoja Cenicienta**: espada que prende fuego a los enemigos (la suelta el boss).
-- Huevo generador del boss y pestaña creativa propia.
+- **Leviatán**: ballena gigante pacífica de los océanos profundos. Solo ataca si la golpeas.
+- Huevo generador y pestaña creativa propia.
 
 ## Cómo obtener el .jar con GitHub
 1. Crea un repositorio en GitHub y sube todo este proyecto.

@@ -10,7 +10,12 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = RpgRealms.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientEvents {
     @SubscribeEvent
+    public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(LeviathanModel.LAYER, LeviathanModel::createBodyLayer);
+    }
+
+    @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(ModEntities.ASHEN_KING.get(), AshenKingRenderer::new);
+        event.registerEntityRenderer(ModEntities.LEVIATHAN.get(), LeviathanRenderer::new);
     }
 }
