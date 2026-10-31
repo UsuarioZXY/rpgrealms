@@ -16,6 +16,12 @@ public class ModTabs {
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.rpgrealms"))
                     .icon(() -> new ItemStack(ModItems.LEVIATHAN_SPAWN_EGG.get()))
-                    .displayItems((params, output) -> output.accept(ModItems.LEVIATHAN_SPAWN_EGG.get()))
+                    .displayItems((params, output) -> {
+                        output.accept(ModItems.ABYSSAL_PEARL.get());
+                        output.accept(ModItems.LEVIATHAN_CUB_SPAWN_EGG.get());
+                        output.accept(ModItems.LEVIATHAN_SPAWN_EGG.get());
+                        output.accept(ModItems.LUMEN_STONE.get());
+                        output.accept(ModItems.LUMEN_CRYSTAL.get());
+                    })
                     .build());
 }

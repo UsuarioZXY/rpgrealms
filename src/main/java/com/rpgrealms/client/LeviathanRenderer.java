@@ -10,23 +10,22 @@ import net.minecraft.resources.ResourceLocation;
 public class LeviathanRenderer extends MobRenderer<LeviathanEntity, LeviathanModel> {
     private static final ResourceLocation TEXTURE =
             new ResourceLocation(RpgRealms.MODID, "textures/entity/leviathan.png");
+    private static final ResourceLocation GLOW =
+            new ResourceLocation(RpgRealms.MODID, "textures/entity/leviathan_glow.png");
 
     public LeviathanRenderer(EntityRendererProvider.Context context) {
-        super(context, new LeviathanModel(context.bakeLayer(LeviathanModel.LAYER)), 3.0F);
-        this.addLayer(new LeviathanGlowLayer(this));
+        super(context, new LeviathanModel(context.bakeLayer(LeviathanModel.LAYER)), 6.0F);
+        this.addLayer(new LeviathanGlowLayer<>(this, GLOW, 1.15F));
     }
 
     @Override
     protected void scale(LeviathanEntity entity, PoseStack poseStack, float partialTick) {
-        poseStack.scale(2.4F, 2.4F, 2.4F);
-        // El modelo mide ~160 px de largo con el origen en el pecho: lo centramos
-        // sobre la posición de la entidad para que gire sobre su centro.
+        poseStack.scale(4.5F, 4.5F, 4.5F);
         poseStack.translate(0.0F, 0.0F, -1.25F);
     }
 
     @Override
     protected float getFlipDegrees(LeviathanEntity entity) {
-        // Al morir queda flotando panza arriba.
         return 180.0F;
     }
 

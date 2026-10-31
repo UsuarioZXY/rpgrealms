@@ -1,0 +1,83 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.6,
+  "downfall": 0.0,
+  "effects": {
+    "fog_color": 200732,
+    "water_color": 1732512,
+    "water_fog_color": 268848,
+    "sky_color": 1288,
+    "particle": {
+      "probability": 0.004,
+      "options": {
+        "type": "minecraft:glow"
+      }
+    },
+    "ambient_sound": "minecraft:ambient.cave",
+    "mood_sound": {
+      "sound": "minecraft:ambient.cave",
+      "tick_delay": 6000,
+      "block_search_extent": 8,
+      "offset": 2.0
+    }
+  },
+  "carvers": {},
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "rpgrealms:lumen_stone_patch",
+      "minecraft:ore_coal_upper",
+      "minecraft:ore_iron_middle",
+      "minecraft:ore_gold",
+      "minecraft:ore_redstone",
+      "minecraft:ore_lapis",
+      "minecraft:ore_copper",
+      "minecraft:ore_diamond"
+    ],
+    [
+      "rpgrealms:lumen_crystal_floor",
+      "rpgrealms:lumen_crystal_ceiling",
+      "minecraft:glow_lichen"
+    ],
+    [],
+    [],
+    []
+  ],
+  "creature_spawn_probability": 0.0,
+  "spawners": {
+    "monster": [],
+    "creature": [],
+    "ambient": [],
+    "axolotls": [],
+    "underground_water_creature": [
+      {
+        "type": "minecraft:glow_squid",
+        "weight": 10,
+        "minCount": 4,
+        "maxCount": 6
+      }
+    ],
+    "water_creature": [
+      {
+        "type": "rpgrealms:leviathan",
+        "weight": 1,
+        "minCount": 1,
+        "maxCount": 1
+      },
+      {
+        "type": "rpgrealms:leviathan_cub",
+        "weight": 8,
+        "minCount": 1,
+        "maxCount": 2
+      }
+    ],
+    "water_ambient": [],
+    "misc": []
+  },
+  "spawn_costs": {}
+}
