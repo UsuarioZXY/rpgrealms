@@ -1,7 +1,9 @@
 package com.rpgrealms.entity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import org.joml.Vector3f;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -38,6 +40,16 @@ public abstract class AbstractLeviathan extends WaterAnimal {
 
     /** Cuánto se amplía el AABB de culling en horizontal. */
     protected abstract double cullingInflate();
+
+    /** Distancia desde el centro hasta la cola (para repartir las partículas del rastro). */
+    protected double trailBack() {
+        return this.mouthForward() * 2.2D;
+    }
+
+    /** Cantidad relativa de partículas místicas (1 = adulto). */
+    protected double trailDensity() {
+        return 1.0D;
+    }
 
     /** Fase de ataque sincronizada con el cliente (0 = reposo). El adulto la sobrescribe. */
     public int getPhase() {
@@ -94,7 +106,58 @@ public abstract class AbstractLeviathan extends WaterAnimal {
                     mouth.z + (this.random.nextDouble() - 0.5D),
                     0.0D, 0.06D, 0.0D);
         }
+        if (this.level().isClientSide) {
+            this.mysticTrail();
+        }
         super.aiStep();
+    }
+
+    /**
+     * Rastro de partículas místicas a lo largo de todo el cuerpo: motas cian (rojas si está furioso),
+     * destellos que suben y glifos que flotan. Más densas cuanto más rápido nada.
+     */
+    private void mysticTrail() {
+        Vec3 vel = this.getDeltaMovement();
+        double speed = vel.length();
+        boolean angry = this.isAggressive();
+        double amount = (0.25D + Math.min(speed * 6.0D, 2.0D) + (angry ? 0.6D : 0.0D)) * this.trailDensity();
+        int n = (int) amount;
+        if (this.random.nextDouble() < amount - n) {
+            n++;
+        }
+        if (n <= 0) {
+            return;
+        }
+        Vec3 fwd = Vec3.directionFromRotation(0.0F, this.yBodyRot);
+        Vec3 side = new Vec3(-fwd.z, 0.0D, fwd.x);
+        double front = this.mouthForward();
+        double back = this.trailBack();
+        double halfWidth = Math.max(1.0D, front * 0.28D);
+        DustParticleOptions dust = angry
+                ? new DustParticleOptions(new Vector3f(1.0F, 0.25F, 0.15F), 1.6F)
+                : new DustParticleOptions(new Vector3f(0.30F, 0.90F, 1.0F), 1.6F);
+        for (int i = 0; i < n; i++) {
+            double along = front * 0.8D - this.random.nextDouble() * (front * 0.8D + back);
+            double x = this.getX() + fwd.x * along + side.x * (this.random.nextGaussian() * halfWidth);
+            double z = this.getZ() + fwd.z * along + side.z * (this.random.nextGaussian() * halfWidth);
+            double y = this.getY() + this.getBbHeight() * 0.5D + this.random.nextGaussian() * halfWidth * 0.6D;
+            double dx = -vel.x * 0.15D + this.random.nextGaussian() * 0.01D;
+            double dz = -vel.z * 0.15D + this.random.nextGaussian() * 0.01D;
+            switch (this.random.nextInt(4)) {
+                case 0, 1 -> this.level().addParticle(dust, x, y, z, dx, 0.01D, dz);
+                case 2 -> this.level().addParticle(ParticleTypes.END_ROD, x, y, z, dx * 0.5D, 0.02D, dz * 0.5D);
+                default -> this.level().addParticle(ParticleTypes.NAUTILUS, x, y + 0.5D, z,
+                        this.random.nextGaussian() * 0.3D, this.random.nextDouble() * 0.3D, this.random.nextGaussian() * 0.3D);
+            }
+        }
+        // Estela densa en la punta de la cola cuando se mueve
+        if (speed > 0.08D) {
+            double tx = this.getX() - fwd.x * back;
+            double tz = this.getZ() - fwd.z * back;
+            this.level().addParticle(ParticleTypes.GLOW, tx + this.random.nextGaussian() * 0.8D,
+                    this.getY() + this.getBbHeight() * 0.5D + this.random.nextGaussian() * 0.8D,
+                    tz + this.random.nextGaussian() * 0.8D, 0.0D, 0.02D, 0.0D);
+        }
     }
 
     @Override

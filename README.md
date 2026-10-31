@@ -8,6 +8,7 @@ Mod RPG para **Minecraft 1.20.1 (Forge 47.3.0)**.
   - Con más del 50 % de vida va de frente a morder al jugador.
   - Con 50 % o menos se enfurece (barra roja) y prefiere el rayo; bajo el 25 % casi solo lo usa.
   - Ataques: orbes abisales con explosión en área y rayo cargado con haz luminoso.
+- **Efectos:** ambos dejan un rastro de partículas místicas por todo el cuerpo al moverse (más denso al nadar rápido; rojo al enfurecerse). La bioluminiscencia es un patrón ordenado (línea lateral, franjas, bordes de aletas) que brilla poco de día y se enciende de noche, en cuevas y al atacar.
 - Huevos generadores de ambos y pestaña creativa propia.
 
 ## Cómo obtener el .jar con GitHub

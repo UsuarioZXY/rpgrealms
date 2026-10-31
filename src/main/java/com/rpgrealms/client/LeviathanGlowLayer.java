@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.rpgrealms.entity.AbstractLeviathan;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
@@ -56,7 +57,21 @@ public class LeviathanGlowLayer<T extends AbstractLeviathan, M extends EntityMod
             r = 0.55F; g = 1.0F; b = 1.0F;
         }
 
-        float k = Math.min(1.0F, pulse * this.boost);
+        // Brillo según la oscuridad: de día (y a la luz de antorchas) es un resplandor suave;
+        // de noche y en cuevas oscuras se enciende por completo. En pleno ataque siempre brilla fuerte.
+        float sky = LightTexture.sky(packedLight) / 15.0F;
+        float blockLight = LightTexture.block(packedLight) / 15.0F;
+        float tod = entity.level().getTimeOfDay(partialTick);
+        float daylight = Mth.clamp(Mth.cos(tod * Mth.TWO_PI) * 2.0F + 0.5F, 0.0F, 1.0F);
+        float ambient = Math.max(blockLight, sky * daylight);
+        float dark = 1.0F - ambient;
+        float vis = 0.28F + 0.72F * dark;
+        if (phase > 0) {
+            vis = Math.max(vis, 0.85F);
+        } else if (angry) {
+            vis = Math.max(vis, 0.55F);
+        }
+        float k = Math.min(1.0F, pulse * this.boost) * vis;
         VertexConsumer vc = buffer.getBuffer(RenderType.eyes(this.texture));
         this.getParentModel().renderToBuffer(poseStack, vc, 15728640, OverlayTexture.NO_OVERLAY,
                 r * k, g * k, b * k, 1.0F);

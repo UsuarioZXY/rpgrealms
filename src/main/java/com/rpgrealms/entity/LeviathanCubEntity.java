@@ -63,6 +63,16 @@ public class LeviathanCubEntity extends AbstractLeviathan {
     }
 
     @Override
+    protected double trailBack() {
+        return 11.0D;
+    }
+
+    @Override
+    protected double trailDensity() {
+        return 0.45D;
+    }
+
+    @Override
     protected double cullingInflate() {
         return 10.0D;
     }
