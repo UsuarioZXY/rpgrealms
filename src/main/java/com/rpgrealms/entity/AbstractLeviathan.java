@@ -1,6 +1,5 @@
 package com.rpgrealms.entity;
 
-import com.rpgrealms.registry.ModDimensions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.tags.FluidTags;
@@ -114,7 +113,7 @@ public abstract class AbstractLeviathan extends WaterAnimal {
         return 1;
     }
 
-    /** Aparece solo en agua profunda: océanos profundos en el Overworld, o cualquier lago del Abismo. */
+    /** Aparece solo en agua profunda de los océanos. */
     public static boolean checkWaterSpawn(EntityType<? extends AbstractLeviathan> type, ServerLevelAccessor level,
                                           MobSpawnType reason, BlockPos pos, RandomSource random) {
         boolean water = level.getFluidState(pos).is(FluidTags.WATER)
@@ -122,7 +121,6 @@ public abstract class AbstractLeviathan extends WaterAnimal {
         if (!water) {
             return false;
         }
-        boolean inAbyss = level.getLevel().dimension() == ModDimensions.ABYSS;
-        return inAbyss || pos.getY() <= level.getSeaLevel() - 10;
+        return pos.getY() <= level.getSeaLevel() - 10;
     }
 }

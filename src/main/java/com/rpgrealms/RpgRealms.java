@@ -1,6 +1,5 @@
 package com.rpgrealms;
 
-import com.rpgrealms.registry.ModBlocks;
 import com.rpgrealms.registry.ModEntities;
 import com.rpgrealms.registry.ModItems;
 import com.rpgrealms.registry.ModTabs;
@@ -14,7 +13,6 @@ public class RpgRealms {
 
     public RpgRealms() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-        ModBlocks.BLOCKS.register(bus);
         ModEntities.ENTITIES.register(bus);
         ModItems.ITEMS.register(bus);
         ModTabs.TABS.register(bus);

@@ -71,6 +71,8 @@ public class LeviathanEntity extends AbstractLeviathan {
     private static final EntityDataAccessor<Float> DATA_BEAM_Z =
             SynchedEntityData.defineId(LeviathanEntity.class, EntityDataSerializers.FLOAT);
 
+    private boolean enraged = false;
+
     private final ServerBossEvent bossEvent = new ServerBossEvent(
             Component.translatable("entity.rpgrealms.leviathan"),
             BossEvent.BossBarColor.BLUE, BossEvent.BossBarOverlay.NOTCHED_12);
@@ -333,6 +335,18 @@ public class LeviathanEntity extends AbstractLeviathan {
     protected void customServerAiStep() {
         super.customServerAiStep();
         this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
+        if (!this.enraged && this.getHealth() <= this.getMaxHealth() * 0.5F) {
+            this.enraged = true;
+            this.bossEvent.setColor(BossEvent.BossBarColor.RED);
+            this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
+                    SoundEvents.ENDER_DRAGON_GROWL, SoundSource.HOSTILE, 8.0F, 0.6F);
+            if (this.level() instanceof ServerLevel serverLevel) {
+                Vec3 m = this.getMouthPos();
+                sendParticle(serverLevel, ParticleTypes.SONIC_BOOM, m.x, m.y, m.z, 1, 0.0D, 0.0D);
+                sendParticle(serverLevel, ParticleTypes.ELECTRIC_SPARK, this.getX(), this.getY() + 2.0D, this.getZ(),
+                        80, 6.0D, 0.4D);
+            }
+        }
         int recoil = this.entityData.get(DATA_RECOIL);
         if (recoil > 0) {
             this.entityData.set(DATA_RECOIL, recoil - 1);
@@ -344,6 +358,10 @@ public class LeviathanEntity extends AbstractLeviathan {
         super.readAdditionalSaveData(tag);
         if (this.hasCustomName()) {
             this.bossEvent.setName(this.getDisplayName());
+        }
+        this.enraged = this.getHealth() <= this.getMaxHealth() * 0.5F;
+        if (this.enraged) {
+            this.bossEvent.setColor(BossEvent.BossBarColor.RED);
         }
     }
 
@@ -386,6 +404,27 @@ public class LeviathanEntity extends AbstractLeviathan {
 
     private boolean isWaterAt(double x, double y, double z) {
         return this.level().getFluidState(BlockPos.containing(x, y, z)).is(FluidTags.WATER);
+    }
+
+    /** Punto de agua más lejano que se puede alcanzar en línea recta hacia el objetivo (null si no hay). */
+    private Vec3 nearestWaterPointToward(Vec3 target) {
+        Vec3 from = this.position();
+        Vec3 d = target.subtract(from);
+        double len = d.length();
+        if (len < 1.0E-3D) {
+            return null;
+        }
+        Vec3 dir = d.scale(1.0D / len);
+        Vec3 best = null;
+        for (double s = 3.0D; s <= len; s += 2.0D) {
+            Vec3 p = from.add(dir.scale(s));
+            if (this.isWaterAt(p.x, p.y, p.z)) {
+                best = p;
+            } else {
+                break;
+            }
+        }
+        return best;
     }
 
     /**
@@ -567,7 +606,7 @@ public class LeviathanEntity extends AbstractLeviathan {
                         this.boltsLeft--;
                     }
                     if (this.boltsLeft <= 0) {
-                        this.endAttack(50 + this.mob.getRandom().nextInt(40));
+                        this.endAttack(this.nextCooldown());
                     }
                 }
                 case MODE_CHARGE -> {
@@ -595,39 +634,101 @@ public class LeviathanEntity extends AbstractLeviathan {
                     }
                     this.mob.fireBeamTick(this.beamDir, this.timer);
                     if (this.timer >= BEAM_TICKS) {
-                        this.endAttack(80 + this.mob.getRandom().nextInt(60));
+                        this.endAttack(this.nextCooldown());
                     }
                 }
                 default -> {
-                    // Mordisco si lo tiene en la boca.
-                    if (mouthDist < 6.0D + target.getBbWidth()) {
-                        if (this.biteCooldown <= 0) {
-                            this.mob.swing(InteractionHand.MAIN_HAND);
-                            this.mob.doHurtTarget(target);
-                            this.biteCooldown = 30;
+                    float hp = this.mob.getHealth() / this.mob.getMaxHealth();
+                    boolean wounded = hp <= 0.5F;
+                    boolean desperate = hp <= 0.25F;
+                    double reach = 6.0D + target.getBbWidth();
+
+                    if (!wounded) {
+                        // CON BUENA VIDA: va de frente a matar. Se acerca lo máximo que permite el agua y muerde.
+                        if (mouthDist < reach) {
+                            this.tryBite(target, 20);
+                        } else {
+                            Vec3 p = this.mob.nearestWaterPointToward(center);
+                            if (p != null) {
+                                this.mob.getMoveControl().setWantedPosition(p.x, p.y, p.z, 1.7D);
+                            }
                         }
-                    } else if (mouthDist > 24.0D && this.mob.isWaterAt(center.x, center.y, center.z)) {
-                        // Se acerca (solo por agua) hasta quedar a distancia de tiro.
-                        this.mob.getMoveControl().setWantedPosition(center.x, center.y, center.z, 1.0D);
+                    } else {
+                        // CON POCA VIDA: guarda distancia y prefiere el rayo.
+                        if (mouthDist < reach) {
+                            this.tryBite(target, 30);     // si lo tienen encima, muerde
+                        } else if (mouthDist < 16.0D) {
+                            Vec3 away = this.mob.position().subtract(center).multiply(1.0D, 0.0D, 1.0D);
+                            if (away.lengthSqr() > 1.0E-4D) {
+                                Vec3 back = this.mob.position().add(away.normalize().scale(14.0D));
+                                if (this.mob.isWaterAt(back.x, this.mob.getY(), back.z)) {
+                                    this.mob.getMoveControl().setWantedPosition(back.x, this.mob.getY(), back.z, 1.2D);
+                                }
+                            }
+                        } else if (mouthDist > 40.0D) {
+                            Vec3 p = this.mob.nearestWaterPointToward(center);
+                            if (p != null) {
+                                this.mob.getMoveControl().setWantedPosition(p.x, p.y, p.z, 1.0D);
+                            }
+                        }
                     }
 
                     this.cooldown--;
-                    if (this.cooldown <= 0 && mouthDist > 7.0D && this.mob.getSensing().hasLineOfSight(target)) {
-                        if (mouthDist > 14.0D && this.mob.getRandom().nextInt(3) == 0) {
-                            this.mode = MODE_CHARGE;
-                            this.timer = 0;
-                            this.mob.setPhaseTimer(0);
-                            this.mob.setPhase(PHASE_BEAM_CHARGE);
-                        } else {
-                            this.mode = MODE_BOLTS;
-                            this.timer = 0;
-                            this.boltsLeft = 4;
-                            this.mob.setPhaseTimer(0);
-                            this.mob.setPhase(PHASE_BOLTS);
+                    if (this.cooldown <= 0 && this.mob.getSensing().hasLineOfSight(target)) {
+                        if (wounded) {
+                            // Rayo casi siempre; orbes de vez en cuando.
+                            double beamChance = desperate ? 0.9D : 0.7D;
+                            if (mouthDist > 5.0D && this.mob.getRandom().nextDouble() < beamChance) {
+                                this.startCharge();
+                            } else if (mouthDist > 7.0D) {
+                                this.startBolts();
+                            }
+                        } else if (mouthDist > 12.0D) {
+                            // Sano pero sin poder alcanzarlo (p. ej. el jugador está en tierra): dispara.
+                            if (this.mob.getRandom().nextInt(5) == 0) {
+                                this.startCharge();
+                            } else {
+                                this.startBolts();
+                            }
                         }
                     }
                 }
             }
+        }
+
+        private void tryBite(LivingEntity target, int cooldownTicks) {
+            if (this.biteCooldown <= 0) {
+                this.mob.swing(InteractionHand.MAIN_HAND);
+                this.mob.doHurtTarget(target);
+                this.biteCooldown = cooldownTicks;
+            }
+        }
+
+        private void startCharge() {
+            this.mode = MODE_CHARGE;
+            this.timer = 0;
+            this.mob.setPhaseTimer(0);
+            this.mob.setPhase(PHASE_BEAM_CHARGE);
+        }
+
+        private void startBolts() {
+            this.mode = MODE_BOLTS;
+            this.timer = 0;
+            this.boltsLeft = this.mob.getHealth() <= this.mob.getMaxHealth() * 0.5F ? 6 : 4;
+            this.mob.setPhaseTimer(0);
+            this.mob.setPhase(PHASE_BOLTS);
+        }
+
+        /** Pausa hasta el siguiente ataque a distancia: mucho más corta cuanta menos vida tenga. */
+        private int nextCooldown() {
+            float hp = this.mob.getHealth() / this.mob.getMaxHealth();
+            if (hp <= 0.25F) {
+                return 25 + this.mob.getRandom().nextInt(20);
+            }
+            if (hp <= 0.5F) {
+                return 35 + this.mob.getRandom().nextInt(25);
+            }
+            return 60 + this.mob.getRandom().nextInt(40);
         }
 
         private void endAttack(int nextCooldown) {

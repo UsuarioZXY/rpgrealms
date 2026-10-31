@@ -60,24 +60,6 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "rpgrealms:lumen_crystal",
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "min": 8,
-                "max": 16
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
           "name": "minecraft:prismarine_crystals",
           "functions": [
             {

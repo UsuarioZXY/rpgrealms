@@ -2,14 +2,8 @@
   "itemGroup.rpgrealms": "RPG Realms",
   "item.rpgrealms.leviathan_cub_spawn_egg": "Leviathan Cub Spawn Egg",
   "item.rpgrealms.leviathan_spawn_egg": "Leviathan Spawn Egg",
-  "item.rpgrealms.abyssal_pearl": "Abyssal Pearl",
-  "item.rpgrealms.abyssal_pearl.desc": "Use it to travel to the Abyss.",
-  "item.rpgrealms.abyssal_pearl.desc2": "Use it again inside to return where you came from.",
   "item.rpgrealms.abyss_orb": "Abyss Orb",
-  "block.rpgrealms.lumen_stone": "Lumen Stone",
-  "block.rpgrealms.lumen_crystal": "Lumen Crystal",
   "entity.rpgrealms.leviathan_cub": "Leviathan Cub",
   "entity.rpgrealms.leviathan": "Leviathan",
-  "entity.rpgrealms.abyss_bolt": "Abyss Orb",
-  "message.rpgrealms.abyss_missing": "The Abyss could not be found. Try creating a new world."
+  "entity.rpgrealms.abyss_bolt": "Abyss Orb"
 }

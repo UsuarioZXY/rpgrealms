@@ -3,10 +3,11 @@
 Mod RPG para **Minecraft 1.20.1 (Forge 47.3.0)**.
 
 ## Contenido actual
-- **Cría de Leviatán** (~18 bloques): pacífica y muy rápida; 70 de vida y poco daño. Aparece en océanos profundos y en el Abismo. Solo se defiende si la golpeas.
-- **Leviatán** (~44 bloques): colosal y lento; 800 de vida, barra de jefe. Vive en los lagos del Abismo. Mordisco, ráfaga de orbes abisales (con estela y explosión en área) y un rayo cargado con haz luminoso real, destello de carga y retroceso del cuerpo. Anzuelo luminoso, bioluminiscencia (cian en calma, roja al enfadarse, blanca al disparar el rayo).
-- **El Abismo**: dimensión de cuevas gigantes y oscuras con su propio bioma (*Abismo Luminoso*), suelo caminable, lagos, Piedra Lumen y Cristales Lumen.
-- **Perla Abisal**: se craftea con perla de ender + corazón del mar + saco de tinta luminoso. Úsala para entrar al Abismo y, dentro, para volver.
+- **Cría de Leviatán** (~18 bloques): pacífica y muy rápida; 70 de vida y poco daño. Aparece en océanos profundos. Solo se defiende si la golpeas.
+- **Leviatán** (~44 bloques): colosal, lento y de aspecto propio (cuerpo negro de obsidiana con venas cian, cabeza enorme con boca abierta y colmillos, coraza de placas, vela dorsal alta, anzuelo luminoso). 800 de vida, barra de jefe. Solo con huevo generador por ahora (la dimensión se rehará como planeta).
+  - Con más del 50 % de vida va de frente a morder al jugador.
+  - Con 50 % o menos se enfurece (barra roja) y prefiere el rayo; bajo el 25 % casi solo lo usa.
+  - Ataques: orbes abisales con explosión en área y rayo cargado con haz luminoso.
 - Huevos generadores de ambos y pestaña creativa propia.
 
 ## Cómo obtener el .jar con GitHub
