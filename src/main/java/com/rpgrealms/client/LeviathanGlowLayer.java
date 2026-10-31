@@ -43,13 +43,16 @@ public class LeviathanGlowLayer<T extends AbstractLeviathan, M extends EntityMod
         float g = angry ? 0.18F : 0.85F;
         float b = angry ? 0.12F : 1.00F;
 
-        if (phase == 2) {          // cargando el rayo: se enciende en blanco azulado, latido rápido
-            pulse = 0.8F + 0.2F * Mth.sin(ageInTicks * 0.9F);
+        if (phase == 2) {          // cargando el rayo: se enciende en blanco azulado, latido cada vez más rápido
+            float c = Mth.clamp(entity.getPhaseTimer() / 50.0F, 0.0F, 1.0F);
+            pulse = 0.6F + 0.4F * Mth.sin(ageInTicks * (0.3F + c * 1.4F));
+            pulse *= 0.7F + 0.5F * c;
             r = 0.75F; g = 0.95F; b = 1.0F;
-        } else if (phase == 3) {   // disparando: incandescente
-            pulse = 1.0F;
+        } else if (phase == 3) {   // disparando: incandescente, con vibración
+            pulse = 0.9F + 0.1F * Mth.sin(ageInTicks * 3.0F);
             r = 1.0F; g = 1.0F; b = 1.0F;
-        } else if (phase == 1) {   // ráfaga de orbes
+        } else if (phase == 1) {   // ráfaga de orbes: destello en cada disparo
+            pulse = 0.8F + 0.2F * (entity.getRecoil() / 6.0F);
             r = 0.55F; g = 1.0F; b = 1.0F;
         }
 

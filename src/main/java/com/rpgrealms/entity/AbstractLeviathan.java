@@ -4,6 +4,7 @@ import com.rpgrealms.registry.ModDimensions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
@@ -44,9 +45,26 @@ public abstract class AbstractLeviathan extends WaterAnimal {
         return 0;
     }
 
+    /** Fuerza del retroceso de disparo (0..6). Solo el adulto lo usa. */
+    public int getRecoil() {
+        return 0;
+    }
+
+    /** Progreso (en ticks) de la fase de ataque actual. Solo el adulto lo usa. */
+    public int getPhaseTimer() {
+        return 0;
+    }
+
+    /** Posición de la boca RELATIVA a los pies de la entidad, interpolada para el render. */
+    public Vec3 getMouthOffset(float partialTick) {
+        float yaw = Mth.rotLerp(partialTick, this.yBodyRotO, this.yBodyRot);
+        float pitch = Mth.lerp(partialTick, this.xRotO, this.getXRot());
+        Vec3 dir = Vec3.directionFromRotation(pitch * 0.7F, yaw);
+        return dir.scale(this.mouthForward()).add(0.0D, this.mouthUp(), 0.0D);
+    }
+
     public Vec3 getMouthPos() {
-        Vec3 dir = Vec3.directionFromRotation(this.getXRot() * 0.7F, this.yBodyRot);
-        return this.position().add(dir.scale(this.mouthForward())).add(0.0D, this.mouthUp(), 0.0D);
+        return this.position().add(this.getMouthOffset(1.0F));
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.rpgrealms.client;
 
 import com.rpgrealms.RpgRealms;
 import com.rpgrealms.registry.ModEntities;
-import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -20,6 +19,6 @@ public class ClientEvents {
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.LEVIATHAN_CUB.get(), LeviathanCubRenderer::new);
         event.registerEntityRenderer(ModEntities.LEVIATHAN.get(), LeviathanRenderer::new);
-        event.registerEntityRenderer(ModEntities.ABYSS_BOLT.get(), ctx -> new ThrownItemRenderer<>(ctx, 3.0F, true));
+        event.registerEntityRenderer(ModEntities.ABYSS_BOLT.get(), AbyssBoltRenderer::new);
     }
 }

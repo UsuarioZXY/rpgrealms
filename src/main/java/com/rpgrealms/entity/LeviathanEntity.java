@@ -23,6 +23,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
@@ -40,7 +41,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.EnumSet;
 
 /**
- * Leviatán adulto: colosal, lento y muy resistente. Vive en los lagos de las cuevas del Abismo.
+ * Leviatán adulto: colosal, lento y muy resistente. Vive en los lagos del Abismo.
  * Ataques: mordisco, ráfaga de orbes abisales y un rayo cargado que recorre toda la cueva.
  */
 public class LeviathanEntity extends AbstractLeviathan {
@@ -53,14 +54,30 @@ public class LeviathanEntity extends AbstractLeviathan {
     public static final int PHASE_BEAM_CHARGE = 2;
     public static final int PHASE_BEAM_FIRE = 3;
 
+    public static final int CHARGE_TICKS = 50;
+    public static final int BEAM_TICKS = 40;
+
     private static final EntityDataAccessor<Integer> DATA_PHASE =
             SynchedEntityData.defineId(LeviathanEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_TIMER =
+            SynchedEntityData.defineId(LeviathanEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_RECOIL =
+            SynchedEntityData.defineId(LeviathanEntity.class, EntityDataSerializers.INT);
+    // Extremo del rayo, relativo a la posición de la entidad (para dibujarlo en el cliente).
+    private static final EntityDataAccessor<Float> DATA_BEAM_X =
+            SynchedEntityData.defineId(LeviathanEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> DATA_BEAM_Y =
+            SynchedEntityData.defineId(LeviathanEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> DATA_BEAM_Z =
+            SynchedEntityData.defineId(LeviathanEntity.class, EntityDataSerializers.FLOAT);
 
     private final ServerBossEvent bossEvent = new ServerBossEvent(
-            this.getDisplayName(), BossEvent.BossBarColor.BLUE, BossEvent.BossBarOverlay.NOTCHED_12);
+            Component.translatable("entity.rpgrealms.leviathan"),
+            BossEvent.BossBarColor.BLUE, BossEvent.BossBarOverlay.NOTCHED_12);
 
     public LeviathanEntity(EntityType<? extends WaterAnimal> type, Level level) {
         super(type, level, 8);
+        this.moveControl = new AbyssMoveControl(this);
         this.xpReward = 500;
         this.setPersistenceRequired();
     }
@@ -82,6 +99,11 @@ public class LeviathanEntity extends AbstractLeviathan {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_PHASE, PHASE_IDLE);
+        this.entityData.define(DATA_TIMER, 0);
+        this.entityData.define(DATA_RECOIL, 0);
+        this.entityData.define(DATA_BEAM_X, 0.0F);
+        this.entityData.define(DATA_BEAM_Y, 0.0F);
+        this.entityData.define(DATA_BEAM_Z, 0.0F);
     }
 
     @Override
@@ -91,6 +113,26 @@ public class LeviathanEntity extends AbstractLeviathan {
 
     public void setPhase(int phase) {
         this.entityData.set(DATA_PHASE, phase);
+    }
+
+    @Override
+    public int getPhaseTimer() {
+        return this.entityData.get(DATA_TIMER);
+    }
+
+    public void setPhaseTimer(int ticks) {
+        this.entityData.set(DATA_TIMER, ticks);
+    }
+
+    @Override
+    public int getRecoil() {
+        return this.entityData.get(DATA_RECOIL);
+    }
+
+    /** Extremo del rayo relativo a los pies de la entidad. */
+    public Vec3 getBeamEndOffset() {
+        return new Vec3(this.entityData.get(DATA_BEAM_X), this.entityData.get(DATA_BEAM_Y),
+                this.entityData.get(DATA_BEAM_Z));
     }
 
     // ------------------------------------------------------------------ IA
@@ -118,7 +160,7 @@ public class LeviathanEntity extends AbstractLeviathan {
 
     @Override
     protected double cullingInflate() {
-        return 32.0D;
+        return 60.0D; // el rayo llega a 56 bloques: no debe desaparecer al salir de pantalla
     }
 
     @Override
@@ -135,36 +177,68 @@ public class LeviathanEntity extends AbstractLeviathan {
         if (aim.lengthSqr() < 1.0E-4D) {
             return;
         }
+        Vec3 dir = aim.normalize();
         AbyssBoltEntity bolt = new AbyssBoltEntity(this.level(), this, aim.x, aim.y, aim.z);
         bolt.setPos(mouth.x, mouth.y, mouth.z);
-        bolt.setDeltaMovement(aim.normalize().scale(1.4D));
+        bolt.setDeltaMovement(dir.scale(1.4D));
         this.level().addFreshEntity(bolt);
+
+        // Retroceso visual (el cliente lo anima) y empujoncito físico hacia atrás.
+        this.entityData.set(DATA_RECOIL, 6);
+        this.setDeltaMovement(this.getDeltaMovement().add(dir.scale(-0.07D)));
+
+        if (this.level() instanceof ServerLevel serverLevel) {
+            sendParticle(serverLevel, ParticleTypes.FLASH, mouth.x, mouth.y, mouth.z, 1, 0.0D, 0.0D);
+            sendParticle(serverLevel, ParticleTypes.GLOW, mouth.x, mouth.y, mouth.z, 16, 0.8D, 0.08D);
+            sendParticle(serverLevel, ParticleTypes.ELECTRIC_SPARK, mouth.x, mouth.y, mouth.z, 20, 1.2D, 0.2D);
+            // anillo que sale de la boca
+            Vec3 up = Math.abs(dir.y) < 0.99D ? new Vec3(0.0D, 1.0D, 0.0D) : new Vec3(1.0D, 0.0D, 0.0D);
+            Vec3 u = dir.cross(up).normalize();
+            Vec3 v = dir.cross(u);
+            for (int i = 0; i < 16; i++) {
+                double a = i * Math.PI / 8.0D;
+                Vec3 p = mouth.add(dir.scale(1.5D)).add(u.scale(Math.cos(a) * 2.2D)).add(v.scale(Math.sin(a) * 2.2D));
+                sendParticle(serverLevel, ParticleTypes.END_ROD, p.x, p.y, p.z, 1, 0.0D, 0.0D);
+            }
+        }
+        this.level().playSound(null, mouth.x, mouth.y, mouth.z,
+                SoundEvents.BLAZE_SHOOT, SoundSource.HOSTILE, 3.0F, 0.5F);
         this.level().playSound(null, mouth.x, mouth.y, mouth.z,
                 SoundEvents.AMETHYST_CLUSTER_BREAK, SoundSource.HOSTILE, 3.0F, 0.5F);
     }
 
-    /** Partículas que se concentran en la boca mientras carga el rayo. */
+    /** Un tick de carga: las partículas se concentran en espiral en la boca y crece un núcleo luminoso. */
     public void chargeBeamParticles(int tick) {
         if (!(this.level() instanceof ServerLevel serverLevel)) {
             return;
         }
         Vec3 mouth = this.getMouthPos();
-        float radius = 6.0F * (1.0F - tick / 50.0F) + 0.5F;
-        for (int i = 0; i < 6; i++) {
-            double a = this.random.nextDouble() * Math.PI * 2.0D;
-            double b = (this.random.nextDouble() - 0.5D) * Math.PI;
+        float prog = Mth.clamp(tick / (float) CHARGE_TICKS, 0.0F, 1.0F);
+        if (tick == 1) {
+            this.level().playSound(null, mouth.x, mouth.y, mouth.z,
+                    SoundEvents.WARDEN_SONIC_CHARGE, SoundSource.HOSTILE, 5.0F, 0.7F);
+        }
+        double radius = 8.0D * (1.0F - prog) + 0.8D;
+        double spin = tick * 0.55D;
+        for (int i = 0; i < 4; i++) {
+            double a = spin + i * Math.PI / 2.0D;
+            double b = Math.sin(tick * 0.2D + i) * 0.9D;
             double x = mouth.x + Math.cos(a) * Math.cos(b) * radius;
             double y = mouth.y + Math.sin(b) * radius;
             double z = mouth.z + Math.sin(a) * Math.cos(b) * radius;
-            sendParticle(serverLevel, ParticleTypes.GLOW, x, y, z, 1, 0.0D);
+            sendParticle(serverLevel, ParticleTypes.ELECTRIC_SPARK, x, y, z, 1, 0.0D, 0.0D);
+            sendParticle(serverLevel, ParticleTypes.GLOW, x, y, z, 1, 0.0D, 0.0D);
         }
-        if (tick % 10 == 0) {
+        // Núcleo que se va llenando
+        sendParticle(serverLevel, ParticleTypes.END_ROD, mouth.x, mouth.y, mouth.z, 2 + (int) (prog * 6.0F),
+                0.25D + prog * 0.9D, 0.0D);
+        if (tick % 8 == 0) {
             this.level().playSound(null, mouth.x, mouth.y, mouth.z,
-                    SoundEvents.BEACON_AMBIENT, SoundSource.HOSTILE, 4.0F, 0.5F + tick / 100.0F);
+                    SoundEvents.BEACON_AMBIENT, SoundSource.HOSTILE, 4.0F, 0.5F + prog);
         }
     }
 
-    /** Un tick del rayo: dibuja la línea de partículas y daña lo que cruza. */
+    /** Un tick del rayo: guarda el extremo (el cliente dibuja el haz), añade chispas y daña lo que cruza. */
     public void fireBeamTick(Vec3 dir, int tick) {
         if (!(this.level() instanceof ServerLevel serverLevel)) {
             return;
@@ -183,16 +257,50 @@ public class LeviathanEntity extends AbstractLeviathan {
         }
         Vec3 end = from.add(dir.scale(len));
 
-        for (double s = 0.0D; s <= len; s += 1.2D) {
-            Vec3 p = from.add(dir.scale(s));
-            sendParticle(serverLevel, ParticleTypes.END_ROD, p.x, p.y, p.z, 1, 0.0D);
-            sendParticle(serverLevel, ParticleTypes.ELECTRIC_SPARK, p.x, p.y, p.z, 2, 0.15D);
+        // El cliente dibuja el haz entre la boca y este punto.
+        this.entityData.set(DATA_BEAM_X, (float) (end.x - this.getX()));
+        this.entityData.set(DATA_BEAM_Y, (float) (end.y - this.getY()));
+        this.entityData.set(DATA_BEAM_Z, (float) (end.z - this.getZ()));
+
+        // Retroceso del cuerpo mientras dispara.
+        this.setDeltaMovement(this.getDeltaMovement().add(dir.scale(-0.02D)));
+
+        if (tick == 1) {
+            this.level().playSound(null, from.x, from.y, from.z,
+                    SoundEvents.WARDEN_SONIC_BOOM, SoundSource.HOSTILE, 6.0F, 0.6F);
+            sendParticle(serverLevel, ParticleTypes.SONIC_BOOM, from.x, from.y, from.z, 1, 0.0D, 0.0D);
+            sendParticle(serverLevel, ParticleTypes.FLASH, from.x, from.y, from.z, 1, 0.0D, 0.0D);
         }
-        sendParticle(serverLevel, ParticleTypes.ELECTRIC_SPARK, end.x, end.y, end.z, 14, 0.4D);
+
+        // Hélice doble de chispas alrededor del haz.
+        Vec3 up = Math.abs(dir.y) < 0.99D ? new Vec3(0.0D, 1.0D, 0.0D) : new Vec3(1.0D, 0.0D, 0.0D);
+        Vec3 u = dir.cross(up).normalize();
+        Vec3 v = dir.cross(u);
+        long gt = this.level().getGameTime();
+        for (double s = 0.0D; s <= len; s += 2.0D) {
+            double ang = s * 0.9D + gt * 0.6D;
+            for (int strand = 0; strand < 2; strand++) {
+                double a = ang + strand * Math.PI;
+                Vec3 p = from.add(dir.scale(s)).add(u.scale(Math.cos(a) * 1.5D)).add(v.scale(Math.sin(a) * 1.5D));
+                sendParticle(serverLevel, ParticleTypes.ELECTRIC_SPARK, p.x, p.y, p.z, 1, 0.0D, 0.0D);
+            }
+            if (((int) s) % 6 == 0) {
+                Vec3 c = from.add(dir.scale(s));
+                sendParticle(serverLevel, ParticleTypes.END_ROD, c.x, c.y, c.z, 1, 0.3D, 0.0D);
+            }
+        }
+        // Impacto
+        sendParticle(serverLevel, ParticleTypes.ELECTRIC_SPARK, end.x, end.y, end.z, 18, 0.9D, 0.3D);
+        sendParticle(serverLevel, ParticleTypes.GLOW, end.x, end.y, end.z, 8, 0.7D, 0.05D);
+        if (tick % 4 == 0) {
+            sendParticle(serverLevel, ParticleTypes.EXPLOSION, end.x, end.y, end.z, 1, 0.5D, 0.0D);
+        }
 
         if (tick % 5 == 0) {
             this.level().playSound(null, from.x, from.y, from.z,
                     SoundEvents.GUARDIAN_ATTACK, SoundSource.HOSTILE, 4.0F, 0.6F);
+            this.level().playSound(null, end.x, end.y, end.z,
+                    SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.HOSTILE, 3.0F, 0.5F);
             Vec3 ab = end.subtract(from);
             double abLen2 = Math.max(ab.lengthSqr(), 1.0E-4D);
             AABB box = new AABB(from, end).inflate(3.0D);
@@ -211,10 +319,10 @@ public class LeviathanEntity extends AbstractLeviathan {
 
     /** Envía partículas visibles desde lejos (el rayo es largo). */
     private static void sendParticle(ServerLevel level, ParticleOptions type,
-                                     double x, double y, double z, int count, double spread) {
+                                     double x, double y, double z, int count, double spread, double speed) {
         for (ServerPlayer player : level.players()) {
             if (player.distanceToSqr(x, y, z) < 96.0D * 96.0D) {
-                level.sendParticles(player, type, true, x, y, z, count, spread, spread, spread, 0.0D);
+                level.sendParticles(player, type, true, x, y, z, count, spread, spread, spread, speed);
             }
         }
     }
@@ -225,6 +333,10 @@ public class LeviathanEntity extends AbstractLeviathan {
     protected void customServerAiStep() {
         super.customServerAiStep();
         this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
+        int recoil = this.entityData.get(DATA_RECOIL);
+        if (recoil > 0) {
+            this.entityData.set(DATA_RECOIL, recoil - 1);
+        }
     }
 
     @Override
@@ -270,13 +382,57 @@ public class LeviathanEntity extends AbstractLeviathan {
         return SoundEvents.ELDER_GUARDIAN_DEATH;
     }
 
-    // ------------------------------------------------------------------ objetivos y movimiento
+    // ------------------------------------------------------------------ movimiento
 
     private boolean isWaterAt(double x, double y, double z) {
         return this.level().getFluidState(BlockPos.containing(x, y, z)).is(FluidTags.WATER);
     }
 
-    /** Nada sin rumbo por el lago, sin depender del pathfinding (la hitbox es enorme). */
+    /**
+     * Control de movimiento propio: el de vainilla (SmoothSwimmingMoveControl) solo se mueve si hay un
+     * camino calculado, y el adulto no usa pathfinding (su hitbox es enorme). Este nada en línea recta
+     * hacia el punto, girando despacio como corresponde a algo tan grande.
+     */
+    static class AbyssMoveControl extends MoveControl {
+        private final LeviathanEntity fish;
+
+        AbyssMoveControl(LeviathanEntity mob) {
+            super(mob);
+            this.fish = mob;
+        }
+
+        @Override
+        public void tick() {
+            if (this.operation != MoveControl.Operation.MOVE_TO) {
+                this.fish.setSpeed(0.0F);
+                return;
+            }
+            double dx = this.wantedX - this.fish.getX();
+            double dy = this.wantedY - this.fish.getY();
+            double dz = this.wantedZ - this.fish.getZ();
+            double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            if (dist < 1.5D || this.speedModifier <= 0.0D) {
+                this.operation = MoveControl.Operation.WAIT;
+                this.fish.setSpeed(0.0F);
+                return;
+            }
+
+            float targetYaw = (float) (Mth.atan2(dz, dx) * (180.0D / Math.PI)) - 90.0F;
+            this.fish.setYRot(this.rotlerp(this.fish.getYRot(), targetYaw, 2.5F));
+            this.fish.yBodyRot = this.fish.getYRot();
+            this.fish.yHeadRot = this.fish.getYRot();
+
+            double horiz = Math.sqrt(dx * dx + dz * dz);
+            float targetPitch = (float) (-(Mth.atan2(dy, horiz) * (180.0D / Math.PI)));
+            this.fish.setXRot(this.rotlerp(this.fish.getXRot(), Mth.clamp(Mth.wrapDegrees(targetPitch), -50.0F, 50.0F), 2.0F));
+
+            double accel = this.speedModifier * this.fish.getAttributeValue(Attributes.MOVEMENT_SPEED) * 0.045D;
+            Vec3 look = Vec3.directionFromRotation(this.fish.getXRot(), this.fish.getYRot());
+            this.fish.setDeltaMovement(this.fish.getDeltaMovement().add(look.scale(accel)));
+        }
+    }
+
+    /** Nada sin rumbo por el lago, sin depender del pathfinding. */
     static class RoamGoal extends Goal {
         private final LeviathanEntity mob;
         private Vec3 dest;
@@ -378,7 +534,12 @@ public class LeviathanEntity extends AbstractLeviathan {
         public void stop() {
             this.mode = MODE_NONE;
             this.mob.setPhase(PHASE_IDLE);
+            this.mob.setPhaseTimer(0);
             this.mob.setAggressive(false);
+        }
+
+        private void hold() {
+            this.mob.getMoveControl().setWantedPosition(this.mob.getX(), this.mob.getY(), this.mob.getZ(), 0.0D);
         }
 
         @Override
@@ -398,8 +559,9 @@ public class LeviathanEntity extends AbstractLeviathan {
 
             switch (this.mode) {
                 case MODE_BOLTS -> {
-                    this.mob.getMoveControl().setWantedPosition(this.mob.getX(), this.mob.getY(), this.mob.getZ(), 0.0D);
+                    this.hold();
                     this.timer++;
+                    this.mob.setPhaseTimer(this.timer);
                     if (this.timer % 12 == 0) {
                         this.mob.fireBolt(target);
                         this.boltsLeft--;
@@ -409,25 +571,30 @@ public class LeviathanEntity extends AbstractLeviathan {
                     }
                 }
                 case MODE_CHARGE -> {
+                    this.hold();
                     this.timer++;
+                    this.mob.setPhaseTimer(this.timer);
                     this.mob.chargeBeamParticles(this.timer);
-                    if (this.timer >= 50) {
+                    if (this.timer >= CHARGE_TICKS) {
                         Vec3 d = center.subtract(mouth);
                         this.beamDir = d.lengthSqr() < 1.0E-4D ? this.mob.getViewVector(1.0F) : d.normalize();
                         this.mode = MODE_BEAM;
                         this.timer = 0;
+                        this.mob.setPhaseTimer(0);
                         this.mob.setPhase(PHASE_BEAM_FIRE);
                     }
                 }
                 case MODE_BEAM -> {
+                    this.hold();
                     this.timer++;
+                    this.mob.setPhaseTimer(this.timer);
                     Vec3 d = center.subtract(mouth);
                     if (d.lengthSqr() > 1.0E-4D) {
                         // El rayo sigue al objetivo con retraso: se puede esquivar moviéndose.
                         this.beamDir = this.beamDir.lerp(d.normalize(), 0.10D).normalize();
                     }
                     this.mob.fireBeamTick(this.beamDir, this.timer);
-                    if (this.timer >= 40) {
+                    if (this.timer >= BEAM_TICKS) {
                         this.endAttack(80 + this.mob.getRandom().nextInt(60));
                     }
                 }
@@ -449,11 +616,13 @@ public class LeviathanEntity extends AbstractLeviathan {
                         if (mouthDist > 14.0D && this.mob.getRandom().nextInt(3) == 0) {
                             this.mode = MODE_CHARGE;
                             this.timer = 0;
+                            this.mob.setPhaseTimer(0);
                             this.mob.setPhase(PHASE_BEAM_CHARGE);
                         } else {
                             this.mode = MODE_BOLTS;
                             this.timer = 0;
                             this.boltsLeft = 4;
+                            this.mob.setPhaseTimer(0);
                             this.mob.setPhase(PHASE_BOLTS);
                         }
                     }
@@ -466,6 +635,7 @@ public class LeviathanEntity extends AbstractLeviathan {
             this.timer = 0;
             this.cooldown = nextCooldown;
             this.mob.setPhase(PHASE_IDLE);
+            this.mob.setPhaseTimer(0);
         }
     }
 }

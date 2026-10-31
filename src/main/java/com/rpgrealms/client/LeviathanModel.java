@@ -517,20 +517,40 @@ public class LeviathanModel extends EntityModel<LeviathanEntity> {
 
         // Mordida: la animación de ataque de la entidad abre y cierra la mandíbula.
         float bite = this.attackTime > 0.0F ? Mth.sin(this.attackTime * (float) Math.PI) : 0.0F;
-        // Boca abierta según el ataque a distancia (orbes / carga / rayo).
-        float mouth = atk == 1 ? 0.55F : atk == 2 ? 0.80F : atk == 3 ? 1.00F : 0.0F;
 
-        // ---- Cuerpo: balanceo suave + inclinación según hacia donde mira ----
-        this.pose(this.body, headPitch * deg * 0.7F + Mth.sin(phase) * 0.02F * amp, 0.0F, 0.0F);
-        this.body.y = this.rest.get(this.body)[3] + Mth.sin(ageInTicks * 0.04F) * 0.6F;
+        // Estados del ataque a distancia (solo el adulto; en la cría valen 0).
+        float charge = atk == 2 ? Mth.clamp(entity.getPhaseTimer() / 50.0F, 0.0F, 1.0F) : 0.0F;
+        float fire = atk == 3 ? 1.0F : 0.0F;
+        float recoil = Mth.clamp(entity.getRecoil() / 6.0F, 0.0F, 1.0F);
+        float mouth = atk == 1 ? 0.45F + recoil * 0.4F : atk == 2 ? 0.30F + charge * 0.55F : atk == 3 ? 1.0F : 0.0F;
+        float rage = (angry || atk > 0) ? 1.0F : 0.0F;
 
-        // ---- Onda vertical que se propaga hasta la cola (más amplitud hacia atrás) ----
-        this.pose(this.mid,   Mth.sin(phase - 0.5F) * 0.04F * amp, Mth.sin(phase * 0.5F - 0.4F) * 0.03F * amp, 0.0F);
-        this.pose(this.rear,  Mth.sin(phase - 1.0F) * 0.07F * amp, Mth.sin(phase * 0.5F - 0.8F) * 0.05F * amp, 0.0F);
-        this.pose(this.tail1, Mth.sin(phase - 1.5F) * 0.10F * amp, Mth.sin(phase * 0.5F - 1.2F) * 0.07F * amp, 0.0F);
-        this.pose(this.tail2, Mth.sin(phase - 2.0F) * 0.13F * amp, Mth.sin(phase * 0.5F - 1.6F) * 0.09F * amp, 0.0F);
-        this.pose(this.tail3, Mth.sin(phase - 2.5F) * 0.16F * amp, Mth.sin(phase * 0.5F - 2.0F) * 0.11F * amp, 0.0F);
-        this.pose(this.fluke, Mth.sin(phase - 3.0F) * 0.22F * amp, 0.0F, 0.0F);
+        // Reacciones: golpe recibido, muerte, giro y movimiento vertical.
+        float hit = entity.hurtTime > 0 ? Mth.sin(entity.hurtTime * 0.9F) : 0.0F;
+        float death = Mth.clamp(entity.deathTime / 20.0F, 0.0F, 1.0F);
+        float turn = Mth.clamp(Mth.wrapDegrees(entity.getYRot() - entity.yRotO), -12.0F, 12.0F);
+        float vy = Mth.clamp((float) entity.getDeltaMovement().y, -0.4F, 0.4F);
+        float shake = Mth.sin(ageInTicks * 2.7F) * fire;   // vibración mientras dispara el rayo
+
+        // ---- Cuerpo: arqueo al cargar, retroceso al disparar, balanceo en los giros, sacudida al recibir daño ----
+        this.pose(this.body,
+                headPitch * deg * 0.7F + Mth.sin(phase) * 0.02F * amp - charge * 0.18F - recoil * 0.10F - fire * 0.06F,
+                0.0F,
+                -turn * 0.012F + hit * 0.05F);
+        this.body.y = this.rest.get(this.body)[3] + Mth.sin(ageInTicks * 0.04F) * 0.6F + hit * 0.8F + shake * 0.3F;
+
+        // ---- Onda vertical que se propaga hasta la cola; la cola se arrastra al subir/bajar y en los giros ----
+        this.pose(this.mid,   Mth.sin(phase - 0.5F) * 0.04F * amp - vy * 0.2F,
+                Mth.sin(phase * 0.5F - 0.4F) * 0.03F * amp - turn * 0.004F, 0.0F);
+        this.pose(this.rear,  Mth.sin(phase - 1.0F) * 0.07F * amp - vy * 0.4F,
+                Mth.sin(phase * 0.5F - 0.8F) * 0.05F * amp - turn * 0.008F, 0.0F);
+        this.pose(this.tail1, Mth.sin(phase - 1.5F) * 0.10F * amp - vy * 0.6F + death * 0.10F,
+                Mth.sin(phase * 0.5F - 1.2F) * 0.07F * amp - turn * 0.012F, 0.0F);
+        this.pose(this.tail2, Mth.sin(phase - 2.0F) * 0.13F * amp - vy * 0.8F + death * 0.20F,
+                Mth.sin(phase * 0.5F - 1.6F) * 0.09F * amp - turn * 0.016F, 0.0F);
+        this.pose(this.tail3, Mth.sin(phase - 2.5F) * 0.16F * amp - vy * 1.0F + death * 0.30F,
+                Mth.sin(phase * 0.5F - 2.0F) * 0.11F * amp - turn * 0.020F, 0.0F);
+        this.pose(this.fluke, Mth.sin(phase - 3.0F) * 0.22F * amp - vy * 1.0F, 0.0F, 0.0F);
 
         // Alas de la cola: se doblan como una media luna que bate
         float f1 = Mth.sin(phase - 3.4F) * 0.16F * amp;
@@ -545,20 +565,22 @@ public class LeviathanModel extends EntityModel<LeviathanEntity> {
 
         // ---- Cabeza y mandíbula ----
         this.pose(this.head,
-                Mth.sin(phase - 0.2F) * 0.03F * amp + headPitch * deg * 0.3F + bite * 0.12F - (atk == 3 ? 0.12F : 0.0F),
-                netHeadYaw * deg * 0.35F, 0.0F);
+                Mth.sin(phase - 0.2F) * 0.03F * amp + headPitch * deg * 0.3F + bite * 0.12F
+                        - recoil * 0.25F - charge * 0.20F - fire * 0.12F + hit * 0.10F,
+                netHeadYaw * deg * 0.35F + shake * 0.03F, 0.0F);
         this.pose(this.jaw,
-                0.06F + Mth.sin(ageInTicks * 0.07F) * 0.04F + (angry ? 0.15F : 0.0F) + bite * 0.85F + mouth * 0.75F
-                        + (atk >= 2 ? Mth.sin(ageInTicks * 1.7F) * 0.03F : 0.0F),
+                0.06F + Mth.sin(ageInTicks * 0.07F) * 0.04F + (angry ? 0.15F : 0.0F) + bite * 0.85F
+                        + mouth * 0.85F + death * 0.50F
+                        + Mth.sin(ageInTicks * 1.7F) * 0.03F * (charge + fire) + shake * 0.04F,
                 0.0F, 0.0F);
         this.pose(this.jaw_tip, bite * 0.2F + mouth * 0.15F, 0.0F, 0.0F);
 
-        // Cresta: se mece; al enfadarse se levanta
-        float crestUp = (angry || atk > 0) ? 0.3F : 0.0F;
+        // Cresta: se mece; al enfadarse o cargar se levanta
+        float crestUp = rage * 0.3F + charge * 0.2F;
         this.pose(this.crest, Mth.sin(phase - 0.3F) * 0.04F * amp + crestUp, 0.0F, 0.0F);
         this.pose(this.crest_tip, Mth.sin(phase - 0.8F) * 0.06F * amp + crestUp * 0.6F, 0.0F, 0.0F);
-        this.pose(this.horn_l, crestUp * 0.5F, 0.0F, crestUp > 0.0F ? 0.25F : 0.0F);
-        this.pose(this.horn_r, crestUp * 0.5F, 0.0F, crestUp > 0.0F ? -0.25F : 0.0F);
+        this.pose(this.horn_l, crestUp * 0.5F, 0.0F, rage * 0.25F);
+        this.pose(this.horn_r, crestUp * 0.5F, 0.0F, -rage * 0.25F);
 
         // ---- Aleta dorsal y cola: siguen la onda con retraso ----
         this.pose(this.dorsal1, Mth.sin(phase - 1.0F) * 0.03F * amp, 0.0F, 0.0F);
@@ -571,12 +593,12 @@ public class LeviathanModel extends EntityModel<LeviathanEntity> {
         this.pose(this.ventral2, Mth.sin(phase - 1.5F) * 0.08F * amp, 0.0F, 0.0F);
         this.pose(this.ventral3, Mth.sin(phase - 1.9F) * 0.11F * amp, 0.0F, 0.0F);
 
-        // ---- Aletas pectorales: remada lenta; al enfadarse se abren ----
-        float flare = (angry || atk > 0) ? 0.3F : 0.0F;
-        float lift = (angry || atk > 0) ? -0.25F : 0.0F;
-        float p1 = Mth.sin(phase + 0.4F) * 0.14F * amp + lift;
-        float p2 = Mth.sin(phase + 0.9F) * 0.20F * amp;
-        float p3 = Mth.sin(phase + 1.4F) * 0.26F * amp;
+        // ---- Aletas pectorales: remada lenta; al enfadarse/cargar se abren; al morir caen ----
+        float flare = rage * 0.3F + charge * 0.25F + fire * 0.15F;
+        float lift = rage * -0.25F;
+        float p1 = Mth.sin(phase + 0.4F) * 0.14F * amp + lift + death * 0.90F + shake * 0.05F;
+        float p2 = Mth.sin(phase + 0.9F) * 0.20F * amp + death * 0.60F;
+        float p3 = Mth.sin(phase + 1.4F) * 0.26F * amp + death * 0.40F;
         this.pose(this.pec_l1, 0.0F, flare, p1);
         this.pose(this.pec_l2, 0.0F, flare * 0.5F, p2);
         this.pose(this.pec_l3, 0.0F, flare * 0.3F, p3);
@@ -585,7 +607,7 @@ public class LeviathanModel extends EntityModel<LeviathanEntity> {
         this.pose(this.pec_r3, 0.0F, -flare * 0.3F, -p3);
 
         // ---- Aletas laterales superiores ----
-        float w1 = Mth.sin(phase + 1.0F) * 0.10F * amp + ((angry || atk > 0) ? 0.2F : 0.0F);
+        float w1 = Mth.sin(phase + 1.0F) * 0.10F * amp + rage * 0.2F + death * 0.50F;
         float w2 = Mth.sin(phase + 1.6F) * 0.16F * amp;
         this.pose(this.wing_l1, 0.0F, flare * 0.6F, w1);
         this.pose(this.wing_l2, 0.0F, 0.0F, w2);
@@ -593,22 +615,22 @@ public class LeviathanModel extends EntityModel<LeviathanEntity> {
         this.pose(this.wing_r2, 0.0F, 0.0F, -w2);
 
         // ---- Extras del adulto ----
-        // Anzuelo luminoso: se balancea como un péndulo y se agita al atacar
-        float lureAmp = atk > 0 ? 2.0F : 1.0F;
+        // Anzuelo luminoso: péndulo que se agita al atacar y más aún al cargar
+        float lureAmp = 1.0F + (atk > 0 ? 1.0F : 0.0F) + charge;
         this.pose(this.lure1, Mth.sin(phase * 1.3F - 0.3F) * 0.06F * lureAmp, Mth.sin(phase * 0.7F) * 0.05F * lureAmp, 0.0F);
         this.pose(this.lure2, Mth.sin(phase * 1.3F - 0.9F) * 0.09F * lureAmp, Mth.sin(phase * 0.7F - 0.5F) * 0.07F * lureAmp, 0.0F);
         this.pose(this.lure3, Mth.sin(phase * 1.3F - 1.5F) * 0.13F * lureAmp, Mth.sin(phase * 0.7F - 1.0F) * 0.10F * lureAmp, 0.0F);
 
-        // Barbas: ondulan colgando de la mandíbula
-        float wh1 = Mth.sin(phase * 1.1F + 0.2F) * 0.10F;
-        float wh2 = Mth.sin(phase * 1.1F - 0.4F) * 0.16F;
-        this.pose(this.whisk_l1, wh1, 0.0F, Mth.sin(phase * 0.8F) * 0.08F);
+        // Barbas: ondulan colgando de la mandíbula (se agitan con la boca abierta)
+        float wh1 = Mth.sin(phase * 1.1F + 0.2F) * 0.10F + mouth * 0.25F;
+        float wh2 = Mth.sin(phase * 1.1F - 0.4F) * 0.16F + mouth * 0.20F;
+        this.pose(this.whisk_l1, wh1, 0.0F, Mth.sin(phase * 0.8F) * 0.08F + mouth * 0.15F);
         this.pose(this.whisk_l2, wh2, 0.0F, Mth.sin(phase * 0.8F - 0.6F) * 0.12F);
-        this.pose(this.whisk_r1, wh1, 0.0F, -Mth.sin(phase * 0.8F) * 0.08F);
+        this.pose(this.whisk_r1, wh1, 0.0F, -Mth.sin(phase * 0.8F) * 0.08F - mouth * 0.15F);
         this.pose(this.whisk_r2, wh2, 0.0F, -Mth.sin(phase * 0.8F - 0.6F) * 0.12F);
 
         // Espinas del lomo siguen la onda (y se erizan al atacar)
-        float erect = atk > 0 || angry ? -0.2F : 0.0F;
+        float erect = rage * -0.2F - charge * 0.15F + shake * 0.04F;
         this.pose(this.spine1, Mth.sin(phase - 0.2F) * 0.05F * amp + erect, 0.0F, 0.0F);
         this.pose(this.spine2, Mth.sin(phase - 0.5F) * 0.05F * amp + erect, 0.0F, 0.0F);
         this.pose(this.spine3, Mth.sin(phase - 1.0F) * 0.06F * amp + erect, 0.0F, 0.0F);
@@ -616,8 +638,8 @@ public class LeviathanModel extends EntityModel<LeviathanEntity> {
         this.pose(this.spine5, Mth.sin(phase - 1.7F) * 0.08F * amp + erect, 0.0F, 0.0F);
         this.pose(this.spine6, Mth.sin(phase - 2.1F) * 0.09F * amp + erect, 0.0F, 0.0F);
 
-        // Branquias: aletean rápido, como respirando
-        float gill = Mth.sin(ageInTicks * 0.25F) * 0.12F + (atk > 0 ? 0.25F : 0.0F);
+        // Branquias: aletean rápido como respirando; se abren al atacar
+        float gill = Mth.sin(ageInTicks * (0.25F + charge * 0.5F)) * 0.12F + rage * 0.25F + charge * 0.2F;
         this.pose(this.gill_l1, 0.0F, gill, 0.0F);
         this.pose(this.gill_l2, 0.0F, gill * 0.9F, 0.0F);
         this.pose(this.gill_l3, 0.0F, gill * 0.8F, 0.0F);
