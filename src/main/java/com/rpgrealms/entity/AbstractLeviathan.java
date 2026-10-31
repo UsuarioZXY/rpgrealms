@@ -135,7 +135,7 @@ public abstract class AbstractLeviathan extends WaterAnimal {
                 double x = this.mob.getX() + Math.cos(ang) * d;
                 double z = this.mob.getZ() + Math.sin(ang) * d;
                 // Columna de agua en el destino: superficie y fondo.
-                int by = Mth.floor(this.mob.getY() + h * 0.5D);
+                int by = Mth.floor(this.mob.getY() + 0.5D);   // desde los pies: en la superficie el centro del cuerpo puede estar en el aire
                 if (!this.mob.isWaterPoint(x, by, z)) {
                     continue;
                 }
@@ -147,12 +147,17 @@ public abstract class AbstractLeviathan extends WaterAnimal {
                 while (floor > by - 64 && this.mob.isWaterPoint(x, floor - 1, z)) {
                     floor--;
                 }
+                if (top - floor < h * 0.6D) {
+                    continue;   // demasiado poco profundo
+                }
                 double lo = floor + h * 0.5D + 1.0D;
                 double hi = top - h * 0.5D - 1.0D;
+                double y;
                 if (hi < lo) {
-                    continue;   // aquí no cabe
+                    y = (top + floor) * 0.5D + 0.5D;   // agua justa: nada por el medio de la columna
+                } else {
+                    y = Mth.clamp(this.mob.getY() + h * 0.5D + (this.mob.getRandom().nextDouble() * 2.0D - 1.0D) * 4.0D, lo, hi);
                 }
-                double y = Mth.clamp(this.mob.getY() + h * 0.5D + (this.mob.getRandom().nextDouble() * 2.0D - 1.0D) * 4.0D, lo, hi);
                 Vec3 to = new Vec3(x, y - h * 0.5D, z);   // y de los pies
                 if (this.pathClear(to)) {
                     this.dest = to;

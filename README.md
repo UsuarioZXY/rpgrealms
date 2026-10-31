@@ -9,6 +9,7 @@ Mod RPG para **Minecraft 1.20.1 (Forge 47.3.0)**.
   - Con 50 % o menos se enfurece (barra roja) y prefiere el rayo; bajo el 25 % casi solo lo usa.
   - Ataques: orbes abisales con explosión en área y rayo cargado con haz luminoso.
 - **Efectos:** ambos dejan un rastro de partículas místicas por todo el cuerpo al moverse (más denso al nadar rápido; rojo al enfurecerse). La bioluminiscencia es un patrón ordenado (línea lateral, franjas, bordes de aletas) que brilla poco de día y se enciende de noche, en cuevas y al atacar.
+- **Huevo de Leviatán** (objeto): se coloca como entidad (en tierra o agua), se mece y a los 3 min eclosiona en una Cría; golpearlo lo recoge. La Cría crece y a los 20 min se convierte en Leviatán adulto (si hay espacio). El adulto lo suelta con 50 % de probabilidad. Tiempos: `LeviathanEggEntity.HATCH_TICKS` y `LeviathanCubEntity.GROW_TICKS`.
 - Huevos generadores de ambos y pestaña creativa propia.
 
 ## Cómo obtener el .jar con GitHub

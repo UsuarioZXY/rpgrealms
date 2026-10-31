@@ -5,5 +5,7 @@
   "item.rpgrealms.abyss_orb": "Orbe Abisal",
   "entity.rpgrealms.leviathan_cub": "Cría de Leviatán",
   "entity.rpgrealms.leviathan": "Leviatán",
-  "entity.rpgrealms.abyss_bolt": "Orbe Abisal"
+  "entity.rpgrealms.abyss_bolt": "Orbe Abisal",
+  "item.rpgrealms.leviathan_egg": "Huevo de Leviatán",
+  "entity.rpgrealms.leviathan_egg": "Huevo de Leviatán"
 }

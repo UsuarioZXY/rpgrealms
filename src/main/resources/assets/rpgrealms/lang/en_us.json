@@ -5,5 +5,7 @@
   "item.rpgrealms.abyss_orb": "Abyss Orb",
   "entity.rpgrealms.leviathan_cub": "Leviathan Cub",
   "entity.rpgrealms.leviathan": "Leviathan",
-  "entity.rpgrealms.abyss_bolt": "Abyss Orb"
+  "entity.rpgrealms.abyss_bolt": "Abyss Orb",
+  "item.rpgrealms.leviathan_egg": "Leviathan Egg",
+  "entity.rpgrealms.leviathan_egg": "Leviathan Egg"
 }

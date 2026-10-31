@@ -2,6 +2,7 @@ package com.rpgrealms.registry;
 
 import com.rpgrealms.RpgRealms;
 import com.rpgrealms.entity.AbyssBoltEntity;
+import com.rpgrealms.entity.LeviathanEggEntity;
 import com.rpgrealms.entity.LeviathanCubEntity;
 import com.rpgrealms.entity.LeviathanEntity;
 import net.minecraft.world.entity.EntityType;
@@ -27,6 +28,14 @@ public class ModEntities {
                     .sized(10.0F, 6.0F)
                     .clientTrackingRange(32)
                     .build("leviathan"));
+
+    /** Huevo de Leviatán: eclosiona en una Cría. */
+    public static final RegistryObject<EntityType<LeviathanEggEntity>> LEVIATHAN_EGG = ENTITIES.register("leviathan_egg",
+            () -> EntityType.Builder.<LeviathanEggEntity>of(LeviathanEggEntity::new, MobCategory.MISC)
+                    .sized(2.0F, 2.6F)
+                    .clientTrackingRange(10)
+                    .updateInterval(10)
+                    .build("leviathan_egg"));
 
     /** Orbe abisal que escupe el adulto. */
     public static final RegistryObject<EntityType<AbyssBoltEntity>> ABYSS_BOLT = ENTITIES.register("abyss_bolt",

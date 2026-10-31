@@ -1,6 +1,11 @@
 package com.rpgrealms.entity;
 
+import com.rpgrealms.registry.ModEntities;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
@@ -21,6 +26,11 @@ import net.minecraft.world.level.Level;
  */
 public class LeviathanCubEntity extends AbstractLeviathan {
 
+    /** Ticks de vida hasta convertirse en adulto (24000 = 1 día de Minecraft = 20 min). */
+    public static final int GROW_TICKS = 24000;
+
+    private int growAge;
+
     public LeviathanCubEntity(EntityType<? extends WaterAnimal> type, Level level) {
         super(type, level, 5.5F);
         this.xpReward = 10;
@@ -35,6 +45,62 @@ public class LeviathanCubEntity extends AbstractLeviathan {
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.6D)
                 .add(Attributes.ARMOR, 2.0D)
                 .add(Attributes.FOLLOW_RANGE, 32.0D);
+    }
+
+    @Override
+    public void aiStep() {
+        super.aiStep();
+        if (!this.level().isClientSide && this.isAlive()) {
+            this.growAge++;
+            if (this.growAge >= GROW_TICKS && this.tickCount % 20 == 0) {
+                this.growUp();
+            }
+        }
+    }
+
+    /** Se convierte en Leviatán adulto si hay sitio para su cuerpo; si no, lo reintenta en unos segundos. */
+    private void growUp() {
+        if (!(this.level() instanceof ServerLevel sl)) {
+            return;
+        }
+        LeviathanEntity adult = ModEntities.LEVIATHAN.get().create(sl);
+        if (adult == null) {
+            return;
+        }
+        boolean fits = false;
+        for (double lift : new double[]{0.0D, 1.5D, 3.0D}) {
+            adult.moveTo(this.getX(), this.getY() + lift, this.getZ(), this.getYRot(), 0.0F);
+            if (sl.noCollision(adult)) {
+                fits = true;
+                break;
+            }
+        }
+        if (!fits) {
+            this.growAge = GROW_TICKS - 100;   // reintento en 5 s
+            return;
+        }
+        if (this.hasCustomName()) {
+            adult.setCustomName(this.getCustomName());
+        }
+        adult.setPersistenceRequired();
+        sl.addFreshEntity(adult);
+        sl.sendParticles(ParticleTypes.END_ROD, adult.getX(), adult.getY() + 3.0D, adult.getZ(), 80, 4.0D, 2.0D, 4.0D, 0.05D);
+        sl.sendParticles(ParticleTypes.GLOW, adult.getX(), adult.getY() + 3.0D, adult.getZ(), 60, 4.0D, 2.0D, 4.0D, 0.05D);
+        sl.playSound(null, adult.getX(), adult.getY(), adult.getZ(), SoundEvents.ENDER_DRAGON_GROWL,
+                SoundSource.NEUTRAL, 3.0F, 0.7F);
+        this.discard();
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putInt("GrowAge", this.growAge);
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        this.growAge = tag.getInt("GrowAge");
     }
 
     @Override
