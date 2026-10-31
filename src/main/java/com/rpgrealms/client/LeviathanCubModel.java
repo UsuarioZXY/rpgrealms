@@ -338,8 +338,11 @@ public class LeviathanCubModel extends EntityModel<LeviathanCubEntity> {
         float move = Mth.clamp(limbSwingAmount * 2.0F, 0.0F, 1.0F);
 
         // Fase de la onda que recorre el cuerpo: más rápida y amplia cuanto más rápido nada.
-        float phase = ageInTicks * 0.07F + limbSwing * 0.25F;
-        float amp = 0.8F + move * 1.0F + (angry ? 0.5F : 0.0F);
+        // Varado en tierra: se sacude como un pez fuera del agua.
+        boolean beached = !entity.isInWater() && entity.onGround();
+        float flop = beached ? 1.0F : 0.0F;
+        float phase = ageInTicks * 0.07F * (beached ? 3.5F : 1.0F) + limbSwing * 0.25F;
+        float amp = 0.8F + move * 1.0F + (angry ? 0.5F : 0.0F) + flop * 1.6F;
 
         // Mordida: la animación de ataque de la entidad abre y cierra la mandíbula.
         float bite = this.attackTime > 0.0F ? Mth.sin(this.attackTime * (float) Math.PI) : 0.0F;
@@ -362,7 +365,7 @@ public class LeviathanCubModel extends EntityModel<LeviathanCubEntity> {
         this.pose(this.body,
                 headPitch * deg * 0.7F + Mth.sin(phase) * 0.02F * amp - charge * 0.18F - recoil * 0.10F - fire * 0.06F,
                 0.0F,
-                -turn * 0.012F + hit * 0.05F);
+                -turn * 0.012F + hit * 0.05F + flop * Mth.sin(ageInTicks * 2.1F) * 0.10F);
         this.body.y = this.rest.get(this.body)[3] + Mth.sin(ageInTicks * 0.04F) * 0.6F + hit * 0.8F + shake * 0.3F;
 
         // ---- Onda vertical que se propaga hasta la cola; la cola se arrastra al subir/bajar y en los giros ----

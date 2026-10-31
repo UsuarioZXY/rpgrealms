@@ -72,6 +72,11 @@ public class LeviathanEggEntity extends Entity {
             this.entityData.set(DATA_LEFT, this.left);
         }
         // Los últimos 3 segundos crujen.
+        // Golpecitos desde dentro, cada vez más seguidos
+        if (this.left < HATCH_TICKS * 0.7D && this.left > 60 && this.left % (this.left > HATCH_TICKS * 0.35D ? 120 : 50) == 0) {
+            this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
+                    SoundEvents.TURTLE_EGG_CRACK, SoundSource.NEUTRAL, 0.8F, 1.3F);
+        }
         if (this.left > 0 && this.left <= 60 && this.left % 20 == 0 && this.level() instanceof ServerLevel sl) {
             this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
                     SoundEvents.TURTLE_EGG_CRACK, SoundSource.NEUTRAL, 2.0F, 0.6F);

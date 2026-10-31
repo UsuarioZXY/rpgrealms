@@ -2,6 +2,7 @@ package com.rpgrealms.entity;
 
 import com.rpgrealms.registry.ModEntities;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.util.Mth;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -47,10 +48,66 @@ public class LeviathanCubEntity extends AbstractLeviathan {
                 .add(Attributes.FOLLOW_RANGE, 32.0D);
     }
 
+    private int leapCooldown = 80;
+    private boolean leaping;
+    private boolean leftWater;
+    private int leapTicks;
+
+    /** Salta fuera del agua como un mini delfín cuando nada rápido cerca de la superficie. */
+    private void dolphinLeap() {
+        if (this.leaping) {
+            this.leapTicks++;
+            if (!this.isInWater()) {
+                this.leftWater = true;
+            }
+            if ((this.leftWater && this.isInWater()) || this.leapTicks > 100) {
+                this.leaping = false;
+                if (this.level() instanceof ServerLevel sl) {
+                    sl.sendParticles(ParticleTypes.SPLASH, this.getX(), this.getY() + 1.0D, this.getZ(), 40, 1.5D, 0.3D, 1.5D, 0.2D);
+                    sl.sendParticles(ParticleTypes.BUBBLE_POP, this.getX(), this.getY(), this.getZ(), 20, 1.5D, 0.5D, 1.5D, 0.05D);
+                }
+                this.playSound(SoundEvents.GENERIC_SPLASH, 1.5F, 0.8F);
+            } else {
+                Vec3 v = this.getDeltaMovement();
+                double hv = Math.sqrt(v.x * v.x + v.z * v.z);
+                this.setXRot((float) (-Math.atan2(v.y, hv) * (180.0D / Math.PI)));   // arco de delfín
+            }
+            return;
+        }
+        if (--this.leapCooldown > 0 || !this.isInWater() || this.getTarget() != null) {
+            return;
+        }
+        Vec3 v = this.getDeltaMovement();
+        if (v.horizontalDistance() < 0.15D) {
+            return;
+        }
+        int top = Mth.floor(this.getY() + this.getBbHeight());
+        int gap = 0;
+        while (gap < 5 && this.isWaterPoint(this.getX(), top + gap, this.getZ())) {
+            gap++;
+        }
+        if (gap >= 5) {
+            this.leapCooldown = 30;   // demasiado profundo: espera a subir
+            return;
+        }
+        Vec3 fwd = Vec3.directionFromRotation(0.0F, this.yBodyRot);
+        this.setDeltaMovement(fwd.x * 0.3D, 1.0D + 0.12D * gap, fwd.z * 0.3D);
+        this.setXRot(-50.0F);
+        this.leaping = true;
+        this.leftWater = false;
+        this.leapTicks = 0;
+        this.leapCooldown = 120 + this.random.nextInt(160);
+        if (this.level() instanceof ServerLevel sl) {
+            sl.sendParticles(ParticleTypes.SPLASH, this.getX(), this.getY() + this.getBbHeight(), this.getZ(), 30, 1.2D, 0.3D, 1.2D, 0.2D);
+        }
+        this.playSound(SoundEvents.DOLPHIN_JUMP, 1.5F, 0.9F);
+    }
+
     @Override
     public void aiStep() {
         super.aiStep();
         if (!this.level().isClientSide && this.isAlive()) {
+            this.dolphinLeap();
             this.growAge++;
             if (this.growAge >= GROW_TICKS && this.tickCount % 20 == 0) {
                 this.growUp();
@@ -108,7 +165,7 @@ public class LeviathanCubEntity extends AbstractLeviathan {
         // Defensa: solo ataca a quien la haya herido.
         this.goalSelector.addGoal(0, new DefendGoal(this));
         // Pacífica: nada tranquila por el océano.
-        this.goalSelector.addGoal(1, new RoamGoal(this, 30.0D));
+        this.goalSelector.addGoal(1, new RoamGoal(this, 30.0D, 0.6D));
         this.targetSelector.addGoal(0, new HurtByTargetGoal(this));
     }
 

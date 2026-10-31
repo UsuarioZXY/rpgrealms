@@ -68,8 +68,8 @@ public abstract class AbstractLeviathan extends WaterAnimal {
 
         @Override
         public void tick() {
-            if (this.operation != MoveControl.Operation.MOVE_TO) {
-                return;
+            if (!this.fish.isInWater() || this.operation != MoveControl.Operation.MOVE_TO) {
+                return;   // fuera del agua no hay empuje (si no, "volaría")
             }
             double dx = this.wantedX - this.fish.getX();
             double dy = this.wantedY - this.fish.getY();
@@ -106,14 +106,21 @@ public abstract class AbstractLeviathan extends WaterAnimal {
     public static class RoamGoal extends Goal {
         private final AbstractLeviathan mob;
         private final double range;
+        private final double surfaceBias;
         private Vec3 dest;
         private int timeout;
         private int checkTick;
         private Vec3 lastPos = Vec3.ZERO;
 
         public RoamGoal(AbstractLeviathan mob, double range) {
+            this(mob, range, 0.0D);
+        }
+
+        /** surfaceBias: probabilidad de elegir un destino cerca de la superficie (para que las crías salten). */
+        public RoamGoal(AbstractLeviathan mob, double range, double surfaceBias) {
             this.mob = mob;
             this.range = range;
+            this.surfaceBias = surfaceBias;
             this.setFlags(EnumSet.of(Flag.MOVE));
         }
 
@@ -153,7 +160,9 @@ public abstract class AbstractLeviathan extends WaterAnimal {
                 double lo = floor + h * 0.5D + 1.0D;
                 double hi = top - h * 0.5D - 1.0D;
                 double y;
-                if (hi < lo) {
+                if (hi >= lo && this.mob.getRandom().nextDouble() < this.surfaceBias) {
+                    y = hi;   // justo bajo la superficie
+                } else if (hi < lo) {
                     y = (top + floor) * 0.5D + 0.5D;   // agua justa: nada por el medio de la columna
                 } else {
                     y = Mth.clamp(this.mob.getY() + h * 0.5D + (this.mob.getRandom().nextDouble() * 2.0D - 1.0D) * 4.0D, lo, hi);
@@ -272,13 +281,70 @@ public abstract class AbstractLeviathan extends WaterAnimal {
             this.moveRelative(this.getSpeed(), travelVector);
             this.move(MoverType.SELF, this.getDeltaMovement());
             this.setDeltaMovement(this.getDeltaMovement().scale(0.9D));
+            if (!this.isUnderWater()) {
+                // con la cabeza fuera del agua la gravedad lo devuelve (saltos y superficie)
+                this.setDeltaMovement(this.getDeltaMovement().add(0.0D, -0.03D, 0.0D));
+            }
         } else {
             super.travel(travelVector);
         }
     }
 
+    private int hopCooldown;
+
+    @Override
+    public boolean causeFallDamage(float distance, float multiplier, net.minecraft.world.damagesource.DamageSource source) {
+        return false;   // criaturas marinas: sin daño de caída (saltos y varado)
+    }
+
+    protected double hopPower() {
+        return 0.95D / Math.sqrt(this.bodyScale());
+    }
+
+    protected double hopLift() {
+        return 0.9D / Math.pow(this.bodyScale(), 0.2D);
+    }
+
+    /** Punto de agua más cercano (hasta 24 bloques) o null. */
+    private Vec3 findNearestWater() {
+        for (int r = 2; r <= 24; r += 2) {
+            for (int k = 0; k < 16; k++) {
+                double a = k * Math.PI / 8.0D;
+                double x = this.getX() + Math.cos(a) * r;
+                double z = this.getZ() + Math.sin(a) * r;
+                for (int dy = -3; dy <= 1; dy++) {
+                    if (this.isWaterPoint(x, this.getY() + dy, z)) {
+                        return new Vec3(x, this.getY() + dy, z);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /** Varado en tierra: da saltos como un pez, orientándose hacia el agua más cercana. */
+    private void beachedHop() {
+        if (--this.hopCooldown > 0) {
+            return;
+        }
+        this.hopCooldown = 14 + this.random.nextInt(16);
+        Vec3 to = this.findNearestWater();
+        double ang = to != null ? Math.atan2(to.z - this.getZ(), to.x - this.getX()) : this.random.nextDouble() * Math.PI * 2.0D;
+        float yaw = (float) (ang * (180.0D / Math.PI)) - 90.0F;
+        this.setYRot(yaw);
+        this.yBodyRot = yaw;
+        this.yHeadRot = yaw;
+        double p = this.hopPower();
+        this.setDeltaMovement(Math.cos(ang) * p, this.hopLift(), Math.sin(ang) * p);
+        this.hasImpulse = true;
+        this.playSound(net.minecraft.sounds.SoundEvents.COD_FLOP, 1.5F, 0.5F);
+    }
+
     @Override
     public void aiStep() {
+        if (!this.level().isClientSide && !this.isInWater() && this.onGround() && this.isAlive()) {
+            this.beachedHop();
+        }
         // Burbujas que salen del hocico (más seguidas cuando está enfadado).
         if (this.level().isClientSide && this.isInWater()
                 && this.random.nextInt(this.isAggressive() ? 3 : 25) == 0) {

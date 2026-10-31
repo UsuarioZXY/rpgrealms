@@ -192,10 +192,16 @@ public class LeviathanEntity extends AbstractLeviathan {
             return;
         }
         Vec3 dir = aim.normalize();
-        AbyssBoltEntity bolt = new AbyssBoltEntity(this.level(), this, aim.x, aim.y, aim.z);
-        bolt.setPos(mouth.x, mouth.y, mouth.z);
-        bolt.setDeltaMovement(dir.scale(1.4D));
-        this.level().addFreshEntity(bolt);
+        // Abanico de orbes: 3 con buena vida, 5 herido. Los laterales se curvan hacia el objetivo (guiado).
+        int count = this.getHealth() <= this.getMaxHealth() * 0.5F ? 5 : 3;
+        for (int i = 0; i < count; i++) {
+            double offset = (i - (count - 1) / 2.0D) * 0.24D;   // radianes (~14º entre orbes)
+            Vec3 d = dir.yRot((float) offset);
+            AbyssBoltEntity bolt = new AbyssBoltEntity(this.level(), this, d.x, d.y, d.z);
+            bolt.setPos(mouth.x, mouth.y, mouth.z);
+            bolt.setDeltaMovement(d.scale(i == (count - 1) / 2 ? 1.5D : 1.1D));
+            this.level().addFreshEntity(bolt);
+        }
 
         // Retroceso visual (el cliente lo anima) y empujoncito físico hacia atrás.
         this.entityData.set(DATA_RECOIL, 6);
@@ -514,7 +520,7 @@ public class LeviathanEntity extends AbstractLeviathan {
                     this.hold();
                     this.timer++;
                     this.mob.setPhaseTimer(this.timer);
-                    if (this.timer % 12 == 0) {
+                    if (this.timer % 18 == 0) {
                         this.mob.fireBolt(target);
                         this.boltsLeft--;
                     }
@@ -627,7 +633,7 @@ public class LeviathanEntity extends AbstractLeviathan {
         private void startBolts() {
             this.mode = MODE_BOLTS;
             this.timer = 0;
-            this.boltsLeft = this.mob.getHealth() <= this.mob.getMaxHealth() * 0.5F ? 6 : 4;
+            this.boltsLeft = this.mob.getHealth() <= this.mob.getMaxHealth() * 0.5F ? 4 : 3;
             this.mob.setPhaseTimer(0);
             this.mob.setPhase(PHASE_BOLTS);
         }

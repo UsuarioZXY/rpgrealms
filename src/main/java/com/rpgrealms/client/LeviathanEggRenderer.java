@@ -33,9 +33,13 @@ public class LeviathanEggRenderer extends EntityRenderer<LeviathanEggEntity> {
                        MultiBufferSource buffer, int packedLight) {
         float t = egg.tickCount + partialTick;
         float progress = 1.0F - Mth.clamp(egg.getTicksLeft() / (float) LeviathanEggEntity.HATCH_TICKS, 0.0F, 1.0F);
-        float amp = progress > 0.6F ? (progress - 0.6F) / 0.4F * 9.0F : 0.0F;   // grados
+        // Pequeños movimientos: reposo con estremecimientos cada vez más frecuentes y fuertes
+        float gate = Mth.clamp(Mth.sin(t * 0.07F + egg.getId() * 1.7F) * 2.5F - 0.9F + progress * 1.5F, 0.0F, 1.0F);
+        float amp = (progress > 0.25F ? (progress - 0.25F) / 0.75F : 0.0F) * (3.0F + 9.0F * progress) * gate
+                + progress * 0.6F * Mth.sin(t * 2.3F);   // micro-temblor constante
 
         poseStack.pushPose();
+        poseStack.translate(0.0F, Math.max(0.0F, Mth.sin(t * 1.1F)) * 0.06F * gate * progress, 0.0F);
         poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.sin(t * 0.9F) * amp));
         poseStack.mulPose(Axis.XP.rotationDegrees(Mth.cos(t * 0.7F) * amp * 0.6F));
         poseStack.scale(-1.0F, -1.0F, 1.0F);
