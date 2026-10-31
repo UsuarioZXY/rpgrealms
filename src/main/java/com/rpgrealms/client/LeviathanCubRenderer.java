@@ -20,7 +20,7 @@ public class LeviathanCubRenderer extends MobRenderer<LeviathanCubEntity, Leviat
 
     @Override
     protected void scale(LeviathanCubEntity entity, PoseStack poseStack, float partialTick) {
-        poseStack.scale(1.8F, 1.8F, 1.8F);
+        poseStack.scale(2.6F, 2.6F, 2.6F);
         // Centra el modelo (~160 px de largo, origen en el pecho) sobre la posición de la entidad.
         poseStack.translate(0.0F, 0.0F, -1.25F);
     }

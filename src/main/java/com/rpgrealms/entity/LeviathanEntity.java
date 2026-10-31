@@ -25,7 +25,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.WaterAnimal;
@@ -78,17 +77,16 @@ public class LeviathanEntity extends AbstractLeviathan {
             BossEvent.BossBarColor.BLUE, BossEvent.BossBarOverlay.NOTCHED_12);
 
     public LeviathanEntity(EntityType<? extends WaterAnimal> type, Level level) {
-        super(type, level, 8);
-        this.moveControl = new AbyssMoveControl(this);
+        super(type, level, 3.2F);
         this.xpReward = 500;
         this.setPersistenceRequired();
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return WaterAnimal.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 800.0D)
+                .add(Attributes.MAX_HEALTH, 1500.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.6D)      // lento comparado con la cría
-                .add(Attributes.ATTACK_DAMAGE, 32.0D)
+                .add(Attributes.ATTACK_DAMAGE, 45.0D)
                 .add(Attributes.ATTACK_KNOCKBACK, 3.0D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
                 .add(Attributes.ARMOR, 10.0D)
@@ -131,6 +129,16 @@ public class LeviathanEntity extends AbstractLeviathan {
         return this.entityData.get(DATA_RECOIL);
     }
 
+    @Override
+    protected double bodyScale() {
+        return 6.5D;
+    }
+
+    @Override
+    protected double cruiseSpeed() {
+        return 0.30D;   // ~6 bloques/s: majestuoso
+    }
+
     /** Extremo del rayo relativo a los pies de la entidad. */
     public Vec3 getBeamEndOffset() {
         return new Vec3(this.entityData.get(DATA_BEAM_X), this.entityData.get(DATA_BEAM_Y),
@@ -142,8 +150,7 @@ public class LeviathanEntity extends AbstractLeviathan {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new CombatGoal(this));
-        this.goalSelector.addGoal(1, new RoamGoal(this));
-        this.goalSelector.addGoal(2, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(1, new RoamGoal(this, 48.0D));
         this.targetSelector.addGoal(0, new HurtByTargetGoal(this));
         if (!PROVOKED_ONLY) {
             this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
@@ -152,22 +159,22 @@ public class LeviathanEntity extends AbstractLeviathan {
 
     @Override
     protected double mouthForward() {
-        return 12.5D;
+        return 18.0D;
     }
 
     @Override
     protected double mouthUp() {
-        return 1.8D;
+        return 2.6D;
     }
 
     @Override
     protected double trailBack() {
-        return 28.0D;
+        return 40.0D;
     }
 
     @Override
     protected double cullingInflate() {
-        return 60.0D; // el rayo llega a 56 bloques: no debe desaparecer al salir de pantalla
+        return 80.0D; // el rayo llega a 56 bloques: no debe desaparecer al salir de pantalla
     }
 
     @Override
@@ -432,105 +439,6 @@ public class LeviathanEntity extends AbstractLeviathan {
         return best;
     }
 
-    /**
-     * Control de movimiento propio: el de vainilla (SmoothSwimmingMoveControl) solo se mueve si hay un
-     * camino calculado, y el adulto no usa pathfinding (su hitbox es enorme). Este nada en línea recta
-     * hacia el punto, girando despacio como corresponde a algo tan grande.
-     */
-    static class AbyssMoveControl extends MoveControl {
-        private final LeviathanEntity fish;
-
-        AbyssMoveControl(LeviathanEntity mob) {
-            super(mob);
-            this.fish = mob;
-        }
-
-        @Override
-        public void tick() {
-            if (this.operation != MoveControl.Operation.MOVE_TO) {
-                this.fish.setSpeed(0.0F);
-                return;
-            }
-            double dx = this.wantedX - this.fish.getX();
-            double dy = this.wantedY - this.fish.getY();
-            double dz = this.wantedZ - this.fish.getZ();
-            double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-            if (dist < 1.5D || this.speedModifier <= 0.0D) {
-                this.operation = MoveControl.Operation.WAIT;
-                this.fish.setSpeed(0.0F);
-                return;
-            }
-
-            float targetYaw = (float) (Mth.atan2(dz, dx) * (180.0D / Math.PI)) - 90.0F;
-            this.fish.setYRot(this.rotlerp(this.fish.getYRot(), targetYaw, 2.5F));
-            this.fish.yBodyRot = this.fish.getYRot();
-            this.fish.yHeadRot = this.fish.getYRot();
-
-            double horiz = Math.sqrt(dx * dx + dz * dz);
-            float targetPitch = (float) (-(Mth.atan2(dy, horiz) * (180.0D / Math.PI)));
-            this.fish.setXRot(this.rotlerp(this.fish.getXRot(), Mth.clamp(Mth.wrapDegrees(targetPitch), -50.0F, 50.0F), 2.0F));
-
-            double accel = this.speedModifier * this.fish.getAttributeValue(Attributes.MOVEMENT_SPEED) * 0.045D;
-            Vec3 look = Vec3.directionFromRotation(this.fish.getXRot(), this.fish.getYRot());
-            this.fish.setDeltaMovement(this.fish.getDeltaMovement().add(look.scale(accel)));
-        }
-    }
-
-    /** Nada sin rumbo por el lago, sin depender del pathfinding. */
-    static class RoamGoal extends Goal {
-        private final LeviathanEntity mob;
-        private Vec3 dest;
-        private int timeout;
-
-        RoamGoal(LeviathanEntity mob) {
-            this.mob = mob;
-            this.setFlags(EnumSet.of(Flag.MOVE));
-        }
-
-        @Override
-        public boolean canUse() {
-            return this.mob.getTarget() == null && this.mob.isInWater() && this.mob.getRandom().nextInt(40) == 0;
-        }
-
-        @Override
-        public void start() {
-            this.dest = null;
-            for (int i = 0; i < 10; i++) {
-                double x = this.mob.getX() + (this.mob.getRandom().nextDouble() * 2.0D - 1.0D) * 24.0D;
-                double y = this.mob.getY() + (this.mob.getRandom().nextDouble() * 2.0D - 1.0D) * 5.0D;
-                double z = this.mob.getZ() + (this.mob.getRandom().nextDouble() * 2.0D - 1.0D) * 24.0D;
-                if (!this.mob.isWaterAt(x, y, z)) {
-                    continue;
-                }
-                Vec3 to = new Vec3(x, y, z);
-                BlockHitResult hit = this.mob.level().clip(new ClipContext(this.mob.position(), to,
-                        ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this.mob));
-                if (hit.getType() == HitResult.Type.MISS) {
-                    this.dest = to;
-                    break;
-                }
-            }
-            this.timeout = 300;
-        }
-
-        @Override
-        public boolean canContinueToUse() {
-            return this.dest != null && this.timeout > 0 && this.mob.getTarget() == null
-                    && this.mob.position().distanceToSqr(this.dest) > 16.0D;
-        }
-
-        @Override
-        public void tick() {
-            this.timeout--;
-            this.mob.getMoveControl().setWantedPosition(this.dest.x, this.dest.y, this.dest.z, 1.0D);
-        }
-
-        @Override
-        public void stop() {
-            this.dest = null;
-        }
-    }
-
     /** Combate: se acerca, muerde de cerca y, a distancia, dispara orbes o carga el rayo. */
     static class CombatGoal extends Goal {
         private static final int MODE_NONE = 0;
@@ -646,7 +554,7 @@ public class LeviathanEntity extends AbstractLeviathan {
                     float hp = this.mob.getHealth() / this.mob.getMaxHealth();
                     boolean wounded = hp <= 0.5F;
                     boolean desperate = hp <= 0.25F;
-                    double reach = 6.0D + target.getBbWidth();
+                    double reach = 9.0D + target.getBbWidth();
 
                     if (!wounded) {
                         // CON BUENA VIDA: va de frente a matar. Se acerca lo máximo que permite el agua y muerde.

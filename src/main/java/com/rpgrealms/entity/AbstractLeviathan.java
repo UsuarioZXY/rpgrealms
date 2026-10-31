@@ -1,6 +1,7 @@
 package com.rpgrealms.entity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.DustColorTransitionOptions;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import org.joml.Vector3f;
@@ -10,14 +11,17 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.ai.control.SmoothSwimmingLookControl;
-import net.minecraft.world.entity.ai.control.SmoothSwimmingMoveControl;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.LookControl;
+import net.minecraft.world.entity.ai.control.MoveControl;
+import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
+import java.util.EnumSet;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -26,10 +30,171 @@ import net.minecraft.world.phys.Vec3;
  */
 public abstract class AbstractLeviathan extends WaterAnimal {
 
-    protected AbstractLeviathan(EntityType<? extends WaterAnimal> type, Level level, int maxTurnY) {
+    protected AbstractLeviathan(EntityType<? extends WaterAnimal> type, Level level, float turnDegPerTick) {
         super(type, level);
-        this.moveControl = new SmoothSwimmingMoveControl(this, 85, maxTurnY, 0.15F, 0.5F, false);
-        this.lookControl = new SmoothSwimmingLookControl(this, 10);
+        this.moveControl = new SwimControl(this, turnDegPerTick);
+        // El LookControl de vainilla pone el cabeceo a 0 cada tick; aquí lo manda el control de nado.
+        this.lookControl = new LookControl(this) {
+            @Override
+            protected boolean resetXRotOnTick() {
+                return false;
+            }
+        };
+    }
+
+    /** Velocidad de crucero (bloques/tick) con velocidad relativa 1.0. */
+    protected abstract double cruiseSpeed();
+
+    protected boolean isWaterPoint(double x, double y, double z) {
+        return this.level().getFluidState(BlockPos.containing(x, y, z)).is(FluidTags.WATER);
+    }
+
+    /**
+     * Control de nado propio. El de vainilla solo avanza con un camino calculado, y con hitboxes tan grandes
+     * el pathfinding casi nunca encuentra uno. Este nada en línea recta, gira con un radio de giro realista
+     * y "llega" a un radio mayor que ese giro (si no, daría vueltas alrededor del destino sin alcanzarlo).
+     */
+    public static class SwimControl extends MoveControl {
+        private final AbstractLeviathan fish;
+        private final float turn;
+
+        public SwimControl(AbstractLeviathan mob, float turnDegPerTick) {
+            super(mob);
+            this.fish = mob;
+            this.turn = turnDegPerTick;
+        }
+
+        @Override
+        public void tick() {
+            if (this.operation != MoveControl.Operation.MOVE_TO) {
+                return;
+            }
+            double dx = this.wantedX - this.fish.getX();
+            double dy = this.wantedY - this.fish.getY();
+            double dz = this.wantedZ - this.fish.getZ();
+            double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            double cruise = this.fish.cruiseSpeed();
+            double turnRadius = cruise / Math.toRadians(this.turn);
+            if (dist < Math.max(2.0D, turnRadius * 1.1D) || this.speedModifier <= 0.0D) {
+                this.operation = MoveControl.Operation.WAIT;
+                return;
+            }
+
+            float targetYaw = (float) (Mth.atan2(dz, dx) * (180.0D / Math.PI)) - 90.0F;
+            float diff = Mth.wrapDegrees(targetYaw - this.fish.getYRot());
+            float yaw = this.fish.getYRot() + Mth.clamp(diff, -this.turn, this.turn);
+            this.fish.setYRot(yaw);
+            this.fish.yBodyRot = yaw;
+            this.fish.yHeadRot = yaw;
+
+            double horiz = Math.sqrt(dx * dx + dz * dz);
+            float targetPitch = Mth.clamp((float) -(Mth.atan2(dy, horiz) * (180.0D / Math.PI)), -45.0F, 45.0F);
+            float pr = this.turn * 0.7F;
+            this.fish.setXRot(this.fish.getXRot() + Mth.clamp(targetPitch - this.fish.getXRot(), -pr, pr));
+
+            // Avanza fuerte solo cuando mira hacia donde va; si está girando, apenas avanza.
+            double align = Mth.clamp(Math.cos(Math.toRadians(diff)), 0.15D, 1.0D);
+            double accel = cruise * this.speedModifier / 9.0D * align;
+            Vec3 look = Vec3.directionFromRotation(this.fish.getXRot(), this.fish.getYRot());
+            this.fish.setDeltaMovement(this.fish.getDeltaMovement().add(look.scale(accel)));
+        }
+    }
+
+    /** Nada sin rumbo con calma, como una ballena: destinos lejanos, sin chocar y sin hundirse hasta el fondo. */
+    public static class RoamGoal extends Goal {
+        private final AbstractLeviathan mob;
+        private final double range;
+        private Vec3 dest;
+        private int timeout;
+        private int checkTick;
+        private Vec3 lastPos = Vec3.ZERO;
+
+        public RoamGoal(AbstractLeviathan mob, double range) {
+            this.mob = mob;
+            this.range = range;
+            this.setFlags(EnumSet.of(Flag.MOVE));
+        }
+
+        @Override
+        public boolean canUse() {
+            return this.mob.getTarget() == null && this.mob.isInWater() && this.mob.getRandom().nextInt(25) == 0;
+        }
+
+        @Override
+        public void start() {
+            this.dest = null;
+            double h = this.mob.getBbHeight();
+            for (int i = 0; i < 16 && this.dest == null; i++) {
+                double ang = this.mob.getRandom().nextDouble() * Math.PI * 2.0D;
+                double d = this.range * (0.5D + this.mob.getRandom().nextDouble() * 0.5D);
+                double x = this.mob.getX() + Math.cos(ang) * d;
+                double z = this.mob.getZ() + Math.sin(ang) * d;
+                // Columna de agua en el destino: superficie y fondo.
+                int by = Mth.floor(this.mob.getY() + h * 0.5D);
+                if (!this.mob.isWaterPoint(x, by, z)) {
+                    continue;
+                }
+                int top = by;
+                while (top < by + 64 && this.mob.isWaterPoint(x, top + 1, z)) {
+                    top++;
+                }
+                int floor = by;
+                while (floor > by - 64 && this.mob.isWaterPoint(x, floor - 1, z)) {
+                    floor--;
+                }
+                double lo = floor + h * 0.5D + 1.0D;
+                double hi = top - h * 0.5D - 1.0D;
+                if (hi < lo) {
+                    continue;   // aquí no cabe
+                }
+                double y = Mth.clamp(this.mob.getY() + h * 0.5D + (this.mob.getRandom().nextDouble() * 2.0D - 1.0D) * 4.0D, lo, hi);
+                Vec3 to = new Vec3(x, y, z);
+                if (this.pathClear(to)) {
+                    this.dest = to;
+                }
+            }
+            this.timeout = 400;
+            this.checkTick = 0;
+            this.lastPos = this.mob.position();
+        }
+
+        /** Comprueba que el cuerpo entero cabe a lo largo del trayecto. */
+        private boolean pathClear(Vec3 to) {
+            Vec3 from = this.mob.position();
+            Vec3 delta = new Vec3(to.x - from.x, to.y - this.mob.getY() - this.mob.getBbHeight() * 0.5D, to.z - from.z);
+            for (int k = 1; k <= 6; k++) {
+                Vec3 off = delta.scale(k / 6.0D);
+                if (!this.mob.level().noCollision(this.mob, this.mob.getBoundingBox().move(off))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return this.dest != null && this.timeout > 0 && this.mob.getTarget() == null && this.mob.isInWater()
+                    && this.mob.getMoveControl().hasWanted();
+        }
+
+        @Override
+        public void tick() {
+            this.timeout--;
+            this.mob.getMoveControl().setWantedPosition(this.dest.x, this.dest.y, this.dest.z, 1.0D);
+            // Anti-atasco: si en 2 segundos casi no se movió, abandona este destino.
+            if (++this.checkTick >= 40) {
+                this.checkTick = 0;
+                if (this.mob.position().distanceToSqr(this.lastPos) < 4.0D) {
+                    this.timeout = 0;
+                }
+                this.lastPos = this.mob.position();
+            }
+        }
+
+        @Override
+        public void stop() {
+            this.dest = null;
+        }
     }
 
     /** Distancia (en bloques) desde el centro de la entidad hasta la boca. */
@@ -112,51 +277,67 @@ public abstract class AbstractLeviathan extends WaterAnimal {
         super.aiStep();
     }
 
+    /** Escala del modelo (para colocar las puntas de las aletas). */
+    protected abstract double bodyScale();
+
     /**
-     * Rastro de partículas místicas a lo largo de todo el cuerpo: motas cian (rojas si está furioso),
-     * destellos que suben y glifos que flotan. Más densas cuanto más rápido nada.
+     * Rastro místico, tranquilo como el de una ballena: motas cian que se funden a violeta a lo largo del cuerpo,
+     * destellos suaves que suben, glifos que flotan y, al nadar, cintas de luz que salen de las aletas
+     * pectorales y de las puntas de la cola. Rojas solo si está furioso.
      */
     private void mysticTrail() {
         Vec3 vel = this.getDeltaMovement();
         double speed = vel.length();
         boolean angry = this.isAggressive();
-        double amount = (0.25D + Math.min(speed * 6.0D, 2.0D) + (angry ? 0.6D : 0.0D)) * this.trailDensity();
+        double amount = (0.35D + Math.min(speed * 5.0D, 2.0D) + (angry ? 0.5D : 0.0D)) * this.trailDensity();
         int n = (int) amount;
         if (this.random.nextDouble() < amount - n) {
             n++;
-        }
-        if (n <= 0) {
-            return;
         }
         Vec3 fwd = Vec3.directionFromRotation(0.0F, this.yBodyRot);
         Vec3 side = new Vec3(-fwd.z, 0.0D, fwd.x);
         double front = this.mouthForward();
         double back = this.trailBack();
-        double halfWidth = Math.max(1.0D, front * 0.28D);
-        DustParticleOptions dust = angry
-                ? new DustParticleOptions(new Vector3f(1.0F, 0.25F, 0.15F), 1.6F)
-                : new DustParticleOptions(new Vector3f(0.30F, 0.90F, 1.0F), 1.6F);
+        double halfWidth = Math.max(1.0D, front * 0.25D);
+        double cy = this.getY() + this.getBbHeight() * 0.5D;
+        Vector3f c1 = angry ? new Vector3f(1.0F, 0.35F, 0.2F) : new Vector3f(0.35F, 0.95F, 1.0F);
+        Vector3f c2 = angry ? new Vector3f(0.5F, 0.0F, 0.1F) : new Vector3f(0.45F, 0.25F, 0.95F);
+        DustColorTransitionOptions mote = new DustColorTransitionOptions(c1, c2, 1.5F);
+
         for (int i = 0; i < n; i++) {
-            double along = front * 0.8D - this.random.nextDouble() * (front * 0.8D + back);
+            double along = front * 0.7D - this.random.nextDouble() * (front * 0.7D + back);
             double x = this.getX() + fwd.x * along + side.x * (this.random.nextGaussian() * halfWidth);
             double z = this.getZ() + fwd.z * along + side.z * (this.random.nextGaussian() * halfWidth);
-            double y = this.getY() + this.getBbHeight() * 0.5D + this.random.nextGaussian() * halfWidth * 0.6D;
-            double dx = -vel.x * 0.15D + this.random.nextGaussian() * 0.01D;
-            double dz = -vel.z * 0.15D + this.random.nextGaussian() * 0.01D;
-            switch (this.random.nextInt(4)) {
-                case 0, 1 -> this.level().addParticle(dust, x, y, z, dx, 0.01D, dz);
-                case 2 -> this.level().addParticle(ParticleTypes.END_ROD, x, y, z, dx * 0.5D, 0.02D, dz * 0.5D);
-                default -> this.level().addParticle(ParticleTypes.NAUTILUS, x, y + 0.5D, z,
-                        this.random.nextGaussian() * 0.3D, this.random.nextDouble() * 0.3D, this.random.nextGaussian() * 0.3D);
+            double y = cy + this.random.nextGaussian() * halfWidth * 0.6D;
+            double dx = -vel.x * 0.2D + this.random.nextGaussian() * 0.008D;
+            double dz = -vel.z * 0.2D + this.random.nextGaussian() * 0.008D;
+            switch (this.random.nextInt(5)) {
+                case 0, 1 -> this.level().addParticle(mote, x, y, z, dx, 0.015D, dz);
+                case 2 -> this.level().addParticle(ParticleTypes.GLOW, x, y, z, dx, 0.02D, dz);
+                case 3 -> this.level().addParticle(ParticleTypes.END_ROD, x, y, z, dx * 0.4D, 0.012D, dz * 0.4D);
+                default -> this.level().addParticle(ParticleTypes.NAUTILUS, x, y + 0.6D, z,
+                        this.random.nextGaussian() * 0.25D, 0.2D + this.random.nextDouble() * 0.2D,
+                        this.random.nextGaussian() * 0.25D);
             }
         }
-        // Estela densa en la punta de la cola cuando se mueve
-        if (speed > 0.08D) {
-            double tx = this.getX() - fwd.x * back;
-            double tz = this.getZ() - fwd.z * back;
-            this.level().addParticle(ParticleTypes.GLOW, tx + this.random.nextGaussian() * 0.8D,
-                    this.getY() + this.getBbHeight() * 0.5D + this.random.nextGaussian() * 0.8D,
-                    tz + this.random.nextGaussian() * 0.8D, 0.0D, 0.02D, 0.0D);
+
+        // Cintas de luz desde las puntas de las aletas mientras nada.
+        if (speed > 0.06D) {
+            double sc = this.bodyScale();
+            double pecAlong = front * 0.1D - this.random.nextDouble() * front * 0.3D;
+            double tailAlong = -back;
+            for (int sgn = -1; sgn <= 1; sgn += 2) {
+                double px = this.getX() + fwd.x * pecAlong + side.x * sgn * sc * 2.3D;
+                double pz = this.getZ() + fwd.z * pecAlong + side.z * sgn * sc * 2.3D;
+                this.level().addParticle(mote, px, cy - sc * 0.3D, pz, -vel.x * 0.1D, 0.0D, -vel.z * 0.1D);
+                if (this.random.nextInt(2) == 0) {
+                    double tx = this.getX() + fwd.x * tailAlong + side.x * sgn * sc * 1.9D;
+                    double tz = this.getZ() + fwd.z * tailAlong + side.z * sgn * sc * 1.9D;
+                    this.level().addParticle(mote, tx, cy, tz, -vel.x * 0.1D, 0.0D, -vel.z * 0.1D);
+                }
+            }
+            this.level().addParticle(ParticleTypes.GLOW, this.getX() + fwd.x * tailAlong, cy,
+                    this.getZ() + fwd.z * tailAlong, 0.0D, 0.02D, 0.0D);
         }
     }
 

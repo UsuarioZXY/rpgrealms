@@ -17,7 +17,7 @@ public class LeviathanRenderer extends MobRenderer<LeviathanEntity, LeviathanMod
             new ResourceLocation(RpgRealms.MODID, "textures/entity/leviathan_glow.png");
 
     public LeviathanRenderer(EntityRendererProvider.Context context) {
-        super(context, new LeviathanModel(context.bakeLayer(LeviathanModel.LAYER)), 6.0F);
+        super(context, new LeviathanModel(context.bakeLayer(LeviathanModel.LAYER)), 9.0F);
         this.addLayer(new LeviathanGlowLayer<>(this, GLOW, 1.15F));
     }
 
@@ -47,7 +47,7 @@ public class LeviathanRenderer extends MobRenderer<LeviathanEntity, LeviathanMod
 
     @Override
     protected void scale(LeviathanEntity entity, PoseStack poseStack, float partialTick) {
-        poseStack.scale(4.5F, 4.5F, 4.5F);
+        poseStack.scale(6.5F, 6.5F, 6.5F);
         poseStack.translate(0.0F, 0.0F, -1.25F);
     }
 

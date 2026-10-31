@@ -14,17 +14,17 @@ public class ModEntities {
     public static final DeferredRegister<EntityType<?>> ENTITIES =
             DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, RpgRealms.MODID);
 
-    /** Cría de Leviatán (rápida, poca vida y daño). Modelo a escala 1.8. */
+    /** Cría de Leviatán (rápida, poca vida y daño). Modelo a escala 2.6. */
     public static final RegistryObject<EntityType<LeviathanCubEntity>> LEVIATHAN_CUB = ENTITIES.register("leviathan_cub",
             () -> EntityType.Builder.of(LeviathanCubEntity::new, MobCategory.WATER_CREATURE)
-                    .sized(3.4F, 2.2F)
+                    .sized(4.8F, 3.2F)
                     .clientTrackingRange(12)
                     .build("leviathan_cub"));
 
-    /** Leviatán adulto (colosal, lento, dispara orbes y rayo). Modelo a escala 4.5. */
+    /** Leviatán adulto (colosal, lento, dispara orbes y rayo). Modelo a escala 6.5. */
     public static final RegistryObject<EntityType<LeviathanEntity>> LEVIATHAN = ENTITIES.register("leviathan",
             () -> EntityType.Builder.of(LeviathanEntity::new, MobCategory.WATER_CREATURE)
-                    .sized(8.0F, 5.0F)
+                    .sized(11.5F, 7.0F)
                     .clientTrackingRange(32)
                     .build("leviathan"));
 
