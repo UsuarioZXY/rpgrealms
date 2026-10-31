@@ -119,11 +119,14 @@ public abstract class AbstractLeviathan extends WaterAnimal {
 
         @Override
         public boolean canUse() {
-            return this.mob.getTarget() == null && this.mob.isInWater() && this.mob.getRandom().nextInt(25) == 0;
+            if (this.mob.getTarget() != null || !this.mob.isInWater() || this.mob.getRandom().nextInt(25) != 0) {
+                return false;
+            }
+            this.pickDestination();
+            return this.dest != null;   // sin destino válido, el objetivo ni arranca
         }
 
-        @Override
-        public void start() {
+        private void pickDestination() {
             this.dest = null;
             double h = this.mob.getBbHeight();
             for (int i = 0; i < 16 && this.dest == null; i++) {
@@ -150,11 +153,15 @@ public abstract class AbstractLeviathan extends WaterAnimal {
                     continue;   // aquí no cabe
                 }
                 double y = Mth.clamp(this.mob.getY() + h * 0.5D + (this.mob.getRandom().nextDouble() * 2.0D - 1.0D) * 4.0D, lo, hi);
-                Vec3 to = new Vec3(x, y, z);
+                Vec3 to = new Vec3(x, y - h * 0.5D, z);   // y de los pies
                 if (this.pathClear(to)) {
                     this.dest = to;
                 }
             }
+        }
+
+        @Override
+        public void start() {
             this.timeout = 400;
             this.checkTick = 0;
             this.lastPos = this.mob.position();
@@ -163,7 +170,7 @@ public abstract class AbstractLeviathan extends WaterAnimal {
         /** Comprueba que el cuerpo entero cabe a lo largo del trayecto. */
         private boolean pathClear(Vec3 to) {
             Vec3 from = this.mob.position();
-            Vec3 delta = new Vec3(to.x - from.x, to.y - this.mob.getY() - this.mob.getBbHeight() * 0.5D, to.z - from.z);
+            Vec3 delta = new Vec3(to.x - from.x, to.y - from.y, to.z - from.z);
             for (int k = 1; k <= 6; k++) {
                 Vec3 off = delta.scale(k / 6.0D);
                 if (!this.mob.level().noCollision(this.mob, this.mob.getBoundingBox().move(off))) {
@@ -181,6 +188,10 @@ public abstract class AbstractLeviathan extends WaterAnimal {
 
         @Override
         public void tick() {
+            if (this.dest == null) {
+                this.timeout = 0;
+                return;
+            }
             this.timeout--;
             this.mob.getMoveControl().setWantedPosition(this.dest.x, this.dest.y, this.dest.z, 1.0D);
             // Anti-atasco: si en 2 segundos casi no se movió, abandona este destino.
