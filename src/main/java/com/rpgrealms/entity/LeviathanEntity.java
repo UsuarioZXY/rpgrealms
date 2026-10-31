@@ -415,7 +415,7 @@ public class LeviathanEntity extends AbstractLeviathan {
     // ------------------------------------------------------------------ movimiento
 
     private boolean isWaterAt(double x, double y, double z) {
-        return this.level().getFluidState(BlockPos.containing(x, y, z)).is(FluidTags.WATER);
+        return this.isWaterPoint(x, y, z);
     }
 
     /** Punto de agua más lejano que se puede alcanzar en línea recta hacia el objetivo (null si no hay). */

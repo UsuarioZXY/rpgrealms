@@ -45,8 +45,10 @@ public abstract class AbstractLeviathan extends WaterAnimal {
     /** Velocidad de crucero (bloques/tick) con velocidad relativa 1.0. */
     protected abstract double cruiseSpeed();
 
+    /** Agua en ese punto. Si el chunk no está cargado devuelve false: así nunca fuerza la carga/generación de chunks. */
     protected boolean isWaterPoint(double x, double y, double z) {
-        return this.level().getFluidState(BlockPos.containing(x, y, z)).is(FluidTags.WATER);
+        BlockPos pos = BlockPos.containing(x, y, z);
+        return this.level().hasChunkAt(pos) && this.level().getFluidState(pos).is(FluidTags.WATER);
     }
 
     /**

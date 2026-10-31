@@ -24,7 +24,7 @@ public class ModEntities {
     /** Leviatán adulto (colosal, lento, dispara orbes y rayo). Modelo a escala 6.5. */
     public static final RegistryObject<EntityType<LeviathanEntity>> LEVIATHAN = ENTITIES.register("leviathan",
             () -> EntityType.Builder.of(LeviathanEntity::new, MobCategory.WATER_CREATURE)
-                    .sized(11.5F, 7.0F)
+                    .sized(10.0F, 6.0F)
                     .clientTrackingRange(32)
                     .build("leviathan"));
 
