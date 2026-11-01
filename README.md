@@ -3,8 +3,8 @@
 Mod RPG para **Minecraft 1.20.1 (Forge 47.3.0)**.
 
 ## Contenido actual
-- **Cría de Leviatán** (~26 bloques): pacífica y muy rápida; 160 de vida y 14 de daño. Aparece en océanos profundos. Solo se defiende si la golpeas.
-- **Leviatán** (~64 bloques): colosal, lento y de aspecto propio (cuerpo negro de obsidiana con venas cian, cabeza enorme con boca abierta y colmillos, coraza de placas, vela dorsal alta, anzuelo luminoso). 1500 de vida, barra de jefe. Solo con huevo generador por ahora (la dimensión se rehará como planeta).
+- **Cría de Leviatán** (~30 bloques, diseño de ballena): pacífica y muy rápida; 160 de vida y 14 de daño. Aparece en océanos profundos. Solo se defiende si la golpeas.
+- **Leviatán** (~65 bloques): colosal, lento y con diseño de ballena (lomo oscuro, vientre claro con pliegues, cabeza con melón, aletas pectorales largas, cola ancha, anzuelo luminoso y boca con dos hileras de dientes pequeños). 1500 de vida, barra de jefe. Solo con huevo generador por ahora (la dimensión se rehará como planeta).
   - Con más del 50 % de vida va de frente a morder al jugador.
   - Con 50 % o menos se enfurece (barra roja) y prefiere el rayo; bajo el 25 % casi solo lo usa.
   - Ataques: orbes abisales con explosión en área y rayo cargado con haz luminoso.

@@ -224,7 +224,7 @@ public class LeviathanCubEntity extends AbstractLeviathan {
 
     @Override
     protected double mouthForward() {
-        return 6.1D;
+        return 8.5D;
     }
 
     @Override
@@ -234,7 +234,7 @@ public class LeviathanCubEntity extends AbstractLeviathan {
 
     @Override
     protected double trailBack() {
-        return 15.9D;
+        return 18.0D;
     }
 
     @Override
@@ -244,7 +244,7 @@ public class LeviathanCubEntity extends AbstractLeviathan {
 
     @Override
     protected double cullingInflate() {
-        return 16.0D;
+        return 24.0D;
     }
 
     @Override

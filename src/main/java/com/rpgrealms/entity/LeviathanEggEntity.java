@@ -59,10 +59,19 @@ public class LeviathanEggEntity extends Entity {
         }
 
         if (this.level().isClientSide) {
-            if (this.random.nextInt(12) == 0) {
-                this.level().addParticle(ParticleTypes.GLOW, this.getX() + (this.random.nextDouble() - 0.5D) * 1.6D,
-                        this.getY() + this.random.nextDouble() * 2.4D, this.getZ() + (this.random.nextDouble() - 0.5D) * 1.6D,
-                        0.0D, 0.01D, 0.0D);
+            double prog = 1.0D - Math.max(0, Math.min(1.0D, this.getTicksLeft() / (double) HATCH_TICKS));
+            if (this.tickCount % Math.max(2, (int) (8 - prog * 6)) == 0) {
+                // motas que giran alrededor del huevo y suben
+                double a = this.tickCount * 0.12D + this.random.nextDouble();
+                double r = 1.5D + this.random.nextDouble() * 0.3D;
+                double y = this.getY() + ((this.tickCount * 0.02D) % 2.6D);
+                this.level().addParticle(ParticleTypes.END_ROD, this.getX() + Math.cos(a) * r, y,
+                        this.getZ() + Math.sin(a) * r, -Math.sin(a) * 0.03D, 0.01D, Math.cos(a) * 0.03D);
+            }
+            if (prog > 0.8D && this.random.nextInt(4) == 0) {
+                this.level().addParticle(ParticleTypes.ELECTRIC_SPARK, this.getX() + (this.random.nextDouble() - 0.5D) * 2.0D,
+                        this.getY() + this.random.nextDouble() * 2.8D, this.getZ() + (this.random.nextDouble() - 0.5D) * 2.0D,
+                        0.0D, 0.0D, 0.0D);
             }
             return;
         }

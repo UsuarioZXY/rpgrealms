@@ -18,21 +18,21 @@ public class ModEntities {
     /** Cría de Leviatán (rápida, poca vida y daño). Modelo a escala 2.6. */
     public static final RegistryObject<EntityType<LeviathanCubEntity>> LEVIATHAN_CUB = ENTITIES.register("leviathan_cub",
             () -> EntityType.Builder.of(LeviathanCubEntity::new, MobCategory.WATER_CREATURE)
-                    .sized(4.8F, 3.2F)
+                    .sized(4.4F, 3.8F)
                     .clientTrackingRange(12)
                     .build("leviathan_cub"));
 
     /** Leviatán adulto (colosal, lento, dispara orbes y rayo). Modelo a escala 6.5. */
     public static final RegistryObject<EntityType<LeviathanEntity>> LEVIATHAN = ENTITIES.register("leviathan",
             () -> EntityType.Builder.of(LeviathanEntity::new, MobCategory.WATER_CREATURE)
-                    .sized(10.0F, 6.0F)
+                    .sized(10.0F, 7.5F)
                     .clientTrackingRange(32)
                     .build("leviathan"));
 
     /** Huevo de Leviatán: eclosiona en una Cría. */
     public static final RegistryObject<EntityType<LeviathanEggEntity>> LEVIATHAN_EGG = ENTITIES.register("leviathan_egg",
             () -> EntityType.Builder.<LeviathanEggEntity>of(LeviathanEggEntity::new, MobCategory.MISC)
-                    .sized(2.0F, 2.6F)
+                    .sized(2.4F, 2.9F)
                     .clientTrackingRange(10)
                     .updateInterval(10)
                     .build("leviathan_egg"));
