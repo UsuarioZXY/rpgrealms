@@ -1,0 +1,12 @@
+{
+  "itemGroup.bluelock": "Blue Lock",
+  "item.bluelock.soccer_ball": "Soccer Ball",
+  "item.bluelock.goal": "Goal",
+  "block.bluelock.goal_post": "Goal Post",
+  "block.bluelock.goal_net": "Goal Net",
+  "entity.bluelock.soccer_ball": "Soccer Ball",
+  "key.bluelock.kick": "Kick ball",
+  "key.categories.bluelock": "Blue Lock",
+  "message.bluelock.goal": "GOAL!",
+  "message.bluelock.goal_by": "GOAL by %s!"
+}

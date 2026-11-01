@@ -1,0 +1,12 @@
+{
+  "itemGroup.bluelock": "Blue Lock",
+  "item.bluelock.soccer_ball": "Balón de fútbol",
+  "item.bluelock.goal": "Portería",
+  "block.bluelock.goal_post": "Poste de portería",
+  "block.bluelock.goal_net": "Red de portería",
+  "entity.bluelock.soccer_ball": "Balón de fútbol",
+  "key.bluelock.kick": "Patear balón",
+  "key.categories.bluelock": "Blue Lock",
+  "message.bluelock.goal": "¡GOL!",
+  "message.bluelock.goal_by": "¡GOL de %s!"
+}

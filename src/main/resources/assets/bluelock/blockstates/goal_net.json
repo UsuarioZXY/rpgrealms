@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "axis=z": { "model": "bluelock:block/goal_net" },
+    "axis=x": { "model": "bluelock:block/goal_net", "y": 90 },
+    "axis=y": { "model": "bluelock:block/goal_net", "x": 90 }
+  }
+}

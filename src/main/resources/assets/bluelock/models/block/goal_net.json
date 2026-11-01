@@ -1,0 +1,19 @@
+{
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "textures": {
+    "net": "bluelock:block/goal_net",
+    "particle": "bluelock:block/goal_net"
+  },
+  "elements": [
+    {
+      "from": [0, 0, 7.5],
+      "to": [16, 16, 8.5],
+      "shade": false,
+      "faces": {
+        "north": { "uv": [0, 0, 16, 16], "texture": "#net" },
+        "south": { "uv": [0, 0, 16, 16], "texture": "#net" }
+      }
+    }
+  ]
+}
