@@ -17,29 +17,31 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 minecraft {
     mappings channel: 'official', version: minecraft_version
 
-    copyIdeResources = true
-
     runs {
         configureEach {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
+
             mods {
                 "${mod_id}" {
                     source sourceSets.main
                 }
             }
         }
+
         client {
+            property 'forge.enabledGameTestNamespaces', mod_id
         }
+
         server {
+            property 'forge.enabledGameTestNamespaces', mod_id
             args '--nogui'
         }
     }
 }
 
-repositories {
-}
+sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
@@ -47,22 +49,18 @@ dependencies {
 
 tasks.named('processResources', ProcessResources).configure {
     var replaceProperties = [
-            minecraft_version      : minecraft_version,
-            minecraft_version_range: minecraft_version_range,
-            forge_version          : forge_version,
-            forge_version_range    : forge_version_range,
-            loader_version_range   : loader_version_range,
-            mod_id                 : mod_id,
-            mod_name               : mod_name,
-            mod_license            : mod_license,
-            mod_version            : mod_version,
-            mod_authors            : mod_authors,
-            mod_description        : mod_description,
+            minecraft_version: minecraft_version,
+            mod_id           : mod_id,
+            mod_name         : mod_name,
+            mod_license      : mod_license,
+            mod_version      : mod_version,
+            mod_authors      : mod_authors,
+            mod_description  : mod_description,
     ]
     inputs.properties replaceProperties
 
     filesMatching(['META-INF/mods.toml']) {
-        expand replaceProperties + [project: project]
+        expand replaceProperties
     }
 }
 
@@ -77,8 +75,6 @@ tasks.named('jar', Jar).configure {
                 'Implementation-Vendor'   : mod_authors
         ])
     }
-
-    finalizedBy 'reobfJar'
 }
 
 tasks.withType(JavaCompile).configureEach {
