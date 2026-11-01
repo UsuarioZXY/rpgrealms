@@ -7,5 +7,7 @@
   "entity.rpgrealms.leviathan": "Leviatán",
   "entity.rpgrealms.abyss_bolt": "Orbe Abisal",
   "item.rpgrealms.leviathan_egg": "Huevo de Leviatán",
-  "entity.rpgrealms.leviathan_egg": "Huevo de Leviatán"
+  "entity.rpgrealms.leviathan_egg": "Huevo de Leviatán",
+  "item.rpgrealms.leviathan_teen_spawn_egg": "Huevo generador de Leviatán Adolescente",
+  "entity.rpgrealms.leviathan_teen": "Leviatán Adolescente"
 }

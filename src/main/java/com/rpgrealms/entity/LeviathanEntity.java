@@ -130,7 +130,7 @@ public class LeviathanEntity extends AbstractLeviathan {
     }
 
     @Override
-    protected double bodyScale() {
+    public double bodyScale() {
         return 6.5D;
     }
 
@@ -159,7 +159,7 @@ public class LeviathanEntity extends AbstractLeviathan {
 
     @Override
     protected double mouthForward() {
-        return 20.5D;
+        return 26.0D;
     }
 
     @Override
@@ -169,7 +169,7 @@ public class LeviathanEntity extends AbstractLeviathan {
 
     @Override
     protected double trailBack() {
-        return 44.0D;
+        return 48.0D;
     }
 
     @Override

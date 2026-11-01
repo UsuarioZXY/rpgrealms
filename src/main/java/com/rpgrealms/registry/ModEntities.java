@@ -3,6 +3,7 @@ package com.rpgrealms.registry;
 import com.rpgrealms.RpgRealms;
 import com.rpgrealms.entity.AbyssBoltEntity;
 import com.rpgrealms.entity.LeviathanEggEntity;
+import com.rpgrealms.entity.LeviathanTeenEntity;
 import com.rpgrealms.entity.LeviathanCubEntity;
 import com.rpgrealms.entity.LeviathanEntity;
 import net.minecraft.world.entity.EntityType;
@@ -21,6 +22,13 @@ public class ModEntities {
                     .sized(4.4F, 3.8F)
                     .clientTrackingRange(12)
                     .build("leviathan_cub"));
+
+    /** Leviatán adolescente (crece hasta adulto). Modelo a escala 4.4. */
+    public static final RegistryObject<EntityType<LeviathanTeenEntity>> LEVIATHAN_TEEN = ENTITIES.register("leviathan_teen",
+            () -> EntityType.Builder.of(LeviathanTeenEntity::new, MobCategory.WATER_CREATURE)
+                    .sized(6.8F, 5.5F)
+                    .clientTrackingRange(24)
+                    .build("leviathan_teen"));
 
     /** Leviatán adulto (colosal, lento, dispara orbes y rayo). Modelo a escala 6.5. */
     public static final RegistryObject<EntityType<LeviathanEntity>> LEVIATHAN = ENTITIES.register("leviathan",

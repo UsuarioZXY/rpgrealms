@@ -12,6 +12,7 @@ public class ClientEvents {
     @SubscribeEvent
     public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(LeviathanCubModel.LAYER, LeviathanCubModel::createBodyLayer);
+        event.registerLayerDefinition(LeviathanTeenModel.LAYER, LeviathanTeenModel::createBodyLayer);
         event.registerLayerDefinition(LeviathanModel.LAYER, LeviathanModel::createBodyLayer);
         event.registerLayerDefinition(LeviathanEggModel.LAYER, LeviathanEggModel::createBodyLayer);
     }
@@ -19,6 +20,7 @@ public class ClientEvents {
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.LEVIATHAN_CUB.get(), LeviathanCubRenderer::new);
+        event.registerEntityRenderer(ModEntities.LEVIATHAN_TEEN.get(), LeviathanTeenRenderer::new);
         event.registerEntityRenderer(ModEntities.LEVIATHAN.get(), LeviathanRenderer::new);
         event.registerEntityRenderer(ModEntities.ABYSS_BOLT.get(), AbyssBoltRenderer::new);
         event.registerEntityRenderer(ModEntities.LEVIATHAN_EGG.get(), LeviathanEggRenderer::new);

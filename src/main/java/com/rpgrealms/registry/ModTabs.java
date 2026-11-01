@@ -19,6 +19,7 @@ public class ModTabs {
                     .displayItems((params, output) -> {
                         output.accept(ModItems.LEVIATHAN_EGG.get());
                         output.accept(ModItems.LEVIATHAN_CUB_SPAWN_EGG.get());
+                        output.accept(ModItems.LEVIATHAN_TEEN_SPAWN_EGG.get());
                         output.accept(ModItems.LEVIATHAN_SPAWN_EGG.get());
                     })
                     .build());

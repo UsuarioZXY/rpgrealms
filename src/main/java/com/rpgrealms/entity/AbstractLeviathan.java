@@ -102,6 +102,87 @@ public abstract class AbstractLeviathan extends WaterAnimal {
         }
     }
 
+    /** Embiste y muerde a quien la hirió, sin pathfinding (su hitbox es demasiado grande para él). */
+    public static class BiteGoal extends Goal {
+        private final AbstractLeviathan mob;
+        private final double speed;
+        private int biteCooldown;
+
+        public BiteGoal(AbstractLeviathan mob, double speed) {
+            this.mob = mob;
+            this.speed = speed;
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            net.minecraft.world.entity.LivingEntity t = this.mob.getTarget();
+            return t != null && t.isAlive();
+        }
+
+        @Override
+        public boolean requiresUpdateEveryTick() {
+            return true;
+        }
+
+        @Override
+        public void tick() {
+            net.minecraft.world.entity.LivingEntity target = this.mob.getTarget();
+            if (target == null) {
+                return;
+            }
+            this.biteCooldown--;
+            Vec3 center = target.position().add(0.0D, target.getBbHeight() * 0.5D, 0.0D);
+            double dist = this.mob.getMouthPos().distanceTo(center);
+            if (dist < 2.0D + this.mob.bodyScale() * 0.6D + target.getBbWidth() && this.biteCooldown <= 0) {
+                this.mob.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
+                this.mob.doHurtTarget(target);
+                this.biteCooldown = 20;
+            }
+            if (this.mob.isWaterPoint(center.x, center.y, center.z)) {
+                this.mob.getMoveControl().setWantedPosition(center.x, center.y, center.z, this.speed);
+            }
+        }
+    }
+
+    /**
+     * Crece: se sustituye por la siguiente etapa si ésta cabe en el sitio (prueba también un poco más arriba).
+     * Devuelve false si no hay espacio (se reintenta más tarde).
+     */
+    protected boolean growInto(EntityType<? extends AbstractLeviathan> type) {
+        if (!(this.level() instanceof net.minecraft.server.level.ServerLevel sl)) {
+            return false;
+        }
+        AbstractLeviathan next = type.create(sl);
+        if (next == null) {
+            return false;
+        }
+        boolean fits = false;
+        for (double lift : new double[]{0.0D, 1.5D, 3.0D}) {
+            next.moveTo(this.getX(), this.getY() + lift, this.getZ(), this.getYRot(), 0.0F);
+            if (sl.noCollision(next)) {
+                fits = true;
+                break;
+            }
+        }
+        if (!fits) {
+            return false;
+        }
+        if (this.hasCustomName()) {
+            next.setCustomName(this.getCustomName());
+        }
+        next.setPersistenceRequired();
+        sl.addFreshEntity(next);
+        sl.sendParticles(ParticleTypes.END_ROD, next.getX(), next.getY() + next.getBbHeight() * 0.5D, next.getZ(),
+                80, next.getBbWidth() * 0.5D, next.getBbHeight() * 0.3D, next.getBbWidth() * 0.5D, 0.05D);
+        sl.sendParticles(ParticleTypes.GLOW, next.getX(), next.getY() + next.getBbHeight() * 0.5D, next.getZ(),
+                60, next.getBbWidth() * 0.5D, next.getBbHeight() * 0.3D, next.getBbWidth() * 0.5D, 0.05D);
+        sl.playSound(null, next.getX(), next.getY(), next.getZ(), net.minecraft.sounds.SoundEvents.ENDER_DRAGON_GROWL,
+                net.minecraft.sounds.SoundSource.NEUTRAL, 3.0F, 0.9F);
+        this.discard();
+        return true;
+    }
+
     /** Nada sin rumbo con calma, como una ballena: destinos lejanos, sin chocar y sin hundirse hasta el fondo. */
     public static class RoamGoal extends Goal {
         private final AbstractLeviathan mob;
@@ -362,7 +443,7 @@ public abstract class AbstractLeviathan extends WaterAnimal {
     }
 
     /** Escala del modelo (para colocar las puntas de las aletas). */
-    protected abstract double bodyScale();
+    public abstract double bodyScale();
 
     /**
      * Rastro místico, tranquilo como el de una ballena: motas cian que se funden a violeta a lo largo del cuerpo,

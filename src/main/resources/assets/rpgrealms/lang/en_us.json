@@ -7,5 +7,7 @@
   "entity.rpgrealms.leviathan": "Leviathan",
   "entity.rpgrealms.abyss_bolt": "Abyss Orb",
   "item.rpgrealms.leviathan_egg": "Leviathan Egg",
-  "entity.rpgrealms.leviathan_egg": "Leviathan Egg"
+  "entity.rpgrealms.leviathan_egg": "Leviathan Egg",
+  "item.rpgrealms.leviathan_teen_spawn_egg": "Leviathan Teen Spawn Egg",
+  "entity.rpgrealms.leviathan_teen": "Leviathan Teen"
 }

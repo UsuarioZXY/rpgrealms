@@ -26,3 +26,10 @@ Mod RPG para **Minecraft 1.20.1 (Forge 47.3.0)**.
 
 ## Compilar en local
 Requiere JDK 17: `gradle build` (el jar queda en `build/libs/`).
+
+## Tres etapas: Cría → Adolescente → Adulto
+Diseño tipo ballena + tiburón + un toque de mosasaurio (hocico largo, aleta dorsal alta, cola vertical, aletas pectorales largas).
+- **Cría** (HP 160): crece en ~10 min y pasa a adolescente.
+- **Adolescente** (HP 450, daño 26, pacífico, sin ataques a distancia): crece en ~20 min y pasa a adulto. Huevo generador en la pestaña creativa.
+- **Adulto** (HP 1500): orbes y rayo.
+Si no hay espacio para la siguiente etapa, reintenta cada pocos segundos.

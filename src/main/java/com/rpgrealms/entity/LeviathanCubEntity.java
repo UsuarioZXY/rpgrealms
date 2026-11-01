@@ -27,8 +27,8 @@ import net.minecraft.world.level.Level;
  */
 public class LeviathanCubEntity extends AbstractLeviathan {
 
-    /** Ticks de vida hasta convertirse en adulto (24000 = 1 día de Minecraft = 20 min). */
-    public static final int GROW_TICKS = 24000;
+    /** Ticks de vida hasta convertirse en adolescente (12000 = 10 min). */
+    public static final int GROW_TICKS = 12000;
 
     private int growAge;
 
@@ -115,37 +115,11 @@ public class LeviathanCubEntity extends AbstractLeviathan {
         }
     }
 
-    /** Se convierte en Leviatán adulto si hay sitio para su cuerpo; si no, lo reintenta en unos segundos. */
+    /** Se convierte en adolescente si hay sitio para su cuerpo; si no, lo reintenta en unos segundos. */
     private void growUp() {
-        if (!(this.level() instanceof ServerLevel sl)) {
-            return;
-        }
-        LeviathanEntity adult = ModEntities.LEVIATHAN.get().create(sl);
-        if (adult == null) {
-            return;
-        }
-        boolean fits = false;
-        for (double lift : new double[]{0.0D, 1.5D, 3.0D}) {
-            adult.moveTo(this.getX(), this.getY() + lift, this.getZ(), this.getYRot(), 0.0F);
-            if (sl.noCollision(adult)) {
-                fits = true;
-                break;
-            }
-        }
-        if (!fits) {
+        if (!this.growInto(ModEntities.LEVIATHAN_TEEN.get())) {
             this.growAge = GROW_TICKS - 100;   // reintento en 5 s
-            return;
         }
-        if (this.hasCustomName()) {
-            adult.setCustomName(this.getCustomName());
-        }
-        adult.setPersistenceRequired();
-        sl.addFreshEntity(adult);
-        sl.sendParticles(ParticleTypes.END_ROD, adult.getX(), adult.getY() + 3.0D, adult.getZ(), 80, 4.0D, 2.0D, 4.0D, 0.05D);
-        sl.sendParticles(ParticleTypes.GLOW, adult.getX(), adult.getY() + 3.0D, adult.getZ(), 60, 4.0D, 2.0D, 4.0D, 0.05D);
-        sl.playSound(null, adult.getX(), adult.getY(), adult.getZ(), SoundEvents.ENDER_DRAGON_GROWL,
-                SoundSource.NEUTRAL, 3.0F, 0.7F);
-        this.discard();
     }
 
     @Override
@@ -163,14 +137,14 @@ public class LeviathanCubEntity extends AbstractLeviathan {
     @Override
     protected void registerGoals() {
         // Defensa: solo ataca a quien la haya herido.
-        this.goalSelector.addGoal(0, new DefendGoal(this));
+        this.goalSelector.addGoal(0, new BiteGoal(this, 1.6D));
         // Pacífica: nada tranquila por el océano.
         this.goalSelector.addGoal(1, new RoamGoal(this, 30.0D, 0.6D));
         this.targetSelector.addGoal(0, new HurtByTargetGoal(this));
     }
 
     @Override
-    protected double bodyScale() {
+    public double bodyScale() {
         return 2.6D;
     }
 
@@ -179,52 +153,9 @@ public class LeviathanCubEntity extends AbstractLeviathan {
         return 0.50D;   // ~10 bloques/s: mucho más rápida que el adulto
     }
 
-    /** Embiste y muerde al que la hirió, sin pathfinding (su hitbox es demasiado grande para él). */
-    static class DefendGoal extends Goal {
-        private final LeviathanCubEntity mob;
-        private int biteCooldown;
-
-        DefendGoal(LeviathanCubEntity mob) {
-            this.mob = mob;
-            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
-        }
-
-        @Override
-        public boolean canUse() {
-            LivingEntity t = this.mob.getTarget();
-            return t != null && t.isAlive();
-        }
-
-        @Override
-        public boolean requiresUpdateEveryTick() {
-            return true;
-        }
-
-        @Override
-        public void tick() {
-            LivingEntity target = this.mob.getTarget();
-            if (target == null) {
-                return;
-            }
-            this.biteCooldown--;
-            Vec3 center = target.position().add(0.0D, target.getBbHeight() * 0.5D, 0.0D);
-            double dist = this.mob.getMouthPos().distanceTo(center);
-            if (dist < 3.5D + target.getBbWidth()) {
-                if (this.biteCooldown <= 0) {
-                    this.mob.swing(InteractionHand.MAIN_HAND);
-                    this.mob.doHurtTarget(target);
-                    this.biteCooldown = 20;
-                }
-            }
-            if (this.mob.isWaterPoint(center.x, center.y, center.z)) {
-                this.mob.getMoveControl().setWantedPosition(center.x, center.y, center.z, 1.6D);
-            }
-        }
-    }
-
     @Override
     protected double mouthForward() {
-        return 8.5D;
+        return 11.0D;
     }
 
     @Override
@@ -234,7 +165,7 @@ public class LeviathanCubEntity extends AbstractLeviathan {
 
     @Override
     protected double trailBack() {
-        return 18.0D;
+        return 13.5D;
     }
 
     @Override

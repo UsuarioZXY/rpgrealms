@@ -17,6 +17,7 @@ public class ModEvents {
     @SubscribeEvent
     public static void registerAttributes(EntityAttributeCreationEvent event) {
         event.put(ModEntities.LEVIATHAN_CUB.get(), LeviathanCubEntity.createAttributes().build());
+        event.put(ModEntities.LEVIATHAN_TEEN.get(), com.rpgrealms.entity.LeviathanTeenEntity.createAttributes().build());
         event.put(ModEntities.LEVIATHAN.get(), LeviathanEntity.createAttributes().build());
     }
 
