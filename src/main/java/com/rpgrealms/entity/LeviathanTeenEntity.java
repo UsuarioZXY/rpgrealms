@@ -83,7 +83,7 @@ public class LeviathanTeenEntity extends AbstractLeviathan {
 
     @Override
     protected double mouthForward() {
-        return 18.0D;
+        return 14.0D;
     }
 
     @Override
