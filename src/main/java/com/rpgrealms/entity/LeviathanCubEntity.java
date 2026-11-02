@@ -165,7 +165,7 @@ public class LeviathanCubEntity extends AbstractLeviathan {
 
     @Override
     protected double trailBack() {
-        return 13.5D;
+        return 12.0D;
     }
 
     @Override

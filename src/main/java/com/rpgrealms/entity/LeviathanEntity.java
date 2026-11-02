@@ -169,7 +169,7 @@ public class LeviathanEntity extends AbstractLeviathan {
 
     @Override
     protected double trailBack() {
-        return 48.0D;
+        return 43.0D;
     }
 
     @Override

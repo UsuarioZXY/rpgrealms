@@ -36,3 +36,6 @@ Si no hay espacio para la siguiente etapa, reintenta cada pocos segundos.
 
 ## Rediseño realista (v3)
 Cuerpo más ancho y redondeado con afinado suave hacia la cola, aleta dorsal baja tipo ballena y aletas pectorales anchas. Texturas naturales: contraluz (lomo oscuro, vientre claro), moteado, cicatrices, pliegues ventrales y ojos pequeños oscuros. El brillo bioluminiscente se mantiene pero más tenue.
+
+## Rediseño v4 (ballena)
+Cuerpo profundo y fusiforme, cabeza ancha integrada al cuerpo, cola con aletas HORIZONTALES (lóbulos) que bate de arriba abajo como las ballenas, aletas pectorales largas y dorsal baja.
