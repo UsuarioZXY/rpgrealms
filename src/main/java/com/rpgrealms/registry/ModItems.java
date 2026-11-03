@@ -25,6 +25,9 @@ public class ModItems {
     public static final RegistryObject<Item> LEVIATHAN_EGG = ITEMS.register("leviathan_egg",
             () -> new LeviathanEggItem(new Item.Properties().stacksTo(16)));
 
+    public static final RegistryObject<Item> LEVIATHAN_NEST = ITEMS.register("leviathan_nest",
+            () -> new net.minecraft.world.item.BlockItem(ModBlocks.LEVIATHAN_NEST.get(), new Item.Properties()));
+
     // Munición del adulto (no se obtiene; solo sirve de modelo del proyectil)
     public static final RegistryObject<Item> ABYSS_ORB = ITEMS.register("abyss_orb",
             () -> new Item(new Item.Properties()));

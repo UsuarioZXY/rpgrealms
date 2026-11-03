@@ -56,7 +56,23 @@ public class LeviathanEggRenderer extends EntityRenderer<LeviathanEggEntity> {
         poseStack.translate(0.0F, Math.max(0.0F, Mth.sin(t * 1.1F)) * 0.06F * gate * progress, 0.0F);
         poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.sin(t * 0.9F) * amp));
         poseStack.mulPose(Axis.XP.rotationDegrees(Mth.cos(t * 0.7F) * amp * 0.6F));
-        poseStack.scale(-pulseScale, -pulseScale, pulseScale);
+        // Golpe: se inclina alejándose del golpe, rebota y se aplasta un poco
+        float hitK = Mth.clamp((egg.getHitTicks() - partialTick) / 10.0F, 0.0F, 1.0F);
+        float squash = 1.0F;
+        if (hitK > 0.0F) {
+            float dirRad = egg.getHitDir() * 0.017453292F;
+            float ang = Mth.sin(hitK * 9.0F) * hitK * 16.0F;
+            poseStack.mulPose(Axis.XP.rotationDegrees(Mth.sin(dirRad) * ang));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(-Mth.cos(dirRad) * ang));
+            squash = 1.0F - 0.07F * hitK * Math.abs(Mth.sin(hitK * 9.0F));
+        }
+        // Últimos 5 s: sacudida fuerte y destello
+        float last = Mth.clamp(1.0F - egg.getTicksLeft() / 100.0F, 0.0F, 1.0F);
+        if (last > 0.0F && egg.getTicksLeft() > 0) {
+            poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.sin(t * 3.1F) * 4.0F * last));
+            poseStack.mulPose(Axis.XP.rotationDegrees(Mth.cos(t * 2.7F) * 3.0F * last));
+        }
+        poseStack.scale(-pulseScale, -pulseScale * squash, pulseScale);
         poseStack.translate(0.0F, -1.501F, 0.0F);
 
         VertexConsumer body = buffer.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
@@ -64,8 +80,9 @@ public class LeviathanEggRenderer extends EntityRenderer<LeviathanEggEntity> {
 
         // Dos redes de luz en contrafase: la energía "sube y baja" por el huevo
         float speed = 0.07F + progress * 0.22F;
-        float a = 0.45F + 0.4F * Mth.sin(t * speed) + beat * 0.5F * (0.4F + progress);
-        float b = 0.45F + 0.4F * Mth.sin(t * speed + 2.4F) + beat * 0.5F * (0.4F + progress);
+        float flash = last * 0.9F + hitK * 0.8F;
+        float a = 0.45F + 0.4F * Mth.sin(t * speed) + beat * 0.5F * (0.4F + progress) + flash;
+        float b = 0.45F + 0.4F * Mth.sin(t * speed + 2.4F) + beat * 0.5F * (0.4F + progress) + flash;
         VertexConsumer g1 = buffer.getBuffer(RenderType.eyes(RINGS));
         this.model.renderToBuffer(poseStack, g1, 15728640, OverlayTexture.NO_OVERLAY,
                 0.3F * a, 0.9F * a, 1.0F * a, 1.0F);
@@ -74,8 +91,9 @@ public class LeviathanEggRenderer extends EntityRenderer<LeviathanEggEntity> {
                 0.5F * b, 0.7F * b, 1.0F * b, 1.0F);
 
         // Grietas que aparecen poco a poco y brillan al final
-        if (progress > 0.35F) {
-            float ca = Mth.clamp((progress - 0.35F) / 0.55F, 0.0F, 1.0F);
+        float damage = Mth.clamp((1.0F - egg.getHealthFraction()) * 1.3F, 0.0F, 1.0F);
+        float ca = Math.max(damage, progress > 0.35F ? Mth.clamp((progress - 0.35F) / 0.55F, 0.0F, 1.0F) : 0.0F);
+        if (ca > 0.0F) {
             poseStack.scale(1.012F, 1.004F, 1.012F);
             VertexConsumer cr = buffer.getBuffer(RenderType.entityTranslucent(CRACKS));
             this.model.renderToBuffer(poseStack, cr, 15728640, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, ca);

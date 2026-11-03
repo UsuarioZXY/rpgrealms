@@ -10,5 +10,6 @@
   "entity.rpgrealms.leviathan_egg": "Huevo de Vallsaron",
   "item.rpgrealms.leviathan_teen_spawn_egg": "Huevo generador de Vallsaron Adolescente",
   "entity.rpgrealms.leviathan_teen": "Vallsaron Adolescente",
-  "tooltip.rpgrealms.class_leviathan": "Clase: Leviatán"
+  "tooltip.rpgrealms.class_leviathan": "Clase: Leviatán",
+  "block.rpgrealms.leviathan_nest": "Nido de Vallsaron"
 }

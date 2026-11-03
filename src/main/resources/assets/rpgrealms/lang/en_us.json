@@ -10,5 +10,6 @@
   "entity.rpgrealms.leviathan_egg": "Vallsaron Egg",
   "item.rpgrealms.leviathan_teen_spawn_egg": "Juvenile Vallsaron Spawn Egg",
   "entity.rpgrealms.leviathan_teen": "Juvenile Vallsaron",
-  "tooltip.rpgrealms.class_leviathan": "Class: Leviathan"
+  "tooltip.rpgrealms.class_leviathan": "Class: Leviathan",
+  "block.rpgrealms.leviathan_nest": "Vallsaron Nest"
 }

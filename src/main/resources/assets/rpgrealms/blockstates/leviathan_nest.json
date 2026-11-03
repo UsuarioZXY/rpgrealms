@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "waterlogged=false": { "model": "rpgrealms:block/leviathan_nest" },
+    "waterlogged=true": { "model": "rpgrealms:block/leviathan_nest" }
+  }
+}
