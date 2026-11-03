@@ -14,13 +14,13 @@ public class ModItems {
 
     // Huevos generadores
     public static final RegistryObject<Item> LEVIATHAN_CUB_SPAWN_EGG = ITEMS.register("leviathan_cub_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.LEVIATHAN_CUB, 0x1F3A5F, 0x9FC5E8, new Item.Properties()));
+            () -> new com.rpgrealms.item.ClassSpawnEggItem(ModEntities.LEVIATHAN_CUB, 0x1F3A5F, 0x9FC5E8, new Item.Properties()));
 
     public static final RegistryObject<Item> LEVIATHAN_TEEN_SPAWN_EGG = ITEMS.register("leviathan_teen_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.LEVIATHAN_TEEN, 0x0A1630, 0x7FD0FF, new Item.Properties()));
+            () -> new com.rpgrealms.item.ClassSpawnEggItem(ModEntities.LEVIATHAN_TEEN, 0x0A1630, 0x7FD0FF, new Item.Properties()));
 
     public static final RegistryObject<Item> LEVIATHAN_SPAWN_EGG = ITEMS.register("leviathan_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntities.LEVIATHAN, 0x050B1A, 0x4DE8FF, new Item.Properties()));
+            () -> new com.rpgrealms.item.ClassSpawnEggItem(ModEntities.LEVIATHAN, 0x050B1A, 0x4DE8FF, new Item.Properties()));
 
     public static final RegistryObject<Item> LEVIATHAN_EGG = ITEMS.register("leviathan_egg",
             () -> new LeviathanEggItem(new Item.Properties().stacksTo(16)));

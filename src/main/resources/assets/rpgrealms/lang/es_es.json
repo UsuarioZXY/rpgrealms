@@ -1,13 +1,14 @@
 {
   "itemGroup.rpgrealms": "RPG Realms",
-  "item.rpgrealms.leviathan_cub_spawn_egg": "Huevo generador de Cría de Leviatán",
-  "item.rpgrealms.leviathan_spawn_egg": "Huevo generador de Leviatán",
+  "item.rpgrealms.leviathan_cub_spawn_egg": "Huevo generador de Cría de Vallsaron",
+  "item.rpgrealms.leviathan_spawn_egg": "Huevo generador de El Vallsaron",
   "item.rpgrealms.abyss_orb": "Orbe Abisal",
-  "entity.rpgrealms.leviathan_cub": "Cría de Leviatán",
-  "entity.rpgrealms.leviathan": "Leviatán",
+  "entity.rpgrealms.leviathan_cub": "Cría de Vallsaron",
+  "entity.rpgrealms.leviathan": "El Vallsaron",
   "entity.rpgrealms.abyss_bolt": "Orbe Abisal",
-  "item.rpgrealms.leviathan_egg": "Huevo de Leviatán",
-  "entity.rpgrealms.leviathan_egg": "Huevo de Leviatán",
-  "item.rpgrealms.leviathan_teen_spawn_egg": "Huevo generador de Leviatán Adolescente",
-  "entity.rpgrealms.leviathan_teen": "Leviatán Adolescente"
+  "item.rpgrealms.leviathan_egg": "Huevo de Vallsaron",
+  "entity.rpgrealms.leviathan_egg": "Huevo de Vallsaron",
+  "item.rpgrealms.leviathan_teen_spawn_egg": "Huevo generador de Vallsaron Adolescente",
+  "entity.rpgrealms.leviathan_teen": "Vallsaron Adolescente",
+  "tooltip.rpgrealms.class_leviathan": "Clase: Leviatán"
 }

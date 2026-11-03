@@ -1,13 +1,14 @@
 {
   "itemGroup.rpgrealms": "RPG Realms",
-  "item.rpgrealms.leviathan_cub_spawn_egg": "Leviathan Cub Spawn Egg",
-  "item.rpgrealms.leviathan_spawn_egg": "Leviathan Spawn Egg",
+  "item.rpgrealms.leviathan_cub_spawn_egg": "Vallsaron Hatchling Spawn Egg",
+  "item.rpgrealms.leviathan_spawn_egg": "Vallsaron Spawn Egg",
   "item.rpgrealms.abyss_orb": "Abyss Orb",
-  "entity.rpgrealms.leviathan_cub": "Leviathan Cub",
-  "entity.rpgrealms.leviathan": "Leviathan",
+  "entity.rpgrealms.leviathan_cub": "Vallsaron Hatchling",
+  "entity.rpgrealms.leviathan": "The Vallsaron",
   "entity.rpgrealms.abyss_bolt": "Abyss Orb",
-  "item.rpgrealms.leviathan_egg": "Leviathan Egg",
-  "entity.rpgrealms.leviathan_egg": "Leviathan Egg",
-  "item.rpgrealms.leviathan_teen_spawn_egg": "Leviathan Teen Spawn Egg",
-  "entity.rpgrealms.leviathan_teen": "Leviathan Teen"
+  "item.rpgrealms.leviathan_egg": "Vallsaron Egg",
+  "entity.rpgrealms.leviathan_egg": "Vallsaron Egg",
+  "item.rpgrealms.leviathan_teen_spawn_egg": "Juvenile Vallsaron Spawn Egg",
+  "entity.rpgrealms.leviathan_teen": "Juvenile Vallsaron",
+  "tooltip.rpgrealms.class_leviathan": "Class: Leviathan"
 }

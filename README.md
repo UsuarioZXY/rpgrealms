@@ -49,3 +49,9 @@ Runas luminosas a lo largo de los flancos, "constelaciones" de puntos de luz en 
 - Soplo de ballena con destellos cuando la cabeza asoma a la superficie.
 - Bendición del leviatán: jugadores cercanos (radio según etapa) reciben respiración acuática y visión nocturna (adolescente/adulto también gracia del delfín) mientras el leviatán está en paz.
 - Campanillas de amatista ocasionales; chispas al recibir daño; explosión de luz al morir.
+
+## El Vallsaron (Clase Leviatán)
+La criatura se llama **Vallsaron** y pertenece a la clase Leviatán (los huevos generadores lo indican en su descripción). Etapas: Cría de Vallsaron → Vallsaron Adolescente → El Vallsaron. Aletas pectorales mucho más grandes, garganta con surcos de rorcual bajo la mandíbula.
+
+## v7
+Silueta lineal cabeza→cuerpo (la cabeza ya no es más chica que el cuerpo), sin los dos bultos bajo la cabeza ni las aletitas de la cabeza, aletas pectorales y cola sueltan polvo místico al nadar.

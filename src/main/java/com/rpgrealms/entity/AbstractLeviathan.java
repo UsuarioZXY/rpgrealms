@@ -577,6 +577,37 @@ public abstract class AbstractLeviathan extends WaterAnimal {
                     net.minecraft.sounds.SoundSource.NEUTRAL, 1.5F, 0.6F, false);
         }
 
+        // Aletas pectorales y cola sueltan polvo místico mientras nadan (más al aletear rápido)
+        double spd = this.getDeltaMovement().length();
+        if (this.isInWater()) {
+            int per = 2 + (int) Math.min(4.0D, spd * 14.0D);
+            for (int sgn = -1; sgn <= 1; sgn += 2) {
+                for (int i = 0; i < per; i++) {
+                    double r = this.random.nextDouble();
+                    double lat = sc * (1.1D + r * 3.8D);              // a lo largo de la aleta, de la base a la punta
+                    double back = lat * 0.42D - sc * 0.25D;           // las aletas van barridas hacia atrás
+                    double px = this.getX() - fwd.x * back + side.x * sgn * lat;
+                    double pz = this.getZ() - fwd.z * back + side.z * sgn * lat;
+                    double py = cy - sc * 0.55D - r * sc * 0.25D;
+                    double vx = -this.getDeltaMovement().x * 0.3D + this.random.nextGaussian() * 0.01D;
+                    double vz = -this.getDeltaMovement().z * 0.3D + this.random.nextGaussian() * 0.01D;
+                    this.level().addParticle(i % 3 == 0 ? ParticleTypes.END_ROD : (i % 3 == 1 ? ParticleTypes.GLOW : big),
+                            px, py, pz, vx, -0.01D, vz);
+                    if (r > 0.85D) {
+                        this.level().addParticle(ParticleTypes.ENCHANT, px, py + 0.4D, pz, 0.0D, 0.6D, 0.0D);
+                    }
+                }
+            }
+            // la cola deja una estela de luz en abanico
+            double tailAlong = this.trailBack() * 0.95D;
+            for (int sgn = -1; sgn <= 1; sgn += 2) {
+                double lat = sc * (0.4D + this.random.nextDouble() * 1.4D);
+                this.level().addParticle(this.random.nextBoolean() ? ParticleTypes.END_ROD : big,
+                        this.getX() - fwd.x * tailAlong + side.x * sgn * lat, cy + (this.random.nextDouble() - 0.5D) * sc * 0.4D,
+                        this.getZ() - fwd.z * tailAlong + side.z * sgn * lat, 0.0D, 0.0D, 0.0D);
+            }
+        }
+
         // Soplo de ballena con destellos cuando la cabeza asoma
         double topY = this.getY() + this.getBbHeight();
         net.minecraft.core.BlockPos above = net.minecraft.core.BlockPos.containing(this.getX(), topY + 0.3D, this.getZ());
