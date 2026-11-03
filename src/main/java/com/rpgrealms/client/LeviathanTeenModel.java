@@ -295,7 +295,7 @@ public class LeviathanTeenModel extends EntityModel<LeviathanTeenEntity> {
                 PartPose.offset(0.0F, 0.0F, 9.0F));
         PartDefinition v_head = v_body.addOrReplaceChild("head",
                 CubeListBuilder.create().texOffs(84, 58).addBox(-12.0F, -12.0F, -13.16F, 24.0F, 24.0F, 13.0F),
-                PartPose.offset(0.0F, 0.0F, -13.0F));
+                PartPose.offset(0.0F, -2.0F, -13.0F));
         PartDefinition v_melon = v_head.addOrReplaceChild("melon",
                 CubeListBuilder.create().texOffs(122, 179).addBox(-7.5F, -17.029999999999998F, -11.9F, 15.0F, 6.0F, 9.0F),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
@@ -313,7 +313,7 @@ public class LeviathanTeenModel extends EntityModel<LeviathanTeenEntity> {
                 PartPose.offset(0.0F, 0.0F, -6.66F));
         PartDefinition v_jaw = v_head.addOrReplaceChild("jaw",
                 CubeListBuilder.create().texOffs(118, 98).addBox(-9.0F, 4.71F, -26.82F, 18.0F, 4.0F, 27.0F),
-                PartPose.offsetAndRotation(0.0F, 12.2F, -1.48F, 0.12F, 0.0F, 0.0F));
+                PartPose.offsetAndRotation(0.0F, 6.1F, -1.48F, 0.03F, 0.0F, 0.0F));
         PartDefinition v_jaw_tip = v_jaw.addOrReplaceChild("jaw_tip",
                 CubeListBuilder.create().texOffs(138, 159).addBox(-5.5F, 2.4899999999999998F, -13.16F, 11.0F, 6.0F, 13.0F),
                 PartPose.offset(0.0F, 0.0F, -26.64F));

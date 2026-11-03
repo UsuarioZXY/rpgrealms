@@ -472,7 +472,7 @@ public abstract class AbstractLeviathan extends WaterAnimal {
                 }
             }
         }
-        if (this.tickCount % 160 == 80 && this.random.nextInt(2) == 0) {
+        if (this.tickCount % 100 == 50) {
             this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
                     net.minecraft.sounds.SoundEvents.AMETHYST_BLOCK_CHIME, net.minecraft.sounds.SoundSource.NEUTRAL,
                     2.5F, 0.5F + this.random.nextFloat() * 0.3F);
@@ -520,40 +520,61 @@ public abstract class AbstractLeviathan extends WaterAnimal {
         double cx = this.getX() + fwd.x * ringAlong;
         double cz = this.getZ() + fwd.z * ringAlong;
 
-        // Dos hélices de luz que giran alrededor del cuerpo
-        double a = this.tickCount * 0.12D;
-        for (int k = 0; k < 2; k++) {
-            double ang = a + k * Math.PI;
-            double ox = side.x * Math.cos(ang) * ring;
-            double oz = side.z * Math.cos(ang) * ring;
-            double oy = Math.sin(ang) * ring * 0.7D;
-            double drift = (this.tickCount % 60) / 60.0D;
-            this.level().addParticle(ParticleTypes.END_ROD,
-                    cx + ox - fwd.x * drift * 2.0D, cy + oy, cz + oz - fwd.z * drift * 2.0D, 0.0D, 0.0D, 0.0D);
+        // Tres hélices de luz con estela que giran alrededor del cuerpo
+        ring = Math.max(2.0D, this.getBbWidth() * 0.6D);
+        boolean angryNow = this.isAggressive();
+        DustColorTransitionOptions big = new DustColorTransitionOptions(
+                angryNow ? new Vector3f(1.0F, 0.3F, 0.2F) : new Vector3f(0.3F, 0.95F, 1.0F),
+                angryNow ? new Vector3f(0.6F, 0.0F, 0.2F) : new Vector3f(0.7F, 0.3F, 1.0F), 2.6F);
+        double a = this.tickCount * 0.14D;
+        for (int k = 0; k < 3; k++) {
+            for (int t = 0; t < 4; t++) {
+                double ang = a - t * 0.13D + k * Math.PI * 2.0D / 3.0D;
+                double drift = (this.tickCount % 40) / 40.0D * 3.0D + t * 0.12D;
+                double px = cx + side.x * Math.cos(ang) * ring - fwd.x * drift;
+                double pz = cz + side.z * Math.cos(ang) * ring - fwd.z * drift;
+                double py = cy + Math.sin(ang) * ring * 0.8D;
+                if (t == 0) {
+                    this.level().addParticle(ParticleTypes.END_ROD, px, py, pz, 0.0D, 0.0D, 0.0D);
+                }
+                this.level().addParticle(t % 2 == 0 ? big : ParticleTypes.GLOW, px, py, pz, 0.0D, 0.0D, 0.0D);
+            }
         }
 
-        // Glifos que flotan hacia el cuerpo
-        if (this.tickCount % 3 == 0) {
-            double along = (this.random.nextDouble() - 0.4D) * this.mouthForward();
-            double gx = this.getX() + fwd.x * along + side.x * this.random.nextGaussian() * ring * 0.6D;
-            double gz = this.getZ() + fwd.z * along + side.z * this.random.nextGaussian() * ring * 0.6D;
-            this.level().addParticle(ParticleTypes.ENCHANT, gx, cy + ring * 0.5D, gz,
-                    this.random.nextGaussian() * 0.6D, 1.0D + this.random.nextDouble(), this.random.nextGaussian() * 0.6D);
+        // Glifos de encantamiento que caen sobre el cuerpo
+        int glyphs = 2 + (int) (sc * 0.6D);
+        for (int i = 0; i < glyphs; i++) {
+            double along = (this.random.nextDouble() - 0.4D) * this.mouthForward() * 1.4D;
+            double gx = this.getX() + fwd.x * along + side.x * this.random.nextGaussian() * ring * 0.8D;
+            double gz = this.getZ() + fwd.z * along + side.z * this.random.nextGaussian() * ring * 0.8D;
+            this.level().addParticle(ParticleTypes.ENCHANT, gx, cy + ring * 0.7D, gz,
+                    this.random.nextGaussian() * 0.8D, 1.2D + this.random.nextDouble() * 1.2D, this.random.nextGaussian() * 0.8D);
         }
 
-        // Latido: un anillo de destellos se expande desde el cuerpo
-        if (this.tickCount % 100 == 0) {
-            int points = (int) Math.min(64, 24 + sc * 5);
+        // Chispas de aura sueltas alrededor
+        for (int i = 0; i < 2 + (int) sc / 2; i++) {
+            double along = (this.random.nextDouble() - 0.5D) * this.mouthForward() * 2.0D;
+            this.level().addParticle(this.random.nextInt(3) == 0 ? ParticleTypes.ELECTRIC_SPARK : ParticleTypes.GLOW,
+                    this.getX() + fwd.x * along + side.x * this.random.nextGaussian() * ring,
+                    cy + this.random.nextGaussian() * ring * 0.6D,
+                    this.getZ() + fwd.z * along + side.z * this.random.nextGaussian() * ring,
+                    this.random.nextGaussian() * 0.02D, 0.03D, this.random.nextGaussian() * 0.02D);
+        }
+
+        // Latido cada 3 s: dos anillos de luz (vertical y horizontal) que se expanden
+        if (this.tickCount % 60 == 0) {
+            int points = (int) Math.min(96, 36 + sc * 8);
             for (int i = 0; i < points; i++) {
                 double ang = Math.PI * 2.0D * i / points;
                 double dx = side.x * Math.cos(ang);
                 double dz = side.z * Math.cos(ang);
                 double dy = Math.sin(ang);
-                this.level().addParticle(ParticleTypes.GLOW, cx, cy, cz, dx * 0.45D, dy * 0.3D, dz * 0.45D);
-                if (i % 2 == 0) {
-                    this.level().addParticle(ParticleTypes.END_ROD, cx, cy, cz, dx * 0.55D, dy * 0.38D, dz * 0.55D);
-                }
+                this.level().addParticle(ParticleTypes.GLOW, cx, cy, cz, dx * 0.6D, dy * 0.4D, dz * 0.6D);
+                this.level().addParticle(big, cx, cy, cz, dx * 0.5D, dy * 0.33D, dz * 0.5D);
+                this.level().addParticle(ParticleTypes.END_ROD, cx, cy, cz, Math.cos(ang) * 0.7D, 0.0D, Math.sin(ang) * 0.7D);
             }
+            this.level().playLocalSound(this.getX(), cy, this.getZ(), net.minecraft.sounds.SoundEvents.AMETHYST_BLOCK_RESONATE,
+                    net.minecraft.sounds.SoundSource.NEUTRAL, 1.5F, 0.6F, false);
         }
 
         // Soplo de ballena con destellos cuando la cabeza asoma

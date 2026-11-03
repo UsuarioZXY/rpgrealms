@@ -45,7 +45,7 @@ Runas luminosas a lo largo de los flancos, "constelaciones" de puntos de luz en 
 
 ## Efectos mágicos (v6)
 - Dos hélices de luz giran alrededor del cuerpo y glifos de encantamiento caen sobre él.
-- Cada 5 s un latido expande un anillo de destellos.
+- Cada 3 s un latido expande un anillo de destellos.
 - Soplo de ballena con destellos cuando la cabeza asoma a la superficie.
 - Bendición del leviatán: jugadores cercanos (radio según etapa) reciben respiración acuática y visión nocturna (adolescente/adulto también gracia del delfín) mientras el leviatán está en paz.
 - Campanillas de amatista ocasionales; chispas al recibir daño; explosión de luz al morir.
