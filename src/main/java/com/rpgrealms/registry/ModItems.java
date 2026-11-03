@@ -28,6 +28,23 @@ public class ModItems {
     public static final RegistryObject<Item> LEVIATHAN_NEST = ITEMS.register("leviathan_nest",
             () -> new net.minecraft.world.item.BlockItem(ModBlocks.LEVIATHAN_NEST.get(), new Item.Properties()));
 
+    // Botín del Vallsaron
+    public static final RegistryObject<Item> VALLSARON_SCALE = ITEMS.register("vallsaron_scale",
+            () -> new com.rpgrealms.item.VallsaronLootItem(new Item.Properties().rarity(net.minecraft.world.item.Rarity.UNCOMMON),
+                    "item.rpgrealms.vallsaron_scale.lore", false));
+    public static final RegistryObject<Item> VALLSARON_FIN = ITEMS.register("vallsaron_fin",
+            () -> new com.rpgrealms.item.VallsaronLootItem(new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE),
+                    "item.rpgrealms.vallsaron_fin.lore", false));
+    public static final RegistryObject<Item> VALLSARON_TOOTH = ITEMS.register("vallsaron_tooth",
+            () -> new com.rpgrealms.item.VallsaronLootItem(new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE),
+                    "item.rpgrealms.vallsaron_tooth.lore", false));
+    public static final RegistryObject<Item> VALLSARON_EYE = ITEMS.register("vallsaron_eye",
+            () -> new com.rpgrealms.item.VallsaronLootItem(new Item.Properties().stacksTo(16).rarity(net.minecraft.world.item.Rarity.EPIC),
+                    "item.rpgrealms.vallsaron_eye.lore", true));
+    public static final RegistryObject<Item> VALLSARON_HEART = ITEMS.register("vallsaron_heart",
+            () -> new com.rpgrealms.item.VallsaronLootItem(new Item.Properties().stacksTo(16).rarity(net.minecraft.world.item.Rarity.EPIC),
+                    "item.rpgrealms.vallsaron_heart.lore", true));
+
     // Munición del adulto (no se obtiene; solo sirve de modelo del proyectil)
     public static final RegistryObject<Item> ABYSS_ORB = ITEMS.register("abyss_orb",
             () -> new Item(new Item.Properties()));

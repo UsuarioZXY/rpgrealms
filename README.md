@@ -4,7 +4,7 @@ Mod RPG para **Minecraft 1.20.1 (Forge 47.3.0)**.
 
 ## Contenido actual
 - **Cría de Leviatán** (~30 bloques, diseño de ballena): pacífica y muy rápida; 160 de vida y 14 de daño. Aparece en océanos profundos. Solo se defiende si la golpeas.
-- **Leviatán** (~65 bloques): colosal, lento y con diseño de ballena (lomo oscuro, vientre claro con pliegues, cabeza con melón, aletas pectorales largas, cola ancha, anzuelo luminoso y boca con dos hileras de dientes pequeños). 1500 de vida, barra de jefe. Solo con huevo generador por ahora (la dimensión se rehará como planeta).
+- **Leviatán** (~65 bloques): colosal, lento y con diseño de ballena (lomo oscuro, vientre claro con pliegues, cabeza con melón, aletas pectorales largas, cola ancha, anzuelo luminoso y boca con dos hileras de dientes pequeños). 1500 de vida (sin barra de jefe). Solo con huevo generador por ahora (la dimensión se rehará como planeta).
   - Con más del 50 % de vida va de frente a morder al jugador.
   - Con 50 % o menos se enfurece (barra roja) y prefiere el rayo; bajo el 25 % casi solo lo usa.
   - Ataques: orbes abisales con explosión en área y rayo cargado con haz luminoso.
@@ -60,3 +60,10 @@ Silueta lineal cabeza→cuerpo (la cabeza ya no es más chica que el cuerpo), si
 - **Huevo:** se empuja (jugadores y leviatanes lo hacen rodar), se rompe a golpes (20 de vida; se sacude, suelta chispas y se agrieta; al romperse no nace nada y suelta fragmentos de prismarina) y tarda 15 minutos en eclosionar con fases (golpecitos, latidos más rápidos, grietas, sacudida y destello final). Agachado + clic derecho con la mano vacía lo recoge intacto. Nueva textura con espiral y cinturón de runas.
 - Sin hembras: todos los Vallsaron tienen sus aletas dorsales.
 - **Nido de Vallsaron:** bloque colocable (también bajo el agua, sobre suelo firme) que genera un huevo cada ~8 minutos mientras haya menos de 2 huevos en 12 bloques. Brilla (luz 7) y suelta destellos.
+
+## Botín del Vallsaron (v9)
+Sin barra de jefe. Objetos: Escama, Aleta, Diente, Ojo (brillo mágico) y Corazón de Vallsaron (brillo mágico). Solo se consiguen como botín (por ahora no tienen otro uso).
+- Cría: Escama 1-2 (80%), Diente (10%).
+- Adolescente: Escama 2-4, Aleta (50%), Diente 1-2 (40%), Ojo (15%), Corazón (5%).
+- Adulto: Escama 4-8, Aleta 1-2, Diente 2-4, Ojo (70%), Corazón (40%) + Huevo (50%).
+Saqueo aumenta cantidades y probabilidades.

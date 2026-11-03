@@ -22,6 +22,11 @@ public class ModTabs {
                         output.accept(ModItems.LEVIATHAN_CUB_SPAWN_EGG.get());
                         output.accept(ModItems.LEVIATHAN_TEEN_SPAWN_EGG.get());
                         output.accept(ModItems.LEVIATHAN_SPAWN_EGG.get());
+                        output.accept(ModItems.VALLSARON_SCALE.get());
+                        output.accept(ModItems.VALLSARON_FIN.get());
+                        output.accept(ModItems.VALLSARON_TOOTH.get());
+                        output.accept(ModItems.VALLSARON_EYE.get());
+                        output.accept(ModItems.VALLSARON_HEART.get());
                     })
                     .build());
 }

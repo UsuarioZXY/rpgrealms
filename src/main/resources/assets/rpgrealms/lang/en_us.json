@@ -11,5 +11,15 @@
   "item.rpgrealms.leviathan_teen_spawn_egg": "Juvenile Vallsaron Spawn Egg",
   "entity.rpgrealms.leviathan_teen": "Juvenile Vallsaron",
   "tooltip.rpgrealms.class_leviathan": "Class: Leviathan",
-  "block.rpgrealms.leviathan_nest": "Vallsaron Nest"
+  "block.rpgrealms.leviathan_nest": "Vallsaron Nest",
+  "item.rpgrealms.vallsaron_scale": "Vallsaron Scale",
+  "item.rpgrealms.vallsaron_scale.lore": "Armor of the deep, it glows when the tide rises.",
+  "item.rpgrealms.vallsaron_fin": "Vallsaron Fin",
+  "item.rpgrealms.vallsaron_fin.lore": "It still ripples as if it were swimming.",
+  "item.rpgrealms.vallsaron_tooth": "Vallsaron Tooth",
+  "item.rpgrealms.vallsaron_tooth.lore": "It only bit to defend what it loved.",
+  "item.rpgrealms.vallsaron_eye": "Vallsaron Eye",
+  "item.rpgrealms.vallsaron_eye.lore": "It watched the abyss for a thousand years.",
+  "item.rpgrealms.vallsaron_heart": "Vallsaron Heart",
+  "item.rpgrealms.vallsaron_heart.lore": "It still beats, slow as the ocean."
 }

@@ -72,10 +72,6 @@ public class LeviathanEntity extends AbstractLeviathan {
 
     private boolean enraged = false;
 
-    private final ServerBossEvent bossEvent = new ServerBossEvent(
-            Component.translatable("entity.rpgrealms.leviathan"),
-            BossEvent.BossBarColor.BLUE, BossEvent.BossBarOverlay.NOTCHED_12);
-
     public LeviathanEntity(EntityType<? extends WaterAnimal> type, Level level) {
         super(type, level, 3.2F);
         this.xpReward = 500;
@@ -347,15 +343,13 @@ public class LeviathanEntity extends AbstractLeviathan {
         }
     }
 
-    // ------------------------------------------------------------------ barra de jefe
+    // ------------------------------------------------------------------ furia y retroceso
 
     @Override
     protected void customServerAiStep() {
         super.customServerAiStep();
-        this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
         if (!this.enraged && this.getHealth() <= this.getMaxHealth() * 0.5F) {
             this.enraged = true;
-            this.bossEvent.setColor(BossEvent.BossBarColor.RED);
             this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
                     SoundEvents.ENDER_DRAGON_GROWL, SoundSource.HOSTILE, 8.0F, 0.6F);
             if (this.level() instanceof ServerLevel serverLevel) {
@@ -374,31 +368,7 @@ public class LeviathanEntity extends AbstractLeviathan {
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        if (this.hasCustomName()) {
-            this.bossEvent.setName(this.getDisplayName());
-        }
         this.enraged = this.getHealth() <= this.getMaxHealth() * 0.5F;
-        if (this.enraged) {
-            this.bossEvent.setColor(BossEvent.BossBarColor.RED);
-        }
-    }
-
-    @Override
-    public void setCustomName(Component name) {
-        super.setCustomName(name);
-        this.bossEvent.setName(this.getDisplayName());
-    }
-
-    @Override
-    public void startSeenByPlayer(ServerPlayer player) {
-        super.startSeenByPlayer(player);
-        this.bossEvent.addPlayer(player);
-    }
-
-    @Override
-    public void stopSeenByPlayer(ServerPlayer player) {
-        super.stopSeenByPlayer(player);
-        this.bossEvent.removePlayer(player);
     }
 
     // ------------------------------------------------------------------ sonidos
