@@ -438,8 +438,139 @@ public abstract class AbstractLeviathan extends WaterAnimal {
         }
         if (this.level().isClientSide) {
             this.mysticTrail();
+            this.clientMagic();
+        } else if (this.isAlive()) {
+            this.serverMagic();
         }
         super.aiStep();
+    }
+
+    /** Radio de la bendición del leviatán (0 = no bendice). */
+    protected double blessRadius() {
+        return this.bodyScale() * 3.5D;
+    }
+
+    /**
+     * Magia del lado del servidor: bendición (respiración acuática, visión nocturna y gracia del delfín) para los
+     * jugadores cercanos mientras está en paz, y campanillas místicas de vez en cuando.
+     */
+    private void serverMagic() {
+        if (this.tickCount % 40 == 0 && this.getTarget() == null && !this.isAggressive()) {
+            double r = this.blessRadius();
+            for (net.minecraft.world.entity.player.Player p : this.level().getEntitiesOfClass(
+                    net.minecraft.world.entity.player.Player.class, this.getBoundingBox().inflate(r))) {
+                if (p.isSpectator() || p.distanceToSqr(this) > r * r) {
+                    continue;
+                }
+                p.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                        net.minecraft.world.effect.MobEffects.WATER_BREATHING, 140, 0, true, false, true));
+                p.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                        net.minecraft.world.effect.MobEffects.NIGHT_VISION, 260, 0, true, false, true));
+                if (this.bodyScale() >= 4.0D) {
+                    p.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                            net.minecraft.world.effect.MobEffects.DOLPHINS_GRACE, 100, 0, true, false, true));
+                }
+            }
+        }
+        if (this.tickCount % 160 == 80 && this.random.nextInt(2) == 0) {
+            this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
+                    net.minecraft.sounds.SoundEvents.AMETHYST_BLOCK_CHIME, net.minecraft.sounds.SoundSource.NEUTRAL,
+                    2.5F, 0.5F + this.random.nextFloat() * 0.3F);
+        }
+    }
+
+    @Override
+    public boolean hurt(net.minecraft.world.damagesource.DamageSource source, float amount) {
+        boolean r = super.hurt(source, amount);
+        if (r && this.level() instanceof net.minecraft.server.level.ServerLevel sl) {
+            double w = this.getBbWidth() * 0.4D;
+            sl.sendParticles(ParticleTypes.ELECTRIC_SPARK, this.getX(), this.getY() + this.getBbHeight() * 0.5D, this.getZ(),
+                    24, w, this.getBbHeight() * 0.25D, w, 0.25D);
+            sl.sendParticles(ParticleTypes.GLOW, this.getX(), this.getY() + this.getBbHeight() * 0.5D, this.getZ(),
+                    10, w, this.getBbHeight() * 0.25D, w, 0.05D);
+        }
+        return r;
+    }
+
+    @Override
+    public void die(net.minecraft.world.damagesource.DamageSource source) {
+        super.die(source);
+        if (this.level() instanceof net.minecraft.server.level.ServerLevel sl) {
+            double w = this.getBbWidth() * 0.6D;
+            double cy = this.getY() + this.getBbHeight() * 0.5D;
+            sl.sendParticles(ParticleTypes.END_ROD, this.getX(), cy, this.getZ(), 160, w, this.getBbHeight() * 0.4D, w, 0.12D);
+            sl.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, this.getX(), cy, this.getZ(), 80, w, this.getBbHeight() * 0.4D, w, 0.06D);
+            sl.sendParticles(ParticleTypes.GLOW, this.getX(), cy, this.getZ(), 120, w, this.getBbHeight() * 0.4D, w, 0.1D);
+            sl.playSound(null, this.getX(), cy, this.getZ(), net.minecraft.sounds.SoundEvents.BEACON_DEACTIVATE,
+                    net.minecraft.sounds.SoundSource.NEUTRAL, 4.0F, 0.6F);
+        }
+    }
+
+    /**
+     * Magia visual: anillo de luz que gira alrededor del cuerpo, glifos que caen sobre él, latido que expande un
+     * anillo de destellos y, en superficie, un soplo de ballena con destellos.
+     */
+    private void clientMagic() {
+        double sc = this.bodyScale();
+        Vec3 fwd = Vec3.directionFromRotation(0.0F, this.yBodyRot);
+        Vec3 side = new Vec3(-fwd.z, 0.0D, fwd.x);
+        double cy = this.getY() + this.getBbHeight() * 0.5D;
+        double ring = Math.max(1.5D, this.getBbWidth() * 0.45D);
+        double ringAlong = this.mouthForward() * 0.1D;
+        double cx = this.getX() + fwd.x * ringAlong;
+        double cz = this.getZ() + fwd.z * ringAlong;
+
+        // Dos hélices de luz que giran alrededor del cuerpo
+        double a = this.tickCount * 0.12D;
+        for (int k = 0; k < 2; k++) {
+            double ang = a + k * Math.PI;
+            double ox = side.x * Math.cos(ang) * ring;
+            double oz = side.z * Math.cos(ang) * ring;
+            double oy = Math.sin(ang) * ring * 0.7D;
+            double drift = (this.tickCount % 60) / 60.0D;
+            this.level().addParticle(ParticleTypes.END_ROD,
+                    cx + ox - fwd.x * drift * 2.0D, cy + oy, cz + oz - fwd.z * drift * 2.0D, 0.0D, 0.0D, 0.0D);
+        }
+
+        // Glifos que flotan hacia el cuerpo
+        if (this.tickCount % 3 == 0) {
+            double along = (this.random.nextDouble() - 0.4D) * this.mouthForward();
+            double gx = this.getX() + fwd.x * along + side.x * this.random.nextGaussian() * ring * 0.6D;
+            double gz = this.getZ() + fwd.z * along + side.z * this.random.nextGaussian() * ring * 0.6D;
+            this.level().addParticle(ParticleTypes.ENCHANT, gx, cy + ring * 0.5D, gz,
+                    this.random.nextGaussian() * 0.6D, 1.0D + this.random.nextDouble(), this.random.nextGaussian() * 0.6D);
+        }
+
+        // Latido: un anillo de destellos se expande desde el cuerpo
+        if (this.tickCount % 100 == 0) {
+            int points = (int) Math.min(64, 24 + sc * 5);
+            for (int i = 0; i < points; i++) {
+                double ang = Math.PI * 2.0D * i / points;
+                double dx = side.x * Math.cos(ang);
+                double dz = side.z * Math.cos(ang);
+                double dy = Math.sin(ang);
+                this.level().addParticle(ParticleTypes.GLOW, cx, cy, cz, dx * 0.45D, dy * 0.3D, dz * 0.45D);
+                if (i % 2 == 0) {
+                    this.level().addParticle(ParticleTypes.END_ROD, cx, cy, cz, dx * 0.55D, dy * 0.38D, dz * 0.55D);
+                }
+            }
+        }
+
+        // Soplo de ballena con destellos cuando la cabeza asoma
+        double topY = this.getY() + this.getBbHeight();
+        net.minecraft.core.BlockPos above = net.minecraft.core.BlockPos.containing(this.getX(), topY + 0.3D, this.getZ());
+        if (this.isInWater() && !this.level().getFluidState(above).is(FluidTags.WATER)
+                && this.tickCount % 2 == 0) {
+            double bx = this.getX() + fwd.x * this.mouthForward() * 0.35D;
+            double bz = this.getZ() + fwd.z * this.mouthForward() * 0.35D;
+            for (int i = 0; i < 3; i++) {
+                this.level().addParticle(ParticleTypes.SPLASH, bx, topY, bz,
+                        this.random.nextGaussian() * 0.08D, 0.5D + this.random.nextDouble() * 0.3D, this.random.nextGaussian() * 0.08D);
+            }
+            this.level().addParticle(ParticleTypes.CLOUD, bx, topY + 0.5D, bz, 0.0D, 0.25D, 0.0D);
+            this.level().addParticle(ParticleTypes.END_ROD, bx, topY + 1.0D, bz,
+                    this.random.nextGaussian() * 0.05D, 0.2D, this.random.nextGaussian() * 0.05D);
+        }
     }
 
     /** Escala del modelo (para colocar las puntas de las aletas). */

@@ -330,22 +330,22 @@ public class LeviathanModel extends EntityModel<LeviathanEntity> {
                 CubeListBuilder.create().texOffs(108, 159).addBox(-2.1F, -2.28F, -13.16F, 2.0F, 7.0F, 13.0F),
                 PartPose.offset(-3.3000000000000003F, 0.0F, 0.0F));
         PartDefinition v_lip = v_jaw_tip.addOrReplaceChild("lip",
-                CubeListBuilder.create().texOffs(214, 222).addBox(-5.5F, -2.28F, -13.08F, 11.0F, 7.0F, 1.0F),
+                CubeListBuilder.create().texOffs(204, 222).addBox(-5.5F, -2.28F, -13.08F, 11.0F, 7.0F, 1.0F),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
         PartDefinition v_palate0 = v_head.addOrReplaceChild("palate0",
                 CubeListBuilder.create().texOffs(74, 195).addBox(-11.0F, 12.309999999999999F, -13.16F, 22.0F, 1.0F, 13.0F),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
         PartDefinition v_palate1 = v_snout1.addOrReplaceChild("palate1",
-                CubeListBuilder.create().texOffs(188, 210).addBox(-9.0F, 6.21F, -10.18F, 18.0F, 1.0F, 10.0F),
+                CubeListBuilder.create().texOffs(168, 210).addBox(-9.0F, 6.21F, -10.18F, 18.0F, 1.0F, 10.0F),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
         PartDefinition v_palate2 = v_snout2.addOrReplaceChild("palate2",
-                CubeListBuilder.create().texOffs(26, 222).addBox(-6.5F, 4.99F, -8.94F, 13.0F, 1.0F, 9.0F),
+                CubeListBuilder.create().texOffs(0, 222).addBox(-6.5F, 4.99F, -8.94F, 13.0F, 1.0F, 9.0F),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
         PartDefinition v_palate3 = v_snout3.addOrReplaceChild("palate3",
-                CubeListBuilder.create().texOffs(0, 233).addBox(-4.5F, 3.77F, -6.83F, 9.0F, 1.0F, 7.0F),
+                CubeListBuilder.create().texOffs(0, 232).addBox(-4.5F, 3.77F, -6.83F, 9.0F, 1.0F, 7.0F),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
         PartDefinition v_palate4 = v_snout4.addOrReplaceChild("palate4",
-                CubeListBuilder.create().texOffs(0, 241).addBox(-2.0F, 2.55F, -3.85F, 4.0F, 1.0F, 4.0F),
+                CubeListBuilder.create().texOffs(0, 240).addBox(-2.0F, 2.55F, -3.85F, 4.0F, 1.0F, 4.0F),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
         PartDefinition v_cheek_l = v_head.addOrReplaceChild("cheek_l",
                 CubeListBuilder.create().texOffs(106, 132).addBox(8.950000000000001F, 11.969999999999999F, -13.16F, 3.0F, 9.0F, 13.0F),
@@ -357,59 +357,59 @@ public class LeviathanModel extends EntityModel<LeviathanEntity> {
                 CubeListBuilder.create().texOffs(144, 195).addBox(-11.0F, 12.19F, -2.98F, 22.0F, 11.0F, 3.0F),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
         PartDefinition v_eye_l_big = v_head.addOrReplaceChild("eye_l_big",
-                CubeListBuilder.create().texOffs(48, 241).addBox(0.0F, -1.0F, -1.0F, 2.0F, 2.0F, 2.0F),
+                CubeListBuilder.create().texOffs(48, 240).addBox(0.0F, -1.0F, -1.0F, 2.0F, 2.0F, 2.0F),
                 PartPose.offset(12.100000000000001F, -2.44F, -8.879999999999999F));
         PartDefinition v_eye_r_big = v_head.addOrReplaceChild("eye_r_big",
-                CubeListBuilder.create().texOffs(56, 241).addBox(-2.0F, -1.0F, -1.0F, 2.0F, 2.0F, 2.0F),
+                CubeListBuilder.create().texOffs(56, 240).addBox(-2.0F, -1.0F, -1.0F, 2.0F, 2.0F, 2.0F),
                 PartPose.offset(-12.100000000000001F, -2.44F, -8.879999999999999F));
         PartDefinition v_eye_l_a = v_head.addOrReplaceChild("eye_l_a",
-                CubeListBuilder.create().texOffs(92, 246).addBox(0.0F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F),
+                CubeListBuilder.create().texOffs(92, 245).addBox(0.0F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F),
                 PartPose.offset(12.100000000000001F, -8.54F, -4.4399999999999995F));
         PartDefinition v_eye_r_a = v_head.addOrReplaceChild("eye_r_a",
-                CubeListBuilder.create().texOffs(96, 246).addBox(-1.0F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F),
+                CubeListBuilder.create().texOffs(96, 245).addBox(-1.0F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F),
                 PartPose.offset(-12.100000000000001F, -8.54F, -4.4399999999999995F));
         PartDefinition v_eye_l_b = v_head.addOrReplaceChild("eye_l_b",
-                CubeListBuilder.create().texOffs(100, 246).addBox(0.0F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F),
+                CubeListBuilder.create().texOffs(100, 245).addBox(0.0F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F),
                 PartPose.offset(12.100000000000001F, 4.88F, -4.4399999999999995F));
         PartDefinition v_eye_r_b = v_head.addOrReplaceChild("eye_r_b",
-                CubeListBuilder.create().texOffs(104, 246).addBox(-1.0F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F),
+                CubeListBuilder.create().texOffs(104, 245).addBox(-1.0F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F),
                 PartPose.offset(-12.100000000000001F, 4.88F, -4.4399999999999995F));
         PartDefinition v_eye_l_c = v_snout1.addOrReplaceChild("eye_l_c",
-                CubeListBuilder.create().texOffs(108, 246).addBox(0.0F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F),
+                CubeListBuilder.create().texOffs(108, 245).addBox(0.0F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F),
                 PartPose.offset(9.9F, -1.22F, -5.92F));
         PartDefinition v_eye_r_c = v_snout1.addOrReplaceChild("eye_r_c",
-                CubeListBuilder.create().texOffs(112, 246).addBox(-1.0F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F),
+                CubeListBuilder.create().texOffs(112, 245).addBox(-1.0F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F),
                 PartPose.offset(-9.9F, -1.22F, -5.92F));
         PartDefinition v_eye_l_d = v_head.addOrReplaceChild("eye_l_d",
-                CubeListBuilder.create().texOffs(116, 246).addBox(0.0F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F),
+                CubeListBuilder.create().texOffs(116, 245).addBox(0.0F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F),
                 PartPose.offset(12.100000000000001F, -8.54F, -11.84F));
         PartDefinition v_eye_r_d = v_head.addOrReplaceChild("eye_r_d",
-                CubeListBuilder.create().texOffs(120, 246).addBox(-1.0F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F),
+                CubeListBuilder.create().texOffs(120, 245).addBox(-1.0F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F),
                 PartPose.offset(-12.100000000000001F, -8.54F, -11.84F));
         PartDefinition v_eye_l_e = v_head.addOrReplaceChild("eye_l_e",
-                CubeListBuilder.create().texOffs(124, 246).addBox(0.0F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F),
+                CubeListBuilder.create().texOffs(124, 245).addBox(0.0F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F),
                 PartPose.offset(12.100000000000001F, 6.1F, -11.84F));
         PartDefinition v_eye_r_e = v_head.addOrReplaceChild("eye_r_e",
-                CubeListBuilder.create().texOffs(128, 246).addBox(-1.0F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F),
+                CubeListBuilder.create().texOffs(128, 245).addBox(-1.0F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F),
                 PartPose.offset(-12.100000000000001F, 6.1F, -11.84F));
         PartDefinition v_crest = v_head.addOrReplaceChild("crest",
-                CubeListBuilder.create().texOffs(0, 222).addBox(-2.0F, -2.2199999999999998F, -8.94F, 4.0F, 2.0F, 9.0F),
+                CubeListBuilder.create().texOffs(224, 210).addBox(-2.0F, -2.2199999999999998F, -8.94F, 4.0F, 2.0F, 9.0F),
                 PartPose.offset(0.0F, -12.2F, -4.4399999999999995F));
         PartDefinition v_crest_tip = v_crest.addOrReplaceChild("crest_tip",
-                CubeListBuilder.create().texOffs(16, 241).addBox(-1.0F, -1.1099999999999999F, -4.22F, 2.0F, 1.0F, 4.0F),
+                CubeListBuilder.create().texOffs(16, 240).addBox(-1.0F, -1.1099999999999999F, -4.22F, 2.0F, 1.0F, 4.0F),
                 PartPose.offset(0.0F, -1.22F, -8.879999999999999F));
         PartDefinition v_horn_l = v_head.addOrReplaceChild("horn_l",
-                CubeListBuilder.create().texOffs(28, 241).addBox(0.10000000000000009F, -1.0F, -1.5F, 2.0F, 2.0F, 3.0F),
+                CubeListBuilder.create().texOffs(28, 240).addBox(0.10000000000000009F, -1.0F, -1.5F, 2.0F, 2.0F, 3.0F),
                 PartPose.offset(11.0F, -12.2F, -7.4F));
         PartDefinition v_horn_r = v_head.addOrReplaceChild("horn_r",
-                CubeListBuilder.create().texOffs(38, 241).addBox(-2.1F, -1.0F, -1.5F, 2.0F, 2.0F, 3.0F),
+                CubeListBuilder.create().texOffs(38, 240).addBox(-2.1F, -1.0F, -1.5F, 2.0F, 2.0F, 3.0F),
                 PartPose.offset(-11.0F, -12.2F, -7.4F));
         PartDefinition v_gill_l = v_head.addOrReplaceChild("gill_l",
-                CubeListBuilder.create().texOffs(194, 195).addBox(0.050000000000000044F, -5.0F, -0.1499999999999999F, 1.0F, 10.0F, 4.0F),
-                PartPose.offset(12.100000000000001F, 0.0F, -4.4399999999999995F));
+                CubeListBuilder.create().texOffs(44, 222).addBox(0.050000000000000044F, -3.5F, -0.020000000000000018F, 1.0F, 7.0F, 3.0F),
+                PartPose.offset(12.100000000000001F, 1.22F, -4.4399999999999995F));
         PartDefinition v_gill_r = v_head.addOrReplaceChild("gill_r",
-                CubeListBuilder.create().texOffs(204, 195).addBox(-1.05F, -5.0F, -0.1499999999999999F, 1.0F, 10.0F, 4.0F),
-                PartPose.offset(-12.100000000000001F, 0.0F, -4.4399999999999995F));
+                CubeListBuilder.create().texOffs(52, 222).addBox(-1.05F, -3.5F, -0.020000000000000018F, 1.0F, 7.0F, 3.0F),
+                PartPose.offset(-12.100000000000001F, 1.22F, -4.4399999999999995F));
         PartDefinition v_dorsal1 = v_mid.addOrReplaceChild("dorsal1",
                 CubeListBuilder.create().texOffs(170, 132).addBox(-1.0F, -10.0F, 0.0F, 2.0F, 10.0F, 12.0F),
                 PartPose.offsetAndRotation(0.0F, -16.0F, 6.0F, -0.25F, 0.0F, 0.0F));
@@ -417,28 +417,28 @@ public class LeviathanModel extends EntityModel<LeviathanEntity> {
                 CubeListBuilder.create().texOffs(170, 179).addBox(-1.0F, -7.0F, 0.0F, 2.0F, 7.0F, 8.0F),
                 PartPose.offsetAndRotation(0.0F, -9.0F, 3.0F, -0.3F, 0.0F, 0.0F));
         PartDefinition v_dorsal3 = v_dorsal2.addOrReplaceChild("dorsal3",
-                CubeListBuilder.create().texOffs(70, 222).addBox(-1.0F, -5.0F, 0.0F, 2.0F, 5.0F, 5.0F),
+                CubeListBuilder.create().texOffs(60, 222).addBox(-1.0F, -5.0F, 0.0F, 2.0F, 5.0F, 5.0F),
                 PartPose.offsetAndRotation(0.0F, -7.0F, 3.0F, -0.35F, 0.0F, 0.0F));
         PartDefinition v_dorsal4 = v_dorsal3.addOrReplaceChild("dorsal4",
-                CubeListBuilder.create().texOffs(160, 233).addBox(-1.0F, -3.0F, 0.0F, 2.0F, 3.0F, 3.0F),
+                CubeListBuilder.create().texOffs(160, 232).addBox(-1.0F, -3.0F, 0.0F, 2.0F, 3.0F, 3.0F),
                 PartPose.offsetAndRotation(0.0F, -5.0F, 2.0F, -0.4F, 0.0F, 0.0F));
         PartDefinition v_dorsal_b = v_rear.addOrReplaceChild("dorsal_b",
-                CubeListBuilder.create().texOffs(168, 222).addBox(-1.0F, -4.0F, 0.0F, 2.0F, 4.0F, 5.0F),
+                CubeListBuilder.create().texOffs(158, 222).addBox(-1.0F, -4.0F, 0.0F, 2.0F, 4.0F, 5.0F),
                 PartPose.offsetAndRotation(0.0F, -12.0F, 4.0F, -0.4F, 0.0F, 0.0F));
         PartDefinition v_tailspike = v_tail1.addOrReplaceChild("tailspike",
-                CubeListBuilder.create().texOffs(182, 222).addBox(-1.0F, -3.0F, 0.0F, 2.0F, 3.0F, 6.0F),
+                CubeListBuilder.create().texOffs(172, 222).addBox(-1.0F, -3.0F, 0.0F, 2.0F, 3.0F, 6.0F),
                 PartPose.offsetAndRotation(0.0F, -8.0F, 2.0F, -0.4F, 0.0F, 0.0F));
         PartDefinition v_tailkeel = v_tail2.addOrReplaceChild("tailkeel",
-                CubeListBuilder.create().texOffs(84, 222).addBox(-1.0F, 0.0F, 0.0F, 2.0F, 4.0F, 6.0F),
+                CubeListBuilder.create().texOffs(74, 222).addBox(-1.0F, 0.0F, 0.0F, 2.0F, 4.0F, 6.0F),
                 PartPose.offsetAndRotation(0.0F, 6.0F, 3.0F, 0.5F, 0.0F, 0.0F));
         PartDefinition v_ventral1 = v_rear.addOrReplaceChild("ventral1",
-                CubeListBuilder.create().texOffs(0, 210).addBox(-1.0F, 0.0F, 0.0F, 2.0F, 4.0F, 8.0F),
+                CubeListBuilder.create().texOffs(220, 195).addBox(-1.0F, 0.0F, 0.0F, 2.0F, 4.0F, 8.0F),
                 PartPose.offsetAndRotation(0.0F, 12.0F, 3.0F, 0.3F, 0.0F, 0.0F));
         PartDefinition v_ventral2 = v_ventral1.addOrReplaceChild("ventral2",
-                CubeListBuilder.create().texOffs(198, 222).addBox(-1.0F, 0.0F, 0.0F, 2.0F, 3.0F, 6.0F),
+                CubeListBuilder.create().texOffs(188, 222).addBox(-1.0F, 0.0F, 0.0F, 2.0F, 3.0F, 6.0F),
                 PartPose.offsetAndRotation(0.0F, 3.0F, 2.0F, 0.3F, 0.0F, 0.0F));
         PartDefinition v_ventral3 = v_ventral2.addOrReplaceChild("ventral3",
-                CubeListBuilder.create().texOffs(170, 233).addBox(-1.0F, 0.0F, 0.0F, 2.0F, 2.0F, 4.0F),
+                CubeListBuilder.create().texOffs(170, 232).addBox(-1.0F, 0.0F, 0.0F, 2.0F, 2.0F, 4.0F),
                 PartPose.offsetAndRotation(0.0F, 2.0F, 2.0F, 0.3F, 0.0F, 0.0F));
         PartDefinition v_pec_l1 = v_body.addOrReplaceChild("pec_l1",
                 CubeListBuilder.create().texOffs(190, 179).addBox(0.0F, -1.5F, -5.0F, 14.0F, 3.0F, 12.0F),
@@ -447,37 +447,37 @@ public class LeviathanModel extends EntityModel<LeviathanEntity> {
                 CubeListBuilder.create().texOffs(0, 195).addBox(-14.0F, -1.5F, -5.0F, 14.0F, 3.0F, 12.0F),
                 PartPose.offsetAndRotation(-17.0F, 13.0F, -4.0F, 0.0F, 0.45F, -0.35F));
         PartDefinition v_pec_l2 = v_pec_l1.addOrReplaceChild("pec_l2",
-                CubeListBuilder.create().texOffs(20, 210).addBox(0.0F, -1.0F, -4.0F, 13.0F, 2.0F, 10.0F),
+                CubeListBuilder.create().texOffs(0, 210).addBox(0.0F, -1.0F, -4.0F, 13.0F, 2.0F, 10.0F),
                 PartPose.offsetAndRotation(14.0F, 0.0F, 0.0F, 0.0F, -0.3F, 0.15F));
         PartDefinition v_pec_r2 = v_pec_r1.addOrReplaceChild("pec_r2",
-                CubeListBuilder.create().texOffs(66, 210).addBox(-13.0F, -1.0F, -4.0F, 13.0F, 2.0F, 10.0F),
+                CubeListBuilder.create().texOffs(46, 210).addBox(-13.0F, -1.0F, -4.0F, 13.0F, 2.0F, 10.0F),
                 PartPose.offsetAndRotation(-14.0F, 0.0F, 0.0F, 0.0F, 0.3F, -0.15F));
         PartDefinition v_pec_l3 = v_pec_l2.addOrReplaceChild("pec_l3",
-                CubeListBuilder.create().texOffs(32, 233).addBox(0.0F, -0.5F, -3.0F, 11.0F, 1.0F, 7.0F),
+                CubeListBuilder.create().texOffs(32, 232).addBox(0.0F, -0.5F, -3.0F, 11.0F, 1.0F, 7.0F),
                 PartPose.offsetAndRotation(13.0F, 0.0F, 0.0F, 0.0F, -0.3F, 0.1F));
         PartDefinition v_pec_r3 = v_pec_r2.addOrReplaceChild("pec_r3",
-                CubeListBuilder.create().texOffs(68, 233).addBox(-11.0F, -0.5F, -3.0F, 11.0F, 1.0F, 7.0F),
+                CubeListBuilder.create().texOffs(68, 232).addBox(-11.0F, -0.5F, -3.0F, 11.0F, 1.0F, 7.0F),
                 PartPose.offsetAndRotation(-13.0F, 0.0F, 0.0F, 0.0F, 0.3F, -0.1F));
         PartDefinition v_hind_l = v_rear.addOrReplaceChild("hind_l",
-                CubeListBuilder.create().texOffs(100, 222).addBox(0.0F, -1.0F, -2.0F, 9.0F, 2.0F, 8.0F),
+                CubeListBuilder.create().texOffs(90, 222).addBox(0.0F, -1.0F, -2.0F, 9.0F, 2.0F, 8.0F),
                 PartPose.offsetAndRotation(13.0F, 9.0F, 4.0F, 0.0F, -0.4F, 0.6F));
         PartDefinition v_hind_r = v_rear.addOrReplaceChild("hind_r",
-                CubeListBuilder.create().texOffs(134, 222).addBox(-9.0F, -1.0F, -2.0F, 9.0F, 2.0F, 8.0F),
+                CubeListBuilder.create().texOffs(124, 222).addBox(-9.0F, -1.0F, -2.0F, 9.0F, 2.0F, 8.0F),
                 PartPose.offsetAndRotation(-13.0F, 9.0F, 4.0F, 0.0F, 0.4F, -0.6F));
         PartDefinition v_wing_l1 = v_head.addOrReplaceChild("wing_l1",
-                CubeListBuilder.create().texOffs(182, 233).addBox(-0.25F, -1.0F, -0.5200000000000002F, 6.0F, 2.0F, 4.0F),
+                CubeListBuilder.create().texOffs(182, 232).addBox(-0.25F, -1.0F, -0.5200000000000002F, 6.0F, 2.0F, 4.0F),
                 PartPose.offsetAndRotation(12.100000000000001F, 9.76F, -7.4F, 0.0F, -0.6F, 0.5F));
         PartDefinition v_wing_r1 = v_head.addOrReplaceChild("wing_r1",
-                CubeListBuilder.create().texOffs(202, 233).addBox(-5.75F, -1.0F, -0.5200000000000002F, 6.0F, 2.0F, 4.0F),
+                CubeListBuilder.create().texOffs(202, 232).addBox(-5.75F, -1.0F, -0.5200000000000002F, 6.0F, 2.0F, 4.0F),
                 PartPose.offsetAndRotation(-12.100000000000001F, 9.76F, -7.4F, 0.0F, 0.6F, -0.5F));
         PartDefinition v_wing_l2 = v_wing_l1.addOrReplaceChild("wing_l2",
-                CubeListBuilder.create().texOffs(64, 241).addBox(0.20000000000000018F, 0.10999999999999999F, -0.76F, 4.0F, 1.0F, 3.0F),
+                CubeListBuilder.create().texOffs(64, 240).addBox(0.20000000000000018F, 0.10999999999999999F, -0.76F, 4.0F, 1.0F, 3.0F),
                 PartPose.offsetAndRotation(5.5F, 0.0F, 0.0F, 0.0F, -0.5F, 0.2F));
         PartDefinition v_wing_r2 = v_wing_r1.addOrReplaceChild("wing_r2",
-                CubeListBuilder.create().texOffs(78, 241).addBox(-4.2F, 0.10999999999999999F, -0.76F, 4.0F, 1.0F, 3.0F),
+                CubeListBuilder.create().texOffs(78, 240).addBox(-4.2F, 0.10999999999999999F, -0.76F, 4.0F, 1.0F, 3.0F),
                 PartPose.offsetAndRotation(-5.5F, 0.0F, 0.0F, 0.0F, 0.5F, -0.2F));
         PartDefinition v_fluke = v_tail4.addOrReplaceChild("fluke",
-                CubeListBuilder.create().texOffs(214, 195).addBox(-2.0F, -2.0F, 0.0F, 4.0F, 4.0F, 9.0F),
+                CubeListBuilder.create().texOffs(194, 195).addBox(-2.0F, -2.0F, 0.0F, 4.0F, 4.0F, 9.0F),
                 PartPose.offset(0.0F, 0.0F, 9.0F));
         PartDefinition v_fl_l1 = v_fluke.addOrReplaceChild("fl_l1",
                 CubeListBuilder.create().texOffs(0, 179).addBox(0.0F, -1.5F, -4.0F, 10.0F, 3.0F, 13.0F),
@@ -486,217 +486,217 @@ public class LeviathanModel extends EntityModel<LeviathanEntity> {
                 CubeListBuilder.create().texOffs(46, 179).addBox(-10.0F, -1.5F, -4.0F, 10.0F, 3.0F, 13.0F),
                 PartPose.offsetAndRotation(-1.0F, 0.0F, 4.0F, 0.0F, 0.55F, 0.0F));
         PartDefinition v_fl_l2 = v_fl_l1.addOrReplaceChild("fl_l2",
-                CubeListBuilder.create().texOffs(112, 210).addBox(0.0F, -1.0F, -3.0F, 9.0F, 2.0F, 10.0F),
+                CubeListBuilder.create().texOffs(92, 210).addBox(0.0F, -1.0F, -3.0F, 9.0F, 2.0F, 10.0F),
                 PartPose.offsetAndRotation(10.0F, 0.0F, 0.0F, 0.0F, -0.4F, 0.0F));
         PartDefinition v_fl_r2 = v_fl_r1.addOrReplaceChild("fl_r2",
-                CubeListBuilder.create().texOffs(150, 210).addBox(-9.0F, -1.0F, -3.0F, 9.0F, 2.0F, 10.0F),
+                CubeListBuilder.create().texOffs(130, 210).addBox(-9.0F, -1.0F, -3.0F, 9.0F, 2.0F, 10.0F),
                 PartPose.offsetAndRotation(-10.0F, 0.0F, 0.0F, 0.0F, 0.4F, 0.0F));
         PartDefinition v_fl_l3 = v_fl_l2.addOrReplaceChild("fl_l3",
-                CubeListBuilder.create().texOffs(104, 233).addBox(0.0F, -0.5F, -2.0F, 8.0F, 1.0F, 6.0F),
+                CubeListBuilder.create().texOffs(104, 232).addBox(0.0F, -0.5F, -2.0F, 8.0F, 1.0F, 6.0F),
                 PartPose.offsetAndRotation(9.0F, 0.0F, 0.0F, 0.0F, -0.35F, 0.0F));
         PartDefinition v_fl_r3 = v_fl_r2.addOrReplaceChild("fl_r3",
-                CubeListBuilder.create().texOffs(132, 233).addBox(-8.0F, -0.5F, -2.0F, 8.0F, 1.0F, 6.0F),
+                CubeListBuilder.create().texOffs(132, 232).addBox(-8.0F, -0.5F, -2.0F, 8.0F, 1.0F, 6.0F),
                 PartPose.offsetAndRotation(-9.0F, 0.0F, 0.0F, 0.0F, 0.35F, 0.0F));
         PartDefinition v_tongue = v_jaw.addOrReplaceChild("tongue",
                 CubeListBuilder.create().texOffs(198, 132).addBox(-3.5F, 3.77F, -23.82F, 7.0F, 1.0F, 21.0F),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
         PartDefinition v_tl_l0 = v_jaw.addOrReplaceChild("tl_l0",
-                CubeListBuilder.create().texOffs(92, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(92, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(7.700000000000001F, -2.44F, -2.96F));
         PartDefinition v_tl_r0 = v_jaw.addOrReplaceChild("tl_r0",
-                CubeListBuilder.create().texOffs(96, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(96, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-7.700000000000001F, -2.44F, -2.96F));
         PartDefinition v_tl_l1 = v_jaw.addOrReplaceChild("tl_l1",
-                CubeListBuilder.create().texOffs(100, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(100, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(7.700000000000001F, -2.44F, -5.18F));
         PartDefinition v_tl_r1 = v_jaw.addOrReplaceChild("tl_r1",
-                CubeListBuilder.create().texOffs(104, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(104, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-7.700000000000001F, -2.44F, -5.18F));
         PartDefinition v_tl_l2 = v_jaw.addOrReplaceChild("tl_l2",
-                CubeListBuilder.create().texOffs(108, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(108, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(7.700000000000001F, -2.44F, -7.4F));
         PartDefinition v_tl_r2 = v_jaw.addOrReplaceChild("tl_r2",
-                CubeListBuilder.create().texOffs(112, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(112, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-7.700000000000001F, -2.44F, -7.4F));
         PartDefinition v_tl_l3 = v_jaw.addOrReplaceChild("tl_l3",
-                CubeListBuilder.create().texOffs(116, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(116, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(7.700000000000001F, -2.44F, -9.62F));
         PartDefinition v_tl_r3 = v_jaw.addOrReplaceChild("tl_r3",
-                CubeListBuilder.create().texOffs(120, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(120, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-7.700000000000001F, -2.44F, -9.62F));
         PartDefinition v_tl_l4 = v_jaw.addOrReplaceChild("tl_l4",
-                CubeListBuilder.create().texOffs(124, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(124, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(7.700000000000001F, -2.44F, -11.84F));
         PartDefinition v_tl_r4 = v_jaw.addOrReplaceChild("tl_r4",
-                CubeListBuilder.create().texOffs(128, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(128, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-7.700000000000001F, -2.44F, -11.84F));
         PartDefinition v_tl_l5 = v_jaw.addOrReplaceChild("tl_l5",
-                CubeListBuilder.create().texOffs(132, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(132, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(7.700000000000001F, -2.44F, -14.06F));
         PartDefinition v_tl_r5 = v_jaw.addOrReplaceChild("tl_r5",
-                CubeListBuilder.create().texOffs(136, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(136, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-7.700000000000001F, -2.44F, -14.06F));
         PartDefinition v_tl_l6 = v_jaw.addOrReplaceChild("tl_l6",
-                CubeListBuilder.create().texOffs(140, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(140, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(7.700000000000001F, -2.44F, -16.28F));
         PartDefinition v_tl_r6 = v_jaw.addOrReplaceChild("tl_r6",
-                CubeListBuilder.create().texOffs(144, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(144, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-7.700000000000001F, -2.44F, -16.28F));
         PartDefinition v_tl_l7 = v_jaw.addOrReplaceChild("tl_l7",
-                CubeListBuilder.create().texOffs(148, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(148, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(7.700000000000001F, -2.44F, -18.5F));
         PartDefinition v_tl_r7 = v_jaw.addOrReplaceChild("tl_r7",
-                CubeListBuilder.create().texOffs(152, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(152, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-7.700000000000001F, -2.44F, -18.5F));
         PartDefinition v_tl_l8 = v_jaw.addOrReplaceChild("tl_l8",
-                CubeListBuilder.create().texOffs(156, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(156, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(7.700000000000001F, -2.44F, -20.72F));
         PartDefinition v_tl_r8 = v_jaw.addOrReplaceChild("tl_r8",
-                CubeListBuilder.create().texOffs(160, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(160, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-7.700000000000001F, -2.44F, -20.72F));
         PartDefinition v_tl_l9 = v_jaw.addOrReplaceChild("tl_l9",
-                CubeListBuilder.create().texOffs(164, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(164, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(7.700000000000001F, -2.44F, -22.94F));
         PartDefinition v_tl_r9 = v_jaw.addOrReplaceChild("tl_r9",
-                CubeListBuilder.create().texOffs(168, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(168, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-7.700000000000001F, -2.44F, -22.94F));
         PartDefinition v_tl_l10 = v_jaw.addOrReplaceChild("tl_l10",
-                CubeListBuilder.create().texOffs(172, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(172, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(7.700000000000001F, -2.44F, -25.16F));
         PartDefinition v_tl_r10 = v_jaw.addOrReplaceChild("tl_r10",
-                CubeListBuilder.create().texOffs(176, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(176, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-7.700000000000001F, -2.44F, -25.16F));
         PartDefinition v_tt_l0 = v_jaw_tip.addOrReplaceChild("tt_l0",
-                CubeListBuilder.create().texOffs(180, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(180, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(4.4F, -2.44F, -1.48F));
         PartDefinition v_tt_r0 = v_jaw_tip.addOrReplaceChild("tt_r0",
-                CubeListBuilder.create().texOffs(184, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(184, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-4.4F, -2.44F, -1.48F));
         PartDefinition v_tt_l1 = v_jaw_tip.addOrReplaceChild("tt_l1",
-                CubeListBuilder.create().texOffs(188, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(188, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(4.4F, -2.44F, -3.7F));
         PartDefinition v_tt_r1 = v_jaw_tip.addOrReplaceChild("tt_r1",
-                CubeListBuilder.create().texOffs(192, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(192, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-4.4F, -2.44F, -3.7F));
         PartDefinition v_tt_l2 = v_jaw_tip.addOrReplaceChild("tt_l2",
-                CubeListBuilder.create().texOffs(196, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(196, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(4.4F, -2.44F, -5.92F));
         PartDefinition v_tt_r2 = v_jaw_tip.addOrReplaceChild("tt_r2",
-                CubeListBuilder.create().texOffs(200, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(200, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-4.4F, -2.44F, -5.92F));
         PartDefinition v_tt_l3 = v_jaw_tip.addOrReplaceChild("tt_l3",
-                CubeListBuilder.create().texOffs(204, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(204, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(4.4F, -2.44F, -8.14F));
         PartDefinition v_tt_r3 = v_jaw_tip.addOrReplaceChild("tt_r3",
-                CubeListBuilder.create().texOffs(208, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(208, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-4.4F, -2.44F, -8.14F));
         PartDefinition v_tt_l4 = v_jaw_tip.addOrReplaceChild("tt_l4",
-                CubeListBuilder.create().texOffs(212, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(212, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(4.4F, -2.44F, -10.36F));
         PartDefinition v_tt_r4 = v_jaw_tip.addOrReplaceChild("tt_r4",
-                CubeListBuilder.create().texOffs(216, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(216, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-4.4F, -2.44F, -10.36F));
         PartDefinition v_tf_l = v_jaw_tip.addOrReplaceChild("tf_l",
-                CubeListBuilder.create().texOffs(220, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(220, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(1.6500000000000001F, -2.44F, -12.58F));
         PartDefinition v_tf_r = v_jaw_tip.addOrReplaceChild("tf_r",
-                CubeListBuilder.create().texOffs(224, 241).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(224, 240).addBox(-0.55F, -3.7600000000000002F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-1.6500000000000001F, -2.44F, -12.58F));
         PartDefinition v_tu1_l0 = v_snout1.addOrReplaceChild("tu1_l0",
-                CubeListBuilder.create().texOffs(228, 241).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(228, 240).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(8.8F, 7.32F, -0.74F));
         PartDefinition v_tu1_r0 = v_snout1.addOrReplaceChild("tu1_r0",
-                CubeListBuilder.create().texOffs(232, 241).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(232, 240).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-8.8F, 7.32F, -0.74F));
         PartDefinition v_tu1_l1 = v_snout1.addOrReplaceChild("tu1_l1",
-                CubeListBuilder.create().texOffs(236, 241).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(236, 240).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(8.8F, 7.32F, -2.96F));
         PartDefinition v_tu1_r1 = v_snout1.addOrReplaceChild("tu1_r1",
-                CubeListBuilder.create().texOffs(240, 241).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(240, 240).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-8.8F, 7.32F, -2.96F));
         PartDefinition v_tu1_l2 = v_snout1.addOrReplaceChild("tu1_l2",
-                CubeListBuilder.create().texOffs(244, 241).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(244, 240).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(8.8F, 7.32F, -5.18F));
         PartDefinition v_tu1_r2 = v_snout1.addOrReplaceChild("tu1_r2",
-                CubeListBuilder.create().texOffs(248, 241).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(248, 240).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-8.8F, 7.32F, -5.18F));
         PartDefinition v_tu1_l3 = v_snout1.addOrReplaceChild("tu1_l3",
-                CubeListBuilder.create().texOffs(252, 241).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(252, 240).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(8.8F, 7.32F, -7.4F));
         PartDefinition v_tu1_r3 = v_snout1.addOrReplaceChild("tu1_r3",
-                CubeListBuilder.create().texOffs(0, 246).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(0, 245).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-8.8F, 7.32F, -7.4F));
         PartDefinition v_tu1_l4 = v_snout1.addOrReplaceChild("tu1_l4",
-                CubeListBuilder.create().texOffs(4, 246).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(4, 245).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(8.8F, 7.32F, -9.62F));
         PartDefinition v_tu1_r4 = v_snout1.addOrReplaceChild("tu1_r4",
-                CubeListBuilder.create().texOffs(8, 246).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(8, 245).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-8.8F, 7.32F, -9.62F));
         PartDefinition v_tu2_l0 = v_snout2.addOrReplaceChild("tu2_l0",
-                CubeListBuilder.create().texOffs(12, 246).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(12, 245).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(6.6000000000000005F, 6.1F, -0.74F));
         PartDefinition v_tu2_r0 = v_snout2.addOrReplaceChild("tu2_r0",
-                CubeListBuilder.create().texOffs(16, 246).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(16, 245).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-6.6000000000000005F, 6.1F, -0.74F));
         PartDefinition v_tu2_l1 = v_snout2.addOrReplaceChild("tu2_l1",
-                CubeListBuilder.create().texOffs(20, 246).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(20, 245).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(6.6000000000000005F, 6.1F, -2.96F));
         PartDefinition v_tu2_r1 = v_snout2.addOrReplaceChild("tu2_r1",
-                CubeListBuilder.create().texOffs(24, 246).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(24, 245).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-6.6000000000000005F, 6.1F, -2.96F));
         PartDefinition v_tu2_l2 = v_snout2.addOrReplaceChild("tu2_l2",
-                CubeListBuilder.create().texOffs(28, 246).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(28, 245).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(6.6000000000000005F, 6.1F, -5.18F));
         PartDefinition v_tu2_r2 = v_snout2.addOrReplaceChild("tu2_r2",
-                CubeListBuilder.create().texOffs(32, 246).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(32, 245).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-6.6000000000000005F, 6.1F, -5.18F));
         PartDefinition v_tu2_l3 = v_snout2.addOrReplaceChild("tu2_l3",
-                CubeListBuilder.create().texOffs(36, 246).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(36, 245).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(6.6000000000000005F, 6.1F, -7.4F));
         PartDefinition v_tu2_r3 = v_snout2.addOrReplaceChild("tu2_r3",
-                CubeListBuilder.create().texOffs(40, 246).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(40, 245).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-6.6000000000000005F, 6.1F, -7.4F));
         PartDefinition v_tu3_l0 = v_snout3.addOrReplaceChild("tu3_l0",
-                CubeListBuilder.create().texOffs(44, 246).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(44, 245).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(4.4F, 4.88F, -0.74F));
         PartDefinition v_tu3_r0 = v_snout3.addOrReplaceChild("tu3_r0",
-                CubeListBuilder.create().texOffs(48, 246).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(48, 245).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-4.4F, 4.88F, -0.74F));
         PartDefinition v_tu3_l1 = v_snout3.addOrReplaceChild("tu3_l1",
-                CubeListBuilder.create().texOffs(52, 246).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(52, 245).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(4.4F, 4.88F, -2.96F));
         PartDefinition v_tu3_r1 = v_snout3.addOrReplaceChild("tu3_r1",
-                CubeListBuilder.create().texOffs(56, 246).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(56, 245).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-4.4F, 4.88F, -2.96F));
         PartDefinition v_tu3_l2 = v_snout3.addOrReplaceChild("tu3_l2",
-                CubeListBuilder.create().texOffs(60, 246).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(60, 245).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(4.4F, 4.88F, -5.18F));
         PartDefinition v_tu3_r2 = v_snout3.addOrReplaceChild("tu3_r2",
-                CubeListBuilder.create().texOffs(64, 246).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(64, 245).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-4.4F, 4.88F, -5.18F));
         PartDefinition v_tu4_l0 = v_snout4.addOrReplaceChild("tu4_l0",
-                CubeListBuilder.create().texOffs(68, 246).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(68, 245).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(2.75F, 3.66F, -0.74F));
         PartDefinition v_tu4_r0 = v_snout4.addOrReplaceChild("tu4_r0",
-                CubeListBuilder.create().texOffs(72, 246).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(72, 245).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-2.75F, 3.66F, -0.74F));
         PartDefinition v_tu4_l1 = v_snout4.addOrReplaceChild("tu4_l1",
-                CubeListBuilder.create().texOffs(76, 246).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(76, 245).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(2.75F, 3.66F, -2.96F));
         PartDefinition v_tu4_r1 = v_snout4.addOrReplaceChild("tu4_r1",
-                CubeListBuilder.create().texOffs(80, 246).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(80, 245).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-2.75F, 3.66F, -2.96F));
         PartDefinition v_tuf_l = v_snout4.addOrReplaceChild("tuf_l",
-                CubeListBuilder.create().texOffs(84, 246).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(84, 245).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(1.1F, 3.66F, -3.33F));
         PartDefinition v_tuf_r = v_snout4.addOrReplaceChild("tuf_r",
-                CubeListBuilder.create().texOffs(88, 246).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
+                CubeListBuilder.create().texOffs(88, 245).addBox(-0.55F, -0.10000000000000009F, -0.37F, 1.0F, 2.0F, 1.0F),
                 PartPose.offset(-1.1F, 3.66F, -3.33F));
         PartDefinition v_eyelid_l = v_head.addOrReplaceChild("eyelid_l",
-                CubeListBuilder.create().texOffs(222, 233).addBox(0.0F, -1.5F, -1.5F, 2.0F, 3.0F, 3.0F),
+                CubeListBuilder.create().texOffs(222, 232).addBox(0.0F, -1.5F, -1.5F, 2.0F, 3.0F, 3.0F),
                 PartPose.offset(12.100000000000001F, -6.1F, -8.879999999999999F));
         PartDefinition v_eyelid_r = v_head.addOrReplaceChild("eyelid_r",
-                CubeListBuilder.create().texOffs(232, 233).addBox(-2.0F, -1.5F, -1.5F, 2.0F, 3.0F, 3.0F),
+                CubeListBuilder.create().texOffs(232, 232).addBox(-2.0F, -1.5F, -1.5F, 2.0F, 3.0F, 3.0F),
                 PartPose.offset(-12.100000000000001F, -6.1F, -8.879999999999999F));
 
         return LayerDefinition.create(mesh, 256, 256);
