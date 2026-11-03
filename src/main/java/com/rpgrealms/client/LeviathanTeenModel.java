@@ -763,9 +763,6 @@ public class LeviathanTeenModel extends EntityModel<LeviathanTeenEntity> {
 
         // ---- Aleta dorsal y cola: siguen la onda con retraso ----
         this.pose(this.dorsal1, Mth.sin(phase - 1.0F) * 0.03F * amp, 0.0F, 0.0F);
-        // Las hembras no tienen la aleta dorsal alta (ni la segunda) de los machos
-        this.dorsal1.visible = !entity.isFemale();
-        this.dorsal_b.visible = !entity.isFemale();
         this.pose(this.dorsal2, Mth.sin(phase - 1.3F) * 0.05F * amp, 0.0F, 0.0F);
         this.pose(this.dorsal3, Mth.sin(phase - 1.6F) * 0.07F * amp, 0.0F, 0.0F);
         this.pose(this.dorsal4, Mth.sin(phase - 1.9F) * 0.09F * amp, 0.0F, 0.0F);

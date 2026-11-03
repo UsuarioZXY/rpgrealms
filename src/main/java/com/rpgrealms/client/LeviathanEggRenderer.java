@@ -88,7 +88,7 @@ public class LeviathanEggRenderer extends EntityRenderer<LeviathanEggEntity> {
                 0.3F * a, 0.9F * a, 1.0F * a, 1.0F);
         VertexConsumer g2 = buffer.getBuffer(RenderType.eyes(MERIDIANS));
         this.model.renderToBuffer(poseStack, g2, 15728640, OverlayTexture.NO_OVERLAY,
-                0.5F * b, 0.7F * b, 1.0F * b, 1.0F);
+                0.35F * b, 0.85F * b, 1.0F * b, 1.0F);
 
         // Grietas que aparecen poco a poco y brillan al final
         float damage = Mth.clamp((1.0F - egg.getHealthFraction()) * 1.3F, 0.0F, 1.0F);

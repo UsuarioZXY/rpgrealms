@@ -32,7 +32,6 @@ public abstract class AbstractLeviathan extends WaterAnimal {
 
     protected AbstractLeviathan(EntityType<? extends WaterAnimal> type, Level level, float turnDegPerTick) {
         super(type, level);
-        this.entityData.set(DATA_FEMALE, this.random.nextBoolean());
         this.moveControl = new SwimControl(this, turnDegPerTick);
         // El LookControl de vainilla pone el cabeceo a 0 cada tick; aquí lo manda el control de nado.
         this.lookControl = new LookControl(this) {
@@ -173,7 +172,6 @@ public abstract class AbstractLeviathan extends WaterAnimal {
             next.setCustomName(this.getCustomName());
         }
         next.setPersistenceRequired();
-        next.setFemale(this.isFemale());
         sl.addFreshEntity(next);
         sl.sendParticles(ParticleTypes.END_ROD, next.getX(), next.getY() + next.getBbHeight() * 0.5D, next.getZ(),
                 80, next.getBbWidth() * 0.5D, next.getBbHeight() * 0.3D, next.getBbWidth() * 0.5D, 0.05D);
@@ -445,45 +443,6 @@ public abstract class AbstractLeviathan extends WaterAnimal {
             this.serverMagic();
         }
         super.aiStep();
-    }
-
-    private static final net.minecraft.network.syncher.EntityDataAccessor<Boolean> DATA_FEMALE =
-            net.minecraft.network.syncher.SynchedEntityData.defineId(AbstractLeviathan.class,
-                    net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
-
-    @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(DATA_FEMALE, false);
-    }
-
-    /** Las hembras no tienen la aleta dorsal alta de los machos. */
-    public boolean isFemale() {
-        return this.entityData.get(DATA_FEMALE);
-    }
-
-    public void setFemale(boolean female) {
-        this.entityData.set(DATA_FEMALE, female);
-    }
-
-    @Override
-    public void addAdditionalSaveData(net.minecraft.nbt.CompoundTag tag) {
-        super.addAdditionalSaveData(tag);
-        tag.putBoolean("Female", this.isFemale());
-    }
-
-    @Override
-    public void readAdditionalSaveData(net.minecraft.nbt.CompoundTag tag) {
-        super.readAdditionalSaveData(tag);
-        this.setFemale(tag.contains("Female") ? tag.getBoolean("Female") : this.random.nextBoolean());
-    }
-
-    @Override
-    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty,
-                                                                   MobSpawnType reason, net.minecraft.world.entity.SpawnGroupData data,
-                                                                   net.minecraft.nbt.CompoundTag tag) {
-        this.setFemale(this.random.nextBoolean());
-        return super.finalizeSpawn(level, difficulty, reason, data, tag);
     }
 
     /** Radio de la bendición del leviatán (0 = no bendice). */

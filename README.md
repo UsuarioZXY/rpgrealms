@@ -58,5 +58,5 @@ Silueta lineal cabeza→cuerpo (la cabeza ya no es más chica que el cuerpo), si
 
 ## v8: huevo, hembras y nido
 - **Huevo:** se empuja (jugadores y leviatanes lo hacen rodar), se rompe a golpes (20 de vida; se sacude, suelta chispas y se agrieta; al romperse no nace nada y suelta fragmentos de prismarina) y tarda 15 minutos en eclosionar con fases (golpecitos, latidos más rápidos, grietas, sacudida y destello final). Agachado + clic derecho con la mano vacía lo recoge intacto. Nueva textura con espiral y cinturón de runas.
-- **Sexo:** cada Vallsaron es macho o hembra al nacer (se conserva al crecer). Las hembras no tienen la aleta dorsal alta (ni la segunda dorsal) de los machos.
+- Sin hembras: todos los Vallsaron tienen sus aletas dorsales.
 - **Nido de Vallsaron:** bloque colocable (también bajo el agua, sobre suelo firme) que genera un huevo cada ~8 minutos mientras haya menos de 2 huevos en 12 bloques. Brilla (luz 7) y suelta destellos.
