@@ -30,8 +30,20 @@ import net.minecraft.world.phys.Vec3;
  */
 public abstract class AbstractLeviathan extends WaterAnimal {
 
+    /** Hitbox por partes: cabeza, pecho, cuerpo, grupa y dos tramos de cola (t = posición de morro a cola). */
+    private static final String[] PART_NAMES = {"head", "chest", "body", "rump", "tail1", "tail2"};
+    private static final double[] PART_T = {0.08D, 0.26D, 0.46D, 0.64D, 0.80D, 0.93D};
+    private static final double[] PART_W = {0.70D, 1.00D, 1.00D, 0.80D, 0.50D, 0.35D};
+    private static final double[] PART_H = {0.75D, 1.00D, 1.00D, 0.80D, 0.50D, 0.35D};
+    private final LeviathanPart[] parts;
+
     protected AbstractLeviathan(EntityType<? extends WaterAnimal> type, Level level, float turnDegPerTick) {
         super(type, level);
+        double bodyH = this.bodyScale() * 2.0D;   // el cuerpo mide 32 px de alto en el modelo
+        this.parts = new LeviathanPart[PART_NAMES.length];
+        for (int i = 0; i < this.parts.length; i++) {
+            this.parts[i] = new LeviathanPart(this, PART_NAMES[i], (float) (bodyH * PART_W[i]), (float) (bodyH * PART_H[i]));
+        }
         this.moveControl = new SwimControl(this, turnDegPerTick);
         // El LookControl de vainilla pone el cabeceo a 0 cada tick; aquí lo manda el control de nado.
         this.lookControl = new LookControl(this) {
@@ -436,6 +448,10 @@ public abstract class AbstractLeviathan extends WaterAnimal {
                     mouth.z + (this.random.nextDouble() - 0.5D),
                     0.0D, 0.06D, 0.0D);
         }
+        this.updateParts();
+        if (this.alertCooldown > 0) {
+            this.alertCooldown--;
+        }
         if (this.level().isClientSide) {
             this.mysticTrail();
             this.clientMagic();
@@ -443,6 +459,117 @@ public abstract class AbstractLeviathan extends WaterAnimal {
             this.serverMagic();
         }
         super.aiStep();
+    }
+
+    @Override
+    public boolean isMultipartEntity() {
+        return true;
+    }
+
+    @Override
+    public net.minecraftforge.entity.PartEntity<?>[] getParts() {
+        return this.parts;
+    }
+
+    /** Las partes necesitan ids consecutivos al del leviatán (igual que el Dragón del End). */
+    @Override
+    public void setId(int id) {
+        super.setId(id);
+        if (this.parts != null) {
+            for (int i = 0; i < this.parts.length; i++) {
+                this.parts[i].setId(id + i + 1);
+            }
+        }
+    }
+
+    /** Coloca las partes a lo largo del cuerpo según su rumbo y cabeceo (cliente y servidor). */
+    private void updateParts() {
+        Vec3 dir = Vec3.directionFromRotation(this.getXRot() * 0.7F, this.yBodyRot);
+        double front = this.mouthForward();
+        double span = front + this.trailBack();
+        double cy = this.getY() + this.getBbHeight() * 0.5D;
+        for (int i = 0; i < this.parts.length; i++) {
+            LeviathanPart part = this.parts[i];
+            double along = front - PART_T[i] * span;
+            double x = this.getX() + dir.x * along;
+            double y = cy + dir.y * along - part.getBbHeight() * 0.5D;
+            double z = this.getZ() + dir.z * along;
+            part.xo = part.xOld = x;
+            part.yo = part.yOld = y;
+            part.zo = part.zOld = z;
+            part.setPos(x, y, z);
+        }
+    }
+
+    private int alertCooldown;
+
+    /** Escudo de runas que se dibuja girando alrededor del cuerpo (0 = ninguno). */
+    protected int shieldCount() {
+        return 0;
+    }
+
+    /** Seres vivos que no son leviatanes dentro de un radio (para ondas y gritos). */
+    protected java.util.List<net.minecraft.world.entity.LivingEntity> victims(double radius) {
+        return this.level().getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class,
+                this.getBoundingBox().inflate(radius),
+                e -> e != this && e.isAlive() && !(e instanceof AbstractLeviathan)
+                        && !(e instanceof net.minecraft.world.entity.player.Player p && p.isSpectator())
+                        && e.distanceToSqr(this) <= radius * radius);
+    }
+
+    /**
+     * Onda de choque alrededor del cuerpo: daño, empuje hacia fuera (más débil lejos), lentitud y oscuridad.
+     * El anillo visible sale de las partículas que genera.
+     */
+    protected void shockwave(double radius, float damage, double knock, double lift, int slowTicks, int darkTicks) {
+        for (net.minecraft.world.entity.LivingEntity e : this.victims(radius)) {
+            double dist = Math.sqrt(e.distanceToSqr(this));
+            double f = 1.0D - 0.5D * Math.min(1.0D, dist / radius);
+            if (damage > 0.0F) {
+                e.hurt(this.damageSources().indirectMagic(this, this), (float) (damage * f));
+            }
+            Vec3 away = e.position().subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
+            away = away.lengthSqr() < 1.0E-4D ? new Vec3(this.random.nextDouble() - 0.5D, 0.0D, this.random.nextDouble() - 0.5D) : away;
+            away = away.normalize();
+            e.setDeltaMovement(e.getDeltaMovement().add(away.x * knock * f, lift * f, away.z * knock * f));
+            e.hurtMarked = true;
+            if (slowTicks > 0) {
+                e.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                        net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN, slowTicks, 1));
+            }
+            if (darkTicks > 0) {
+                e.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                        net.minecraft.world.effect.MobEffects.DARKNESS, darkTicks, 0));
+            }
+        }
+        if (this.level() instanceof net.minecraft.server.level.ServerLevel sl) {
+            double cy = this.getY() + this.getBbHeight() * 0.5D;
+            int points = (int) Math.min(80, 24 + radius * 2.0D);
+            for (int i = 0; i < points; i++) {
+                double ang = Math.PI * 2.0D * i / points;
+                double dx = Math.cos(ang), dz = Math.sin(ang);
+                sl.sendParticles(ParticleTypes.CLOUD, this.getX(), cy, this.getZ(), 0, dx, 0.0D, dz, 0.9D);
+                sl.sendParticles(i % 2 == 0 ? ParticleTypes.END_ROD : ParticleTypes.BUBBLE_POP,
+                        this.getX(), cy, this.getZ(), 0, dx, 0.05D, dz, 1.2D);
+            }
+            sl.sendParticles(ParticleTypes.SONIC_BOOM, this.getX(), cy, this.getZ(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
+        }
+    }
+
+    /** Los demás leviatanes cercanos acuden a defender a quien pide ayuda (chillido). */
+    protected void callForHelp(net.minecraft.world.entity.LivingEntity attacker) {
+        if (this.alertCooldown > 0 || attacker instanceof AbstractLeviathan) {
+            return;
+        }
+        this.alertCooldown = 100;
+        this.playSound(net.minecraft.sounds.SoundEvents.DOLPHIN_HURT, 3.0F, 0.6F);
+        for (AbstractLeviathan other : this.level().getEntitiesOfClass(AbstractLeviathan.class,
+                this.getBoundingBox().inflate(64.0D), o -> o != this && o.getTarget() == null)) {
+            other.setTarget(attacker);
+        }
+        if (this.level() instanceof net.minecraft.server.level.ServerLevel sl) {
+            sl.sendParticles(ParticleTypes.SONIC_BOOM, this.getX(), this.getY() + this.getBbHeight() * 0.5D, this.getZ(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
+        }
     }
 
     /** Radio de la bendición del leviatán (0 = no bendice). */
@@ -462,13 +589,10 @@ public abstract class AbstractLeviathan extends WaterAnimal {
                 if (p.isSpectator() || p.distanceToSqr(this) > r * r) {
                     continue;
                 }
-                p.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-                        net.minecraft.world.effect.MobEffects.WATER_BREATHING, 140, 0, true, false, true));
-                p.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-                        net.minecraft.world.effect.MobEffects.NIGHT_VISION, 260, 0, true, false, true));
-                if (this.bodyScale() >= 4.0D) {
+                net.minecraft.world.effect.MobEffectInstance cur = p.getEffect(com.rpgrealms.registry.ModEffects.VALLSARON_BLESSING.get());
+                if (cur == null || cur.getDuration() < 11900) {
                     p.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-                            net.minecraft.world.effect.MobEffects.DOLPHINS_GRACE, 100, 0, true, false, true));
+                            com.rpgrealms.registry.ModEffects.VALLSARON_BLESSING.get(), 12000, 0, false, false, true));
                 }
             }
         }
@@ -482,6 +606,9 @@ public abstract class AbstractLeviathan extends WaterAnimal {
     @Override
     public boolean hurt(net.minecraft.world.damagesource.DamageSource source, float amount) {
         boolean r = super.hurt(source, amount);
+        if (r && source.getEntity() instanceof net.minecraft.world.entity.LivingEntity attacker && !this.level().isClientSide) {
+            this.callForHelp(attacker);
+        }
         if (r && this.level() instanceof net.minecraft.server.level.ServerLevel sl) {
             double w = this.getBbWidth() * 0.4D;
             sl.sendParticles(ParticleTypes.ELECTRIC_SPARK, this.getX(), this.getY() + this.getBbHeight() * 0.5D, this.getZ(),
@@ -575,6 +702,19 @@ public abstract class AbstractLeviathan extends WaterAnimal {
             }
             this.level().playLocalSound(this.getX(), cy, this.getZ(), net.minecraft.sounds.SoundEvents.AMETHYST_BLOCK_RESONATE,
                     net.minecraft.sounds.SoundSource.NEUTRAL, 1.5F, 0.6F, false);
+        }
+
+        // Escudo de runas: orbes de luz que giran alrededor del cuerpo
+        int sh = this.shieldCount();
+        for (int i = 0; i < sh; i++) {
+            double ang = this.tickCount * 0.09D + i * Math.PI * 2.0D / sh;
+            double rr = Math.max(3.0D, this.getBbWidth() * 0.75D);
+            double ox = side.x * Math.cos(ang) * rr + fwd.x * Math.sin(ang) * rr * 0.6D;
+            double oz = side.z * Math.cos(ang) * rr + fwd.z * Math.sin(ang) * rr * 0.6D;
+            double oy = Math.sin(ang * 2.0D) * rr * 0.25D;
+            this.level().addParticle(big, cx + ox, cy + oy, cz + oz, 0.0D, 0.0D, 0.0D);
+            this.level().addParticle(ParticleTypes.END_ROD, cx + ox, cy + oy, cz + oz, 0.0D, 0.0D, 0.0D);
+            this.level().addParticle(ParticleTypes.ENCHANT, cx + ox, cy + oy + 0.5D, cz + oz, 0.0D, 0.4D, 0.0D);
         }
 
         // Aletas pectorales y cola sueltan polvo místico mientras nadan (más al aletear rápido)

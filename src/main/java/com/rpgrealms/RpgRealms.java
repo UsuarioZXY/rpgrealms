@@ -13,6 +13,7 @@ public class RpgRealms {
 
     public RpgRealms() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        com.rpgrealms.registry.ModEffects.EFFECTS.register(bus);
         com.rpgrealms.registry.ModBlocks.BLOCKS.register(bus);
         com.rpgrealms.registry.ModBlockEntities.TYPES.register(bus);
         ModEntities.ENTITIES.register(bus);

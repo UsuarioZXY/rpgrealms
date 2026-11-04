@@ -21,5 +21,7 @@
   "item.rpgrealms.vallsaron_eye": "Vallsaron Eye",
   "item.rpgrealms.vallsaron_eye.lore": "It watched the abyss for a thousand years.",
   "item.rpgrealms.vallsaron_heart": "Vallsaron Heart",
-  "item.rpgrealms.vallsaron_heart.lore": "It still beats, slow as the ocean."
+  "item.rpgrealms.vallsaron_heart.lore": "It still beats, slow as the ocean.",
+  "effect.rpgrealms.vallsaron_blessing": "Vallsaron's Blessing",
+  "effect.rpgrealms.vallsaron_blessing.description": "Breathe, swim fast and see in the deep. The tide itself protects you."
 }

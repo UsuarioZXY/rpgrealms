@@ -67,3 +67,12 @@ Sin barra de jefe. Objetos: Escama, Aleta, Diente, Ojo (brillo mágico) y Coraz�
 - Adolescente: Escama 2-4, Aleta (50%), Diente 1-2 (40%), Ojo (15%), Corazón (5%).
 - Adulto: Escama 4-8, Aleta 1-2, Diente 2-4, Ojo (70%), Corazón (40%) + Huevo (50%).
 Saqueo aumenta cantidades y probabilidades.
+
+## v10 – Habilidades del Vallsaron
+- Hitbox multiparte (cabeza, pecho, cuerpo, grupa, cola) en las 3 etapas.
+- Vida/daño: cría 150/15, adolescente 450/26, adulto 1500/45. XP: 50 / 500 / 3000.
+- Cría: chorro de agua, chillido de auxilio (otros vallsarones atacan al agresor), salto de delfín.
+- Adolescente: Embestida (carga, ~8 s de enfriamiento) y Pulso sónico (daña y ralentiza).
+- Adulto: orbes y rayo, Marea (empuje masivo), Rugido del abismo (Oscuridad + Lentitud), Salto desde el fondo (onda al caer) y Escudo de runas (bloquea proyectiles, se regenera).
+- Efecto "Bendición del Vallsaron": dura 10 minutos.
+- Crecimiento visible: el adulto gana bultos en el hocico. Sin armadura por ahora.

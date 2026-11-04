@@ -97,6 +97,15 @@ public class AbyssBoltEntity extends AbstractHurtingProjectile implements ItemSu
         }
     }
 
+    /** Los orbes nunca golpean a ningún leviatán ni a sus partes (así no se hieren entre ellos). */
+    @Override
+    protected boolean canHitEntity(net.minecraft.world.entity.Entity entity) {
+        if (entity instanceof AbstractLeviathan || entity instanceof LeviathanPart) {
+            return false;
+        }
+        return super.canHitEntity(entity);
+    }
+
     @Override
     protected void onHitEntity(EntityHitResult result) {
         super.onHitEntity(result);

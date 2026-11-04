@@ -34,14 +34,14 @@ public class LeviathanCubEntity extends AbstractLeviathan {
 
     public LeviathanCubEntity(EntityType<? extends WaterAnimal> type, Level level) {
         super(type, level, 5.5F);
-        this.xpReward = 10;
+        this.xpReward = 50;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return WaterAnimal.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 160.0D)
+                .add(Attributes.MAX_HEALTH, 150.0D)
                 .add(Attributes.MOVEMENT_SPEED, 1.7D)      // mucho más rápida que el adulto
-                .add(Attributes.ATTACK_DAMAGE, 14.0D)       // poco daño
+                .add(Attributes.ATTACK_DAMAGE, 15.0D)       // poco daño
                 .add(Attributes.ATTACK_KNOCKBACK, 1.0D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.6D)
                 .add(Attributes.ARMOR, 2.0D)
@@ -108,9 +108,39 @@ public class LeviathanCubEntity extends AbstractLeviathan {
         super.aiStep();
         if (!this.level().isClientSide && this.isAlive()) {
             this.dolphinLeap();
+            this.waterSquirt();
             this.growAge++;
             if (this.growAge >= GROW_TICKS && this.tickCount % 20 == 0) {
                 this.growUp();
+            }
+        }
+    }
+
+    private int squirtCooldown = 60;
+
+    /** Chorro de agua: empuja a quien la acosa a distancia y le hace un poco de daño. */
+    private void waterSquirt() {
+        net.minecraft.world.entity.LivingEntity t = this.getTarget();
+        if (--this.squirtCooldown > 0 || t == null || !t.isAlive()) {
+            return;
+        }
+        Vec3 from = this.getMouthPos();
+        Vec3 to = t.position().add(0.0D, t.getBbHeight() * 0.5D, 0.0D);
+        double dist = from.distanceTo(to);
+        if (dist < 2.5D || dist > 14.0D || !this.getSensing().hasLineOfSight(t)) {
+            return;
+        }
+        this.squirtCooldown = 100;
+        Vec3 dir = to.subtract(from).normalize();
+        t.setDeltaMovement(t.getDeltaMovement().add(dir.x * 1.1D, 0.35D, dir.z * 1.1D));
+        t.hurtMarked = true;
+        t.hurt(this.damageSources().mobAttack(this), 2.0F);
+        this.playSound(SoundEvents.DOLPHIN_SPLASH, 2.0F, 1.2F);
+        if (this.level() instanceof ServerLevel sl) {
+            for (double s = 0.0D; s <= dist; s += 0.7D) {
+                Vec3 p = from.add(dir.scale(s));
+                sl.sendParticles(ParticleTypes.SPLASH, p.x, p.y, p.z, 2, 0.1D, 0.1D, 0.1D, 0.05D);
+                sl.sendParticles(ParticleTypes.BUBBLE, p.x, p.y, p.z, 1, 0.05D, 0.05D, 0.05D, 0.02D);
             }
         }
     }

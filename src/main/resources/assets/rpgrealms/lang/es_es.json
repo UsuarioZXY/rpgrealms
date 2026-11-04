@@ -21,5 +21,7 @@
   "item.rpgrealms.vallsaron_eye": "Ojo de Vallsaron",
   "item.rpgrealms.vallsaron_eye.lore": "Vigiló el abismo durante mil años.",
   "item.rpgrealms.vallsaron_heart": "Corazón de Vallsaron",
-  "item.rpgrealms.vallsaron_heart.lore": "Aún late, lento como el océano."
+  "item.rpgrealms.vallsaron_heart.lore": "Aún late, lento como el océano.",
+  "effect.rpgrealms.vallsaron_blessing": "Bendición del Vallsaron",
+  "effect.rpgrealms.vallsaron_blessing.description": "Respiras, nadas rápido y ves en lo profundo. La marea misma te protege."
 }

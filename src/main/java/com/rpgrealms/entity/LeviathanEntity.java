@@ -70,11 +70,19 @@ public class LeviathanEntity extends AbstractLeviathan {
     private static final EntityDataAccessor<Float> DATA_BEAM_Z =
             SynchedEntityData.defineId(LeviathanEntity.class, EntityDataSerializers.FLOAT);
 
+    private static final EntityDataAccessor<Integer> DATA_SHIELD =
+            SynchedEntityData.defineId(LeviathanEntity.class, EntityDataSerializers.INT);
+
     private boolean enraged = false;
+    private int tideCooldown = 300;
+    private int roarCooldown = 600;
+    private int shieldRegen = 0;
+    /** 0 = nada, 1..3 = fases del salto desde el fondo (lo controla BreachGoal). */
+    int breachState = 0;
 
     public LeviathanEntity(EntityType<? extends WaterAnimal> type, Level level) {
         super(type, level, 3.2F);
-        this.xpReward = 500;
+        this.xpReward = 3000;
         this.setPersistenceRequired();
     }
 
@@ -95,6 +103,7 @@ public class LeviathanEntity extends AbstractLeviathan {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_PHASE, PHASE_IDLE);
+        this.entityData.define(DATA_SHIELD, 4);
         this.entityData.define(DATA_TIMER, 0);
         this.entityData.define(DATA_RECOIL, 0);
         this.entityData.define(DATA_BEAM_X, 0.0F);
@@ -145,6 +154,7 @@ public class LeviathanEntity extends AbstractLeviathan {
 
     @Override
     protected void registerGoals() {
+        this.goalSelector.addGoal(-1, new BreachGoal(this));
         this.goalSelector.addGoal(0, new CombatGoal(this));
         this.goalSelector.addGoal(1, new RoamGoal(this, 48.0D));
         this.targetSelector.addGoal(0, new HurtByTargetGoal(this));
@@ -359,14 +369,171 @@ public class LeviathanEntity extends AbstractLeviathan {
                         80, 6.0D, 0.4D);
             }
         }
+        this.advancedAbilities();
         int recoil = this.entityData.get(DATA_RECOIL);
         if (recoil > 0) {
             this.entityData.set(DATA_RECOIL, recoil - 1);
         }
     }
 
+    // ------------------------------------------------------------------ habilidades avanzadas
+
+    @Override
+    protected int shieldCount() {
+        return this.entityData.get(DATA_SHIELD);
+    }
+
+    /** Escudo de runas: bloquea proyectiles, se rompe orbe a orbe y se regenera. */
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        if (!this.level().isClientSide && source.getDirectEntity() instanceof net.minecraft.world.entity.projectile.Projectile
+                && this.entityData.get(DATA_SHIELD) > 0) {
+            this.entityData.set(DATA_SHIELD, this.entityData.get(DATA_SHIELD) - 1);
+            this.shieldRegen = 0;
+            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.AMETHYST_BLOCK_BREAK,
+                    SoundSource.HOSTILE, 3.0F, 0.7F);
+            if (this.level() instanceof ServerLevel sl) {
+                sl.sendParticles(ParticleTypes.ENCHANT, this.getX(), this.getY() + this.getBbHeight() * 0.5D, this.getZ(),
+                        40, 3.0D, 2.0D, 3.0D, 0.5D);
+                sl.sendParticles(ParticleTypes.END_ROD, this.getX(), this.getY() + this.getBbHeight() * 0.5D, this.getZ(),
+                        15, 3.0D, 2.0D, 3.0D, 0.1D);
+            }
+            return false;
+        }
+        return super.hurt(source, amount);
+    }
+
+    private void advancedAbilities() {
+        if (!this.isAlive()) {
+            return;
+        }
+        if (this.entityData.get(DATA_SHIELD) < 4 && ++this.shieldRegen >= 160) {
+            this.shieldRegen = 0;
+            this.entityData.set(DATA_SHIELD, this.entityData.get(DATA_SHIELD) + 1);
+            this.playSound(SoundEvents.AMETHYST_BLOCK_CHIME, 3.0F, 1.2F);
+        }
+        LivingEntity t = this.getTarget();
+        if (t == null || !t.isAlive() || this.breachState != 0 || this.getPhase() != PHASE_IDLE) {
+            return;
+        }
+        double d2 = t.distanceToSqr(this);
+        if (--this.tideCooldown <= 0 && d2 < 22.0D * 22.0D) {
+            this.tideCooldown = 500;
+            this.playSound(SoundEvents.ELDER_GUARDIAN_CURSE, 4.0F, 0.5F);
+            this.shockwave(26.0D, 10.0F, 1.6D, 0.9D, 0, 0);
+        }
+        if (--this.roarCooldown <= 0 && d2 < 40.0D * 40.0D) {
+            this.roarCooldown = 1000;
+            this.playSound(SoundEvents.ENDER_DRAGON_GROWL, 8.0F, 0.5F);
+            for (net.minecraft.world.entity.player.Player p : this.level().getEntitiesOfClass(
+                    net.minecraft.world.entity.player.Player.class, this.getBoundingBox().inflate(40.0D))) {
+                p.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.DARKNESS, 160, 0));
+                p.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN, 160, 1));
+            }
+            if (this.level() instanceof ServerLevel sl) {
+                Vec3 m = this.getMouthPos();
+                sl.sendParticles(ParticleTypes.SONIC_BOOM, m.x, m.y, m.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+            }
+        }
+    }
+
+    /** Salto desde el fondo: sube en vertical bajo el objetivo, sale del agua y cae con una onda de choque. */
+    static class BreachGoal extends Goal {
+        private final LeviathanEntity mob;
+        private int timer;
+        private int nextUse = 600;
+        private Vec3 launchDir = Vec3.ZERO;
+
+        BreachGoal(LeviathanEntity mob) {
+            this.mob = mob;
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            LivingEntity t = this.mob.getTarget();
+            if (t == null || !t.isAlive() || this.mob.tickCount < this.nextUse || this.mob.getPhase() != PHASE_IDLE) {
+                return false;
+            }
+            double d = Math.sqrt(this.mob.distanceToSqr(t));
+            return d > 10.0D && d < 45.0D && this.mob.isInWater() && this.mob.isWaterPoint(t.getX(), t.getY() + 1.0D, t.getZ());
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return this.mob.breachState != 0 && this.mob.isAlive();
+        }
+
+        @Override
+        public boolean requiresUpdateEveryTick() {
+            return true;
+        }
+
+        @Override
+        public void start() {
+            this.mob.breachState = 1;
+            this.timer = 0;
+            this.mob.playSound(SoundEvents.ELDER_GUARDIAN_AMBIENT, 6.0F, 0.4F);
+        }
+
+        @Override
+        public void stop() {
+            this.mob.breachState = 0;
+            this.mob.setNoGravity(false);
+            this.nextUse = this.mob.tickCount + 900;
+        }
+
+        @Override
+        public void tick() {
+            LivingEntity t = this.mob.getTarget();
+            this.timer++;
+            if (this.mob.breachState == 1) {
+                // toma impulso: se hunde y se coloca hacia el objetivo
+                if (t == null) {
+                    this.mob.breachState = 0;
+                    return;
+                }
+                Vec3 flat = new Vec3(t.getX() - this.mob.getX(), 0.0D, t.getZ() - this.mob.getZ());
+                this.launchDir = flat.lengthSqr() < 1.0E-3D ? new Vec3(0, 0, 1) : flat.normalize();
+                this.mob.getMoveControl().setWantedPosition(this.mob.getX(), this.mob.getY() - 4.0D, this.mob.getZ(), 0.6D);
+                if (this.mob.level() instanceof ServerLevel sl && this.timer % 4 == 0) {
+                    sl.sendParticles(ParticleTypes.BUBBLE, this.mob.getX(), this.mob.getY(), this.mob.getZ(), 15, 3.0D, 1.0D, 3.0D, 0.1D);
+                }
+                if (this.timer >= 40) {
+                    double dist = Math.min(Math.sqrt(flat.lengthSqr()), 30.0D);
+                    this.mob.setDeltaMovement(this.launchDir.x * (0.35D + dist * 0.02D), 1.5D, this.launchDir.z * (0.35D + dist * 0.02D));
+                    this.mob.hurtMarked = true;
+                    this.mob.breachState = 2;
+                    this.timer = 0;
+                    this.mob.playSound(SoundEvents.DOLPHIN_JUMP, 6.0F, 0.3F);
+                    if (this.mob.level() instanceof ServerLevel sl) {
+                        sl.sendParticles(ParticleTypes.SPLASH, this.mob.getX(), this.mob.getY() + 3.0D, this.mob.getZ(), 120, 4.0D, 2.0D, 4.0D, 0.5D);
+                    }
+                }
+                return;
+            }
+            if (this.mob.breachState == 2) {
+                // en el aire: se espera a volver al agua
+                if (this.timer > 10 && (this.mob.isInWater() || this.mob.onGround()) || this.timer > 120) {
+                    this.mob.playSound(SoundEvents.GENERIC_EXPLODE, 6.0F, 0.5F);
+                    this.mob.shockwave(18.0D, 20.0F, 1.6D, 0.8D, 60, 0);
+                    this.mob.breachState = 0;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putInt("Shield", this.entityData.get(DATA_SHIELD));
+    }
+
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
+        if (tag.contains("Shield")) {
+            this.entityData.set(DATA_SHIELD, tag.getInt("Shield"));
+        }
         super.readAdditionalSaveData(tag);
         this.enraged = this.getHealth() <= this.getMaxHealth() * 0.5F;
     }
