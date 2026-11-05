@@ -76,3 +76,6 @@ Saqueo aumenta cantidades y probabilidades.
 - Adulto: orbes y rayo, Marea (empuje masivo), Rugido del abismo (Oscuridad + Lentitud), Salto desde el fondo (onda al caer) y Escudo de runas (bloquea proyectiles, se regenera).
 - Efecto "Bendición del Vallsaron": dura 10 minutos.
 - Crecimiento visible: el adulto gana bultos en el hocico. Sin armadura por ahora.
+
+## v15 – Pez linterna rúnico
+Pez pequeño de cardumen (4–8) en océanos, bajo el nivel del mar. Runa brillante en el costado, señuelo luminoso con chispas, aletas con borde brillante. Si hieren a uno, su señuelo destella y el cardumen cercano huye más rápido. Suelta el "Pez linterna rúnico" (comestible, da Visión nocturna 30 s). Se puede capturar con cubo. Huevo generador incluido.

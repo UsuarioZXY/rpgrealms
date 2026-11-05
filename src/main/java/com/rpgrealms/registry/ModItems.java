@@ -45,6 +45,20 @@ public class ModItems {
             () -> new com.rpgrealms.item.VallsaronLootItem(new Item.Properties().stacksTo(16).rarity(net.minecraft.world.item.Rarity.EPIC),
                     "item.rpgrealms.vallsaron_heart.lore", true));
 
+    // Pez linterna rúnico
+    public static final RegistryObject<Item> LANTERN_FISH_SPAWN_EGG = ITEMS.register("lantern_fish_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.LANTERN_FISH, 0x1B3C66, 0x6FF0FF, new Item.Properties()));
+    public static final RegistryObject<Item> LANTERN_FISH_BUCKET = ITEMS.register("lantern_fish_bucket",
+            () -> new net.minecraft.world.item.MobBucketItem(ModEntities.LANTERN_FISH,
+                    () -> net.minecraft.world.level.material.Fluids.WATER,
+                    () -> net.minecraft.sounds.SoundEvents.BUCKET_EMPTY_FISH,
+                    new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> RUNE_LANTERN_FISH = ITEMS.register("rune_lantern_fish",
+            () -> new Item(new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder()
+                    .nutrition(2).saturationMod(0.2F)
+                    .effect(() -> new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.NIGHT_VISION, 600, 0), 1.0F)
+                    .build())));
+
     // Munición del adulto (no se obtiene; solo sirve de modelo del proyectil)
     public static final RegistryObject<Item> ABYSS_ORB = ITEMS.register("abyss_orb",
             () -> new Item(new Item.Properties()));

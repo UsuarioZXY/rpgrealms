@@ -45,6 +45,13 @@ public class ModEntities {
                     .updateInterval(10)
                     .build("leviathan_egg"));
 
+    /** Pez linterna rúnico: pez de cardumen con runa y señuelo luminoso. */
+    public static final RegistryObject<EntityType<com.rpgrealms.entity.LanternFishEntity>> LANTERN_FISH = ENTITIES.register("lantern_fish",
+            () -> EntityType.Builder.of(com.rpgrealms.entity.LanternFishEntity::new, MobCategory.WATER_AMBIENT)
+                    .sized(0.6F, 0.5F)
+                    .clientTrackingRange(4)
+                    .build("lantern_fish"));
+
     /** Orbe abisal que escupe el adulto. */
     public static final RegistryObject<EntityType<AbyssBoltEntity>> ABYSS_BOLT = ENTITIES.register("abyss_bolt",
             () -> EntityType.Builder.<AbyssBoltEntity>of(AbyssBoltEntity::new, MobCategory.MISC)

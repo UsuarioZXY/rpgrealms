@@ -15,6 +15,7 @@ public class ClientEvents {
         event.registerLayerDefinition(LeviathanTeenModel.LAYER, LeviathanTeenModel::createBodyLayer);
         event.registerLayerDefinition(LeviathanModel.LAYER, LeviathanModel::createBodyLayer);
         event.registerLayerDefinition(LeviathanEggModel.LAYER, LeviathanEggModel::createBodyLayer);
+        event.registerLayerDefinition(LanternFishModel.LAYER, LanternFishModel::createBodyLayer);
     }
 
     @SubscribeEvent
@@ -23,6 +24,7 @@ public class ClientEvents {
         event.registerEntityRenderer(ModEntities.LEVIATHAN_TEEN.get(), LeviathanTeenRenderer::new);
         event.registerEntityRenderer(ModEntities.LEVIATHAN.get(), LeviathanRenderer::new);
         event.registerEntityRenderer(ModEntities.ABYSS_BOLT.get(), AbyssBoltRenderer::new);
+        event.registerEntityRenderer(ModEntities.LANTERN_FISH.get(), LanternFishRenderer::new);
         event.registerEntityRenderer(ModEntities.LEVIATHAN_EGG.get(), LeviathanEggRenderer::new);
     }
 }

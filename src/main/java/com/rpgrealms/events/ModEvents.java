@@ -19,10 +19,16 @@ public class ModEvents {
         event.put(ModEntities.LEVIATHAN_CUB.get(), LeviathanCubEntity.createAttributes().build());
         event.put(ModEntities.LEVIATHAN_TEEN.get(), com.rpgrealms.entity.LeviathanTeenEntity.createAttributes().build());
         event.put(ModEntities.LEVIATHAN.get(), LeviathanEntity.createAttributes().build());
+        event.put(ModEntities.LANTERN_FISH.get(), com.rpgrealms.entity.LanternFishEntity.createAttributes().build());
     }
 
     @SubscribeEvent
     public static void registerSpawnPlacements(SpawnPlacementRegisterEvent event) {
+        event.register(ModEntities.LANTERN_FISH.get(),
+                SpawnPlacements.Type.IN_WATER,
+                Heightmap.Types.OCEAN_FLOOR,
+                com.rpgrealms.entity.LanternFishEntity::checkSpawn,
+                SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(ModEntities.LEVIATHAN_CUB.get(),
                 SpawnPlacements.Type.IN_WATER,
                 Heightmap.Types.OCEAN_FLOOR,

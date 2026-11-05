@@ -23,5 +23,9 @@
   "item.rpgrealms.vallsaron_heart": "Vallsaron Heart",
   "item.rpgrealms.vallsaron_heart.lore": "It still beats, slow as the ocean.",
   "effect.rpgrealms.vallsaron_blessing": "Vallsaron's Blessing",
-  "effect.rpgrealms.vallsaron_blessing.description": "Breathe, swim fast and see in the deep. The tide itself protects you."
+  "effect.rpgrealms.vallsaron_blessing.description": "Breathe, swim fast and see in the deep. The tide itself protects you.",
+  "item.rpgrealms.lantern_fish_spawn_egg": "Runic Lanternfish Spawn Egg",
+  "item.rpgrealms.lantern_fish_bucket": "Bucket of Runic Lanternfish",
+  "item.rpgrealms.rune_lantern_fish": "Runic Lanternfish",
+  "entity.rpgrealms.lantern_fish": "Runic Lanternfish"
 }
