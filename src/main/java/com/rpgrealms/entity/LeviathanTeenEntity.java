@@ -141,6 +141,12 @@ public class LeviathanTeenEntity extends AbstractLeviathan {
                     sl.sendParticles(net.minecraft.core.particles.ParticleTypes.BUBBLE, mouth.x, mouth.y, mouth.z, 6, 0.8D, 0.5D, 0.8D, 0.05D);
                     sl.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD, mouth.x, mouth.y, mouth.z, 3, 0.6D, 0.4D, 0.6D, 0.04D);
                 }
+                if (this.timer % 5 == 0 && this.mob.level() instanceof net.minecraft.server.level.ServerLevel sl3) {
+                    for (int k = 0; k < 16; k++) {
+                        double ang = Math.PI * 2.0D * k / 16.0D + this.timer * 0.2D;
+                        sl3.sendParticles(net.minecraft.core.particles.ParticleTypes.GLOW, mouth.x + Math.cos(ang) * 4.0D, mouth.y + Math.sin(ang) * 4.0D * 0.5D, mouth.z + Math.sin(ang) * 4.0D, 0, -Math.cos(ang), 0.0D, -Math.sin(ang), 0.5D);
+                    }
+                }
                 if (this.timer >= 20) {
                     net.minecraft.world.phys.Vec3 dir = c.subtract(this.mob.position()).normalize();
                     this.dest = c.add(dir.scale(8.0D));
@@ -155,6 +161,8 @@ public class LeviathanTeenEntity extends AbstractLeviathan {
             if (this.mob.level() instanceof net.minecraft.server.level.ServerLevel sl) {
                 sl.sendParticles(net.minecraft.core.particles.ParticleTypes.BUBBLE_POP, this.mob.getX(), this.mob.getY() + this.mob.getBbHeight() * 0.5D, this.mob.getZ(), 8, 1.5D, 1.0D, 1.5D, 0.05D);
                 sl.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD, mouth.x, mouth.y, mouth.z, 2, 0.4D, 0.3D, 0.4D, 0.03D);
+                sl.sendParticles(net.minecraft.core.particles.ParticleTypes.GLOW, this.mob.getX(), this.mob.getY() + this.mob.getBbHeight() * 0.5D, this.mob.getZ(), 6, 3.0D, 1.0D, 3.0D, 0.02D);
+                sl.sendParticles(net.minecraft.core.particles.ParticleTypes.CLOUD, mouth.x, mouth.y, mouth.z, 3, 0.8D, 0.5D, 0.8D, 0.08D);
             }
             if (!this.hit) {
                 for (net.minecraft.world.entity.LivingEntity e : this.mob.level().getEntitiesOfClass(
@@ -170,6 +178,12 @@ public class LeviathanTeenEntity extends AbstractLeviathan {
                 }
                 if (this.hit) {
                     this.mob.playSound(net.minecraft.sounds.SoundEvents.GENERIC_EXPLODE, 2.0F, 1.0F);
+                    if (this.mob.level() instanceof net.minecraft.server.level.ServerLevel sl2) {
+                        this.mob.ringBurst(sl2, mouth.x, mouth.y, mouth.z, net.minecraft.core.particles.ParticleTypes.CLOUD, 0.8D, 0.05D);
+                        this.mob.ringBurst(sl2, mouth.x, mouth.y, mouth.z, net.minecraft.core.particles.ParticleTypes.END_ROD, 1.1D, 0.0D);
+                        sl2.sendParticles(net.minecraft.core.particles.ParticleTypes.SONIC_BOOM, mouth.x, mouth.y, mouth.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+                        sl2.sendParticles(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK, mouth.x, mouth.y, mouth.z, 40, 1.5D, 1.5D, 1.5D, 0.4D);
+                    }
                     this.state = 3;   // termina
                 }
             }

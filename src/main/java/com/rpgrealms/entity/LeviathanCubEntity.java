@@ -141,6 +141,8 @@ public class LeviathanCubEntity extends AbstractLeviathan {
                 Vec3 p = from.add(dir.scale(s));
                 sl.sendParticles(ParticleTypes.SPLASH, p.x, p.y, p.z, 2, 0.1D, 0.1D, 0.1D, 0.05D);
                 sl.sendParticles(ParticleTypes.BUBBLE, p.x, p.y, p.z, 1, 0.05D, 0.05D, 0.05D, 0.02D);
+                sl.sendParticles(ParticleTypes.END_ROD, p.x, p.y, p.z, 1, 0.05D, 0.05D, 0.05D, 0.01D);
+                sl.sendParticles(ParticleTypes.FALLING_WATER, p.x, p.y, p.z, 2, 0.15D, 0.15D, 0.15D, 0.0D);
             }
         }
     }

@@ -421,6 +421,12 @@ public class LeviathanEntity extends AbstractLeviathan {
             this.tideCooldown = 500;
             this.playSound(SoundEvents.ELDER_GUARDIAN_CURSE, 4.0F, 0.5F);
             this.shockwave(26.0D, 10.0F, 1.6D, 0.9D, 0, 0);
+            if (this.level() instanceof ServerLevel sl) {
+                double y0 = this.getY() + this.getBbHeight() * 0.5D;
+                this.ringBurst(sl, this.getX(), y0 - 2.0D, this.getZ(), ParticleTypes.SPLASH, 1.5D, 0.2D);
+                this.ringBurst(sl, this.getX(), y0 + 2.0D, this.getZ(), ParticleTypes.DOLPHIN, 1.0D, 0.1D);
+                this.ringBurst(sl, this.getX(), y0, this.getZ(), ParticleTypes.BUBBLE_COLUMN_UP, 1.1D, 0.2D);
+            }
         }
         if (--this.roarCooldown <= 0 && d2 < 40.0D * 40.0D) {
             this.roarCooldown = 1000;
@@ -433,6 +439,10 @@ public class LeviathanEntity extends AbstractLeviathan {
             if (this.level() instanceof ServerLevel sl) {
                 Vec3 m = this.getMouthPos();
                 sl.sendParticles(ParticleTypes.SONIC_BOOM, m.x, m.y, m.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+                this.ringBurst(sl, m.x, m.y, m.z, ParticleTypes.SQUID_INK, 1.4D, 0.0D);
+                this.ringBurst(sl, m.x, m.y, m.z, ParticleTypes.GLOW_SQUID_INK, 1.0D, 0.0D);
+                this.ringBurst(sl, m.x, m.y, m.z, ParticleTypes.SOUL_FIRE_FLAME, 0.7D, 0.05D);
+                sl.sendParticles(ParticleTypes.SQUID_INK, m.x, m.y, m.z, 120, 6.0D, 3.0D, 6.0D, 0.1D);
             }
         }
     }
@@ -507,7 +517,10 @@ public class LeviathanEntity extends AbstractLeviathan {
                     this.timer = 0;
                     this.mob.playSound(SoundEvents.DOLPHIN_JUMP, 6.0F, 0.3F);
                     if (this.mob.level() instanceof ServerLevel sl) {
-                        sl.sendParticles(ParticleTypes.SPLASH, this.mob.getX(), this.mob.getY() + 3.0D, this.mob.getZ(), 120, 4.0D, 2.0D, 4.0D, 0.5D);
+                        sl.sendParticles(ParticleTypes.SPLASH, this.mob.getX(), this.mob.getY() + 3.0D, this.mob.getZ(), 200, 4.0D, 2.0D, 4.0D, 0.6D);
+                        sl.sendParticles(ParticleTypes.BUBBLE_COLUMN_UP, this.mob.getX(), this.mob.getY(), this.mob.getZ(), 120, 3.0D, 4.0D, 3.0D, 0.3D);
+                        this.mob.ringBurst(sl, this.mob.getX(), this.mob.getY() + 1.0D, this.mob.getZ(), ParticleTypes.SPLASH, 1.3D, 0.3D);
+                        sl.sendParticles(ParticleTypes.SONIC_BOOM, this.mob.getX(), this.mob.getY() + 2.0D, this.mob.getZ(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
                     }
                 }
                 return;
@@ -517,6 +530,12 @@ public class LeviathanEntity extends AbstractLeviathan {
                 if (this.timer > 10 && (this.mob.isInWater() || this.mob.onGround()) || this.timer > 120) {
                     this.mob.playSound(SoundEvents.GENERIC_EXPLODE, 6.0F, 0.5F);
                     this.mob.shockwave(18.0D, 20.0F, 1.6D, 0.8D, 60, 0);
+                    if (this.mob.level() instanceof ServerLevel sl) {
+                        this.mob.ringBurst(sl, this.mob.getX(), this.mob.getY() + 1.0D, this.mob.getZ(), ParticleTypes.SPLASH, 1.6D, 0.4D);
+                        this.mob.ringBurst(sl, this.mob.getX(), this.mob.getY() + 1.0D, this.mob.getZ(), ParticleTypes.CLOUD, 1.2D, 0.1D);
+                        sl.sendParticles(ParticleTypes.SPLASH, this.mob.getX(), this.mob.getY() + 1.0D, this.mob.getZ(), 300, 6.0D, 2.0D, 6.0D, 0.8D);
+                        sl.sendParticles(ParticleTypes.EXPLOSION_EMITTER, this.mob.getX(), this.mob.getY() + 1.0D, this.mob.getZ(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
+                    }
                     this.mob.breachState = 0;
                 }
             }

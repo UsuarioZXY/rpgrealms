@@ -31,11 +31,28 @@ public class VallsaronBlessingEffect extends MobEffect {
             swim.addTransientModifier(new AttributeModifier(SWIM_ID, "Vallsaron blessing", 0.5D, AttributeModifier.Operation.MULTIPLY_TOTAL));
         }
         entity.setAbsorptionAmount(Math.max(entity.getAbsorptionAmount(), 6.0F));
+        if (!entity.level().isClientSide && entity.level() instanceof ServerLevel sl) {
+            // al recibirla: estallido de luz que sube en espiral y campanada
+            for (int i = 0; i < 48; i++) {
+                double ang = i * 0.5D;
+                double h = i / 48.0D * 2.4D;
+                sl.sendParticles(ParticleTypes.END_ROD, entity.getX() + Math.cos(ang) * 1.2D, entity.getY() + h, entity.getZ() + Math.sin(ang) * 1.2D, 0, 0.0D, 0.1D, 0.0D, 1.0D);
+                sl.sendParticles(ParticleTypes.GLOW, entity.getX() - Math.cos(ang) * 1.2D, entity.getY() + h, entity.getZ() - Math.sin(ang) * 1.2D, 0, 0.0D, 0.1D, 0.0D, 1.0D);
+            }
+            sl.sendParticles(ParticleTypes.ENCHANT, entity.getX(), entity.getY() + 1.0D, entity.getZ(), 60, 0.8D, 0.8D, 0.8D, 1.0D);
+            sl.playSound(null, entity.getX(), entity.getY(), entity.getZ(), net.minecraft.sounds.SoundEvents.BEACON_ACTIVATE,
+                    net.minecraft.sounds.SoundSource.PLAYERS, 1.0F, 1.6F);
+        }
     }
 
     @Override
     public void removeAttributeModifiers(LivingEntity entity, AttributeMap map, int amp) {
         entity.setAbsorptionAmount(Math.max(0.0F, entity.getAbsorptionAmount() - 6.0F));
+        if (!entity.level().isClientSide && entity.level() instanceof ServerLevel sl) {
+            sl.sendParticles(ParticleTypes.END_ROD, entity.getX(), entity.getY() + 1.0D, entity.getZ(), 30, 0.6D, 0.9D, 0.6D, 0.08D);
+            sl.playSound(null, entity.getX(), entity.getY(), entity.getZ(), net.minecraft.sounds.SoundEvents.BEACON_DEACTIVATE,
+                    net.minecraft.sounds.SoundSource.PLAYERS, 0.8F, 1.4F);
+        }
         net.minecraft.world.entity.ai.attributes.AttributeInstance swim = map.getInstance(ForgeMod.SWIM_SPEED.get());
         if (swim != null) {
             swim.removeModifier(SWIM_ID);
@@ -65,6 +82,13 @@ public class VallsaronBlessingEffect extends MobEffect {
             sl.sendParticles(ParticleTypes.END_ROD, entity.getX() + Math.cos(a) * r, entity.getY() + 0.2D + (entity.tickCount % 40) / 40.0D * 1.6D,
                     entity.getZ() + Math.sin(a) * r, 1, 0.0D, 0.0D, 0.0D, 0.0D);
             sl.sendParticles(ParticleTypes.ENCHANT, entity.getX(), entity.getY() + 1.8D, entity.getZ(), 2, 0.4D, 0.1D, 0.4D, 0.5D);
+            // segundo hilo de luz en sentido contrario y estela al nadar
+            sl.sendParticles(ParticleTypes.GLOW, entity.getX() - Math.cos(a) * r, entity.getY() + 1.8D - (entity.tickCount % 40) / 40.0D * 1.6D,
+                    entity.getZ() - Math.sin(a) * r, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+            if (entity.isSwimming() || (entity.isInWater() && entity.getDeltaMovement().horizontalDistanceSqr() > 0.01D)) {
+                sl.sendParticles(ParticleTypes.GLOW, entity.getX(), entity.getY() + 0.5D, entity.getZ(), 6, 0.4D, 0.3D, 0.4D, 0.02D);
+                sl.sendParticles(ParticleTypes.BUBBLE_COLUMN_UP, entity.getX(), entity.getY() + 0.5D, entity.getZ(), 4, 0.4D, 0.3D, 0.4D, 0.1D);
+            }
         }
     }
 }

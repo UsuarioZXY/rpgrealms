@@ -544,15 +544,26 @@ public abstract class AbstractLeviathan extends WaterAnimal {
         }
         if (this.level() instanceof net.minecraft.server.level.ServerLevel sl) {
             double cy = this.getY() + this.getBbHeight() * 0.5D;
-            int points = (int) Math.min(80, 24 + radius * 2.0D);
-            for (int i = 0; i < points; i++) {
-                double ang = Math.PI * 2.0D * i / points;
-                double dx = Math.cos(ang), dz = Math.sin(ang);
-                sl.sendParticles(ParticleTypes.CLOUD, this.getX(), cy, this.getZ(), 0, dx, 0.0D, dz, 0.9D);
-                sl.sendParticles(i % 2 == 0 ? ParticleTypes.END_ROD : ParticleTypes.BUBBLE_POP,
-                        this.getX(), cy, this.getZ(), 0, dx, 0.05D, dz, 1.2D);
-            }
+            // tres anillos concéntricos a distintas alturas y velocidades, más una columna de agua central
+            this.ringBurst(sl, this.getX(), cy, this.getZ(), ParticleTypes.CLOUD, 0.9D, 0.0D);
+            this.ringBurst(sl, this.getX(), cy, this.getZ(), ParticleTypes.END_ROD, 1.3D, 0.05D);
+            this.ringBurst(sl, this.getX(), cy - 1.0D, this.getZ(), ParticleTypes.BUBBLE_POP, 0.7D, 0.1D);
+            this.ringBurst(sl, this.getX(), cy + 1.0D, this.getZ(), ParticleTypes.GLOW, 1.0D, 0.0D);
+            this.ringBurst(sl, this.getX(), cy, this.getZ(), ParticleTypes.NAUTILUS, 0.5D, 0.15D);
+            sl.sendParticles(ParticleTypes.SPLASH, this.getX(), cy, this.getZ(), 80, radius * 0.15D, 1.0D, radius * 0.15D, 0.4D);
             sl.sendParticles(ParticleTypes.SONIC_BOOM, this.getX(), cy, this.getZ(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
+            this.level().playSound(null, this.getX(), cy, this.getZ(), net.minecraft.sounds.SoundEvents.AMETHYST_BLOCK_RESONATE,
+                    net.minecraft.sounds.SoundSource.HOSTILE, 4.0F, 0.5F);
+        }
+    }
+
+    /** Anillo de partículas que se expande en el plano horizontal (count 0 = velocidad por partícula). */
+    protected void ringBurst(net.minecraft.server.level.ServerLevel sl, double x, double y, double z,
+                             net.minecraft.core.particles.ParticleOptions type, double speed, double vy) {
+        int points = 48;
+        for (int i = 0; i < points; i++) {
+            double ang = Math.PI * 2.0D * i / points;
+            sl.sendParticles(type, x, y, z, 0, Math.cos(ang), vy, Math.sin(ang), speed);
         }
     }
 
@@ -715,6 +726,9 @@ public abstract class AbstractLeviathan extends WaterAnimal {
             this.level().addParticle(big, cx + ox, cy + oy, cz + oz, 0.0D, 0.0D, 0.0D);
             this.level().addParticle(ParticleTypes.END_ROD, cx + ox, cy + oy, cz + oz, 0.0D, 0.0D, 0.0D);
             this.level().addParticle(ParticleTypes.ENCHANT, cx + ox, cy + oy + 0.5D, cz + oz, 0.0D, 0.4D, 0.0D);
+            double a2 = ang - 0.25D;
+            this.level().addParticle(ParticleTypes.GLOW, cx + side.x * Math.cos(a2) * rr + fwd.x * Math.sin(a2) * rr * 0.6D,
+                    cy + Math.sin(a2 * 2.0D) * rr * 0.25D, cz + side.z * Math.cos(a2) * rr + fwd.z * Math.sin(a2) * rr * 0.6D, 0.0D, 0.0D, 0.0D);
         }
 
         // Aletas pectorales y cola sueltan polvo místico mientras nadan (más al aletear rápido)
@@ -746,6 +760,39 @@ public abstract class AbstractLeviathan extends WaterAnimal {
                         this.getX() - fwd.x * tailAlong + side.x * sgn * lat, cy + (this.random.nextDouble() - 0.5D) * sc * 0.4D,
                         this.getZ() - fwd.z * tailAlong + side.z * sgn * lat, 0.0D, 0.0D, 0.0D);
             }
+        }
+
+        // Herido: pierde luz a chorros por las grietas (más cuanto menos vida le queda)
+        float hp = this.getHealth() / this.getMaxHealth();
+        if (hp < 0.6F && this.tickCount % 2 == 0) {
+            int n = hp < 0.3F ? 4 : 2;
+            for (int i = 0; i < n; i++) {
+                double al = this.random.nextDouble() * this.mouthForward() - this.mouthForward() * 0.4D;
+                this.level().addParticle(this.isAggressive() ? ParticleTypes.LAVA : ParticleTypes.GLOW,
+                        this.getX() + fwd.x * al + side.x * (this.random.nextDouble() - 0.5D) * sc * 1.5D,
+                        cy + sc * 0.5D,
+                        this.getZ() + fwd.z * al + side.z * (this.random.nextDouble() - 0.5D) * sc * 1.5D,
+                        0.0D, 0.05D, 0.0D);
+            }
+        }
+        // Velocidad alta: ola de proa y estela de burbujas
+        if (this.isInWater() && spd > 0.35D) {
+            for (int i = 0; i < 4; i++) {
+                this.level().addParticle(ParticleTypes.BUBBLE_COLUMN_UP,
+                        this.getX() + fwd.x * this.mouthForward() * 0.5D + side.x * (this.random.nextDouble() - 0.5D) * sc * 2.0D,
+                        cy + (this.random.nextDouble() - 0.5D) * sc,
+                        this.getZ() + fwd.z * this.mouthForward() * 0.5D + side.z * (this.random.nextDouble() - 0.5D) * sc * 2.0D,
+                        -this.getDeltaMovement().x * 0.5D, 0.05D, -this.getDeltaMovement().z * 0.5D);
+            }
+            this.level().addParticle(ParticleTypes.CLOUD,
+                    this.getX() - fwd.x * this.trailBack() * 0.5D, cy, this.getZ() - fwd.z * this.trailBack() * 0.5D, 0.0D, 0.0D, 0.0D);
+        }
+        // En el aire (salto): gotas de agua y destellos cayendo
+        if (!this.isInWater() && !this.onGround() && !this.isNoGravity()) {
+            this.level().addParticle(ParticleTypes.FALLING_WATER, this.getX() + (this.random.nextDouble() - 0.5D) * sc * 2.0D,
+                    cy, this.getZ() + (this.random.nextDouble() - 0.5D) * sc * 2.0D, 0.0D, -0.1D, 0.0D);
+            this.level().addParticle(ParticleTypes.END_ROD, this.getX() + (this.random.nextDouble() - 0.5D) * sc * 2.0D,
+                    cy, this.getZ() + (this.random.nextDouble() - 0.5D) * sc * 2.0D, 0.0D, -0.05D, 0.0D);
         }
 
         // Soplo de ballena con destellos cuando la cabeza asoma
