@@ -25,6 +25,9 @@ public class ModTabs {
                         output.accept(ModItems.LANTERN_FISH_SPAWN_EGG.get());
                         output.accept(ModItems.LANTERN_FISH_BUCKET.get());
                         output.accept(ModItems.RUNE_LANTERN_FISH.get());
+                        output.accept(ModItems.FAROLERO_SPAWN_EGG.get());
+                        output.accept(ModItems.LIGHT_CORE.get());
+                        output.accept(ModItems.SEA_FOX_SPAWN_EGG.get());
                         output.accept(ModItems.VALLSARON_SCALE.get());
                         output.accept(ModItems.VALLSARON_FIN.get());
                         output.accept(ModItems.VALLSARON_TOOTH.get());

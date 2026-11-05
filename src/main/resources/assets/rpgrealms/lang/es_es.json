@@ -24,8 +24,13 @@
   "item.rpgrealms.vallsaron_heart.lore": "Aún late, lento como el océano.",
   "effect.rpgrealms.vallsaron_blessing": "Bendición del Vallsaron",
   "effect.rpgrealms.vallsaron_blessing.description": "Respiras, nadas rápido y ves en lo profundo. La marea misma te protege.",
-  "item.rpgrealms.lantern_fish_spawn_egg": "Huevo generador de Pez linterna rúnico",
-  "item.rpgrealms.lantern_fish_bucket": "Cubo con Pez linterna rúnico",
-  "item.rpgrealms.rune_lantern_fish": "Pez linterna rúnico",
-  "entity.rpgrealms.lantern_fish": "Pez linterna rúnico"
+  "item.rpgrealms.lantern_fish_spawn_egg": "Huevo generador de Pez Rúnico",
+  "item.rpgrealms.lantern_fish_bucket": "Cubo con Pez Rúnico",
+  "item.rpgrealms.rune_lantern_fish": "Pez Rúnico",
+  "entity.rpgrealms.lantern_fish": "Pez Rúnico",
+  "item.rpgrealms.farolero_spawn_egg": "Huevo generador de Farolero",
+  "item.rpgrealms.sea_fox_spawn_egg": "Huevo generador de Zorro marino",
+  "item.rpgrealms.light_core": "Núcleo de luz",
+  "entity.rpgrealms.farolero": "Farolero",
+  "entity.rpgrealms.sea_fox": "Zorro marino"
 }

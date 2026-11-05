@@ -21,7 +21,7 @@ public class LanternFishModel extends EntityModel<LanternFishEntity> {
             new ModelLayerLocation(new ResourceLocation(RpgRealms.MODID, "lantern_fish"), "main");
 
     private final ModelPart root;
-    private final ModelPart body, head, jaw, rear, tail, dorsal, ventral, pectL, pectR, stalk, bulb;
+    private final ModelPart body, head, jaw, rear, tail, caudalM, caudalU, caudalD, dorsal, ventral, pectL, pectR, stalk, bulb;
 
     public LanternFishModel(ModelPart root) {
         this.root = root;
@@ -30,6 +30,9 @@ public class LanternFishModel extends EntityModel<LanternFishEntity> {
         this.jaw = this.head.getChild("jaw");
         this.rear = this.body.getChild("rear");
         this.tail = this.rear.getChild("tail");
+        this.caudalM = this.tail.getChild("caudal_m");
+        this.caudalU = this.tail.getChild("caudal_u");
+        this.caudalD = this.tail.getChild("caudal_d");
         this.dorsal = this.body.getChild("dorsal");
         this.ventral = this.body.getChild("ventral");
         this.pectL = this.body.getChild("pect_l");
@@ -65,15 +68,20 @@ public class LanternFishModel extends EntityModel<LanternFishEntity> {
     @Override
     public void setupAnim(LanternFishEntity entity, float limbSwing, float limbSwingAmount,
                           float ageInTicks, float netHeadYaw, float headPitch) {
-        float move = Mth.clamp(limbSwingAmount * 3.0F, 0.0F, 1.0F);
+        float move = Mth.clamp(limbSwingAmount * 4.0F, 0.0F, 1.0F);
         boolean wet = entity.isInWater();
-        float speed = wet ? 0.22F + move * 0.35F : 0.9F;
-        float amp = wet ? 0.5F + move * 0.9F : 1.6F;
-        float ph = ageInTicks * speed;
-        this.body.yRot = Mth.sin(ph) * 0.07F * amp;
-        this.rear.yRot = Mth.sin(ph - 0.8F) * 0.22F * amp;
-        this.tail.yRot = Mth.sin(ph - 1.6F) * 0.32F * amp;
-        this.head.yRot = netHeadYaw * ((float) Math.PI / 180F) * 0.4F - Mth.sin(ph) * 0.05F * amp;
+        // la onda de la cola sigue la velocidad real: más rápido = más aleteo, nunca a tirones
+        float ph = wet ? limbSwing * 1.3F + ageInTicks * 0.14F : ageInTicks * 0.9F;
+        float amp = wet ? 0.45F + move * 0.75F : 1.5F;
+        float vy = Mth.clamp((float) entity.getDeltaMovement().y * 3.0F, -0.5F, 0.5F);
+        this.body.xRot = -vy * 0.8F;
+        this.body.yRot = Mth.sin(ph) * 0.05F * amp;
+        this.rear.yRot = Mth.sin(ph - 0.9F) * 0.16F * amp;
+        this.tail.yRot = Mth.sin(ph - 1.8F) * 0.26F * amp;
+        this.caudalM.yRot = Mth.sin(ph - 2.6F) * 0.16F * amp;
+        this.caudalU.yRot = Mth.sin(ph - 2.6F) * 0.16F * amp;
+        this.caudalD.yRot = Mth.sin(ph - 2.6F) * 0.16F * amp;
+        this.head.yRot = netHeadYaw * ((float) Math.PI / 180F) * 0.4F - Mth.sin(ph) * 0.04F * amp;
         this.dorsal.yRot = Mth.sin(ph - 0.4F) * 0.10F;
         this.ventral.yRot = Mth.sin(ph - 0.4F) * 0.10F;
         float flap = Mth.sin(ageInTicks * 0.22F + 1.0F) * 0.25F;

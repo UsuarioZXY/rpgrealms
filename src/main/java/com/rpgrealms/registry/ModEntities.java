@@ -52,6 +52,20 @@ public class ModEntities {
                     .clientTrackingRange(4)
                     .build("lantern_fish"));
 
+    /** Farolero: medusa luminosa que flota sobre el agua. */
+    public static final RegistryObject<EntityType<com.rpgrealms.entity.FaroleroEntity>> FAROLERO = ENTITIES.register("farolero",
+            () -> EntityType.Builder.of(com.rpgrealms.entity.FaroleroEntity::new, MobCategory.AMBIENT)
+                    .sized(1.1F, 1.4F)
+                    .clientTrackingRange(8)
+                    .build("farolero"));
+
+    /** Zorro marino: mamífero de las islas con cola de pez. */
+    public static final RegistryObject<EntityType<com.rpgrealms.entity.SeaFoxEntity>> SEA_FOX = ENTITIES.register("sea_fox",
+            () -> EntityType.Builder.of(com.rpgrealms.entity.SeaFoxEntity::new, MobCategory.CREATURE)
+                    .sized(0.6F, 0.7F)
+                    .clientTrackingRange(8)
+                    .build("sea_fox"));
+
     /** Orbe abisal que escupe el adulto. */
     public static final RegistryObject<EntityType<AbyssBoltEntity>> ABYSS_BOLT = ENTITIES.register("abyss_bolt",
             () -> EntityType.Builder.<AbyssBoltEntity>of(AbyssBoltEntity::new, MobCategory.MISC)

@@ -38,7 +38,7 @@ public class LanternFishEntity extends AbstractSchoolingFish {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return AbstractSchoolingFish.createAttributes().add(Attributes.MAX_HEALTH, 4.0D);
+        return AbstractSchoolingFish.createAttributes().add(Attributes.MAX_HEALTH, 4.0D).add(Attributes.MOVEMENT_SPEED, 1.4D);
     }
 
     @Override

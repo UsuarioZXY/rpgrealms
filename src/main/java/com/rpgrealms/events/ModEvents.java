@@ -20,10 +20,22 @@ public class ModEvents {
         event.put(ModEntities.LEVIATHAN_TEEN.get(), com.rpgrealms.entity.LeviathanTeenEntity.createAttributes().build());
         event.put(ModEntities.LEVIATHAN.get(), LeviathanEntity.createAttributes().build());
         event.put(ModEntities.LANTERN_FISH.get(), com.rpgrealms.entity.LanternFishEntity.createAttributes().build());
+        event.put(ModEntities.FAROLERO.get(), com.rpgrealms.entity.FaroleroEntity.createAttributes().build());
+        event.put(ModEntities.SEA_FOX.get(), com.rpgrealms.entity.SeaFoxEntity.createAttributes().build());
     }
 
     @SubscribeEvent
     public static void registerSpawnPlacements(SpawnPlacementRegisterEvent event) {
+        event.register(ModEntities.FAROLERO.get(),
+                SpawnPlacements.Type.NO_RESTRICTIONS,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                com.rpgrealms.entity.FaroleroEntity::checkSpawn,
+                SpawnPlacementRegisterEvent.Operation.REPLACE);
+        event.register(ModEntities.SEA_FOX.get(),
+                SpawnPlacements.Type.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                com.rpgrealms.entity.SeaFoxEntity::checkSpawn,
+                SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(ModEntities.LANTERN_FISH.get(),
                 SpawnPlacements.Type.IN_WATER,
                 Heightmap.Types.OCEAN_FLOOR,

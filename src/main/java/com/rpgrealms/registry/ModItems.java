@@ -59,6 +59,14 @@ public class ModItems {
                     .effect(() -> new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.NIGHT_VISION, 600, 0), 1.0F)
                     .build())));
 
+    // Farolero y Zorro marino
+    public static final RegistryObject<Item> FAROLERO_SPAWN_EGG = ITEMS.register("farolero_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.FAROLERO, 0x9FE3F2, 0xFFCC77, new Item.Properties()));
+    public static final RegistryObject<Item> SEA_FOX_SPAWN_EGG = ITEMS.register("sea_fox_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.SEA_FOX, 0x4C86A8, 0x6FF0FF, new Item.Properties()));
+    public static final RegistryObject<Item> LIGHT_CORE = ITEMS.register("light_core",
+            () -> new Item(new Item.Properties().rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
+
     // Munición del adulto (no se obtiene; solo sirve de modelo del proyectil)
     public static final RegistryObject<Item> ABYSS_ORB = ITEMS.register("abyss_orb",
             () -> new Item(new Item.Properties()));

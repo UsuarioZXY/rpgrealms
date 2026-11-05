@@ -79,3 +79,8 @@ Saqueo aumenta cantidades y probabilidades.
 
 ## v15 – Pez linterna rúnico
 Pez pequeño de cardumen (4–8) en océanos, bajo el nivel del mar. Runa brillante en el costado, señuelo luminoso con chispas, aletas con borde brillante. Si hieren a uno, su señuelo destella y el cardumen cercano huye más rápido. Suelta el "Pez linterna rúnico" (comestible, da Visión nocturna 30 s). Se puede capturar con cubo. Huevo generador incluido.
+
+## v16
+- Pez Rúnico: cola con onda suave y más rápido.
+- Farolero: medusa luminosa flotante (campana translúcida, tentáculos, núcleo ámbar). Descarga eléctrica si la golpean. Suelta Núcleo de luz.
+- Zorro marino: mamífero de islas/playas con cola de pez y huellas luminosas. Se doma con Pez Rúnico (clic derecho), se sienta, sigue al dueño, se cría.
