@@ -731,9 +731,7 @@ public class LeviathanModel extends EntityModel<LeviathanEntity> {
         float amp = 0.8F + move * 1.0F + (angry ? 0.5F : 0.0F) + flop * 1.6F;
 
         // Mordida: la animación de ataque de la entidad abre y cierra la mandíbula.
-        float[] bc = entity.biteCurve();
-        float lunge = bc[1];
-        float bite = Math.max(this.attackTime > 0.0F ? Mth.sin(this.attackTime * (float) Math.PI) : 0.0F, bc[0] * 1.4F);
+        float bite = this.attackTime > 0.0F ? Mth.sin(this.attackTime * (float) Math.PI) : 0.0F;
 
         // Estados del ataque a distancia (solo el adulto; en la cría valen 0).
         float charge = atk == 2 ? Mth.clamp(entity.getPhaseTimer() / 50.0F, 0.0F, 1.0F) : 0.0F;
@@ -751,7 +749,7 @@ public class LeviathanModel extends EntityModel<LeviathanEntity> {
 
         // ---- Cuerpo: arqueo al cargar, retroceso al disparar, balanceo en los giros, sacudida al recibir daño ----
         this.pose(this.body,
-                headPitch * deg * 0.7F + lunge * 0.18F * 0.6F + Mth.sin(phase) * 0.02F * amp - charge * 0.18F - recoil * 0.10F - fire * 0.06F,
+                headPitch * deg * 0.7F + Mth.sin(phase) * 0.02F * amp - charge * 0.18F - recoil * 0.10F - fire * 0.06F,
                 Mth.sin(phase) * 0.025F * amp,
                 -turn * 0.012F + hit * 0.05F);
         this.body.y = this.rest.get(this.body)[3] + Mth.sin(ageInTicks * 0.04F) * 0.6F + hit * 0.8F + shake * 0.3F;
@@ -782,7 +780,7 @@ public class LeviathanModel extends EntityModel<LeviathanEntity> {
 
         // ---- Cabeza y mandíbula ----
         this.pose(this.head,
-                Mth.sin(phase - 0.2F) * 0.03F * amp + headPitch * deg * 0.3F + bite * 0.12F + lunge * 0.18F
+                Mth.sin(phase - 0.2F) * 0.03F * amp + headPitch * deg * 0.3F + bite * 0.12F
                         - recoil * 0.25F - charge * 0.20F - fire * 0.12F + hit * 0.10F,
                 netHeadYaw * deg * 0.35F + shake * 0.03F, 0.0F);
         this.pose(this.jaw,

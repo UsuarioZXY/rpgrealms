@@ -956,6 +956,17 @@ public abstract class AbstractLeviathan extends WaterAnimal {
         if (!water) {
             return false;
         }
-        return pos.getY() <= level.getSeaLevel() - 10;
+        if (pos.getY() > level.getSeaLevel() - 10) {
+            return false;
+        }
+        // Muy raros: solo 1 de cada 5 intentos naturales y nunca cerca de otro leviatán (160 bloques)
+        if (reason == MobSpawnType.NATURAL || reason == MobSpawnType.CHUNK_GENERATION) {
+            if (random.nextInt(5) != 0) {
+                return false;
+            }
+            return level.getLevel().getEntitiesOfClass(AbstractLeviathan.class,
+                    new net.minecraft.world.phys.AABB(pos).inflate(160.0D)).isEmpty();
+        }
+        return true;
     }
 }

@@ -3,7 +3,7 @@
   "biomes": "#minecraft:is_deep_ocean",
   "spawners": {
     "type": "rpgrealms:leviathan_cub",
-    "weight": 2,
+    "weight": 1,
     "minCount": 1,
     "maxCount": 1
   }
