@@ -9,7 +9,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraftforge.common.ForgeMod;
 
 /**
@@ -19,8 +18,6 @@ import net.minecraftforge.common.ForgeMod;
 public class VallsaronBlessingEffect extends MobEffect {
     public VallsaronBlessingEffect() {
         super(MobEffectCategory.BENEFICIAL, 0x4DE8FF);
-        this.addAttributeModifier(Attributes.MAX_ABSORPTION, "5f2b8f0e-3a53-4a9c-9a64-7d0c11a6b002",
-                6.0D, AttributeModifier.Operation.ADDITION);
     }
 
     private static final java.util.UUID SWIM_ID = java.util.UUID.fromString("5f2b8f0e-3a53-4a9c-9a64-7d0c11a6b001");
