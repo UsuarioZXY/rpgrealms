@@ -433,8 +433,42 @@ public abstract class AbstractLeviathan extends WaterAnimal {
         this.playSound(net.minecraft.sounds.SoundEvents.COD_FLOP, 1.5F, 0.5F);
     }
 
+    public static final int BITE_TICKS = 12;
+    private static final net.minecraft.network.syncher.EntityDataAccessor<Integer> DATA_BITE =
+            net.minecraft.network.syncher.SynchedEntityData.defineId(AbstractLeviathan.class,
+                    net.minecraft.network.syncher.EntityDataSerializers.INT);
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(DATA_BITE, 0);
+    }
+
+    /** Ticks que le quedan a la animación de mordisco (0 = ninguna). */
+    public int getBiteTicks() {
+        return this.entityData.get(DATA_BITE);
+    }
+
+    /**
+     * Progreso 0..1 de la animación propia de mordisco. Abre la boca despacio, la mantiene abierta un instante,
+     * cierra de golpe y se recupera. Devuelve {abertura, embestida de cabeza}.
+     */
+    public float[] biteCurve() {
+        int t = this.getBiteTicks();
+        if (t <= 0) {
+            return new float[]{0.0F, 0.0F};
+        }
+        float p = 1.0F - t / (float) BITE_TICKS;
+        float open = p < 0.45F ? p / 0.45F : p < 0.62F ? 1.0F - (p - 0.45F) / 0.17F : 0.0F;
+        float lunge = (float) Math.sin(Math.min(1.0F, p / 0.7F) * Math.PI);
+        return new float[]{open, lunge};
+    }
+
     @Override
     public void aiStep() {
+        if (!this.level().isClientSide && this.getBiteTicks() > 0) {
+            this.entityData.set(DATA_BITE, this.getBiteTicks() - 1);
+        }
         if (!this.level().isClientSide && !this.isInWater() && this.onGround() && this.isAlive()) {
             this.beachedHop();
         }
@@ -554,6 +588,28 @@ public abstract class AbstractLeviathan extends WaterAnimal {
             sl.sendParticles(ParticleTypes.SONIC_BOOM, this.getX(), cy, this.getZ(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
             this.level().playSound(null, this.getX(), cy, this.getZ(), net.minecraft.sounds.SoundEvents.AMETHYST_BLOCK_RESONATE,
                     net.minecraft.sounds.SoundSource.HOSTILE, 4.0F, 0.5F);
+        }
+    }
+
+    /** Animación de mordisco cuando algo golpea a alguien (mandíbula que se cierra, marcas de colmillos y sonido). */
+    public void biteHit(net.minecraft.world.entity.LivingEntity victim) {
+        if (this.level().isClientSide || !this.isAlive()) {
+            return;
+        }
+        if (this.getBiteTicks() <= 0) {
+            this.entityData.set(DATA_BITE, BITE_TICKS);
+            // embestida real del cuerpo hacia la víctima
+            net.minecraft.world.phys.Vec3 to = victim.position().add(0.0D, victim.getBbHeight() * 0.5D, 0.0D).subtract(this.position());
+            if (this.isInWater() && to.lengthSqr() > 1.0E-3D) {
+                this.setDeltaMovement(this.getDeltaMovement().add(to.normalize().scale(0.25D)));
+            }
+        }
+        this.playSound(net.minecraft.sounds.SoundEvents.DOLPHIN_ATTACK, 2.0F, 0.5F);
+        if (this.level() instanceof net.minecraft.server.level.ServerLevel sl) {
+            double vy = victim.getY() + victim.getBbHeight() * 0.6D;
+            sl.sendParticles(ParticleTypes.CRIT, victim.getX(), vy, victim.getZ(), 20, 0.4D, 0.4D, 0.4D, 0.3D);
+            sl.sendParticles(ParticleTypes.DAMAGE_INDICATOR, victim.getX(), vy, victim.getZ(), 6, 0.3D, 0.3D, 0.3D, 0.1D);
+            sl.sendParticles(ParticleTypes.END_ROD, victim.getX(), vy, victim.getZ(), 8, 0.3D, 0.3D, 0.3D, 0.05D);
         }
     }
 
